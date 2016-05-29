@@ -7,6 +7,7 @@
 #include "stdio.h"
 #include "constants.h"
 
+enum Gamestate {splash, title, options, play, pause, cutscene};
 
 
 //SDL_Texture* jackSprite = NULL;
