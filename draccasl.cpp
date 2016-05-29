@@ -13,10 +13,13 @@
 
 SDL_Window *gWindow;
 SDL_Renderer *gRenderer;
+SDL_Surface *gSurface;
+SDL_Texture *gTexture;
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 int main(int argc, char* argv[]){
 	SDL_Init(SDL_INIT_VIDEO);
+	IMG_Init(IMG_INIT_PNG);
 	
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640,480, NULL);
 	if (gWindow == NULL){
@@ -24,9 +27,20 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 	
+	gSurface = IMG_Load("jack.png");
+	if (!gSurface){
+		std::cout << "we let go of jack! " << SDL_GetError() << "\n";
+	}
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+	gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
+	//SDL_RenderClear(gRenderer);
+	SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
+	
 	SDL_Delay(3000);
 	SDL_DestroyWindow(gWindow);
 	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyTexture(gTexture);
+	IMG_Quit();
 	SDL_Quit();
 	return 0;
 }
