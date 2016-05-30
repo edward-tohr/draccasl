@@ -1,23 +1,18 @@
 // I have no idea what I'm doing. But I won't let that stop me.
 
-#include "SDL.h"
-#include "SDL_image.h"
-#include "SDL_ttf.h"
-#include "SDL_mixer.h"
-#include "iostream"
-#include "string"
-#include "sstream"
+#include "draccasl.h"
 
-// Define globals here. Probably bad practice, but eh.
 
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
 
-SDL_Window *gWindow;
-SDL_Renderer *gRenderer;
-SDL_Surface *gSurface;
-SDL_Surface *jackSprite;
-SDL_Texture *gTexture;
-Mix_Music *gMusic;
+enum gameState_t {
+	title,
+	game,
+	pause,
+	cutscene
+};
+
+gameState_t gameState = title;
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
@@ -56,6 +51,8 @@ void init(){
 		std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
 	}
 	
+	gameState = title;
+	
 }
 
 void exit(){
@@ -70,16 +67,23 @@ void exit(){
 
 bool event(SDL_Event e){
 	while (SDL_PollEvent(&e) != 0) {
+		
+		if(e.type == SDL_QUIT){
+	        return true;	
+		}
+		
 		if (e.key.keysym.sym == SDLK_RETURN){
+			if (gameState == title){
 			Mix_PlayMusic(gMusic, -1);
 	
 	SDL_Delay(3000);
-	return true;
-			
-		}
-		else if(e.type == SDL_QUIT){
-	return true;
-			
+	Mix_HaltMusic();
+	gMusic = Mix_LoadMUS("jack.mid");
+	gameState = game;
+			}
+			else {
+				gameState = pause;
+			}	
 		}
 		return false;
 	}
@@ -94,14 +98,18 @@ void render(){
 	
 }
 
+void loop(){
+	
+}
+
 int main(int argc, char* argv[]){
 	
 	init();
 	bool quit = false;
 	SDL_Event e;
-	//when press enter...
 	while (!quit){
 		quit = event(e);
+		loop();
 		render();	
 	}
 	exit();
