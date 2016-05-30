@@ -22,7 +22,7 @@ Mix_Music *gMusic;
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
 
-int init(){
+void init(){
 	//Setup phase
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		std::cout << "SDL init failed! " << SDL_GetError() << "\n";
@@ -39,7 +39,6 @@ int init(){
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640,480, NULL);
 	if (gWindow == NULL){
 		std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
-		return 1;
 	}
 	
 	jackSprite = IMG_Load("jack.png");
@@ -47,27 +46,64 @@ int init(){
 		std::cout << "we let go of jack!";
 	}
 	
-	gMusic = Mix_LoadMUS("jack.mid");
+	gSurface = IMG_Load("title.png");
+	if (!gSurface){
+		std::cout << "failed to load title screen!";
+	}
+	
+	gMusic = Mix_LoadMUS("tocafuge.wav");
 	if (gMusic == NULL){
-		std::cout << "jack.mid refused to load! " << Mix_GetError() << "\n";
+		std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
 	}
 	
 }
+
+void exit(){
+		SDL_DestroyWindow(gWindow);
+	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyTexture(gTexture);
+	Mix_CloseAudio();
+	Mix_Quit();
+	IMG_Quit();
+	SDL_Quit();
+}
+
+bool event(SDL_Event e){
+	while (SDL_PollEvent(&e) != 0) {
+		if (e.key.keysym.sym == SDLK_RETURN){
+			Mix_PlayMusic(gMusic, -1);
+	
+	SDL_Delay(3000);
+	return true;
+			
+		}
+		else if(e.type == SDL_QUIT){
+	return true;
+			
+		}
+		return false;
+	}
+}
+
+void render(){
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+	gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
+	SDL_RenderClear(gRenderer);
+	SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
+	SDL_RenderPresent(gRenderer);
+	
+}
+
 int main(int argc, char* argv[]){
 	
 	init();
-	
-	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-	gTexture = SDL_CreateTextureFromSurface(gRenderer, jackSprite);
-	//SDL_RenderClear(gRenderer);
-	SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
-	Mix_PlayMusic(gMusic, -1);
-	
-	SDL_Delay(30000);
-	SDL_DestroyWindow(gWindow);
-	SDL_DestroyRenderer(gRenderer);
-	SDL_DestroyTexture(gTexture);
-	IMG_Quit();
-	SDL_Quit();
+	bool quit = false;
+	SDL_Event e;
+	//when press enter...
+	while (!quit){
+		quit = event(e);
+		render();	
+	}
+	exit();
 	return 0;
 }
