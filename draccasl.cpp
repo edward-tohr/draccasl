@@ -3,6 +3,7 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "SDL_ttf.h"
+#include "SDL_mixer.h"
 #include "iostream"
 #include "string"
 #include "sstream"
@@ -14,12 +15,26 @@
 SDL_Window *gWindow;
 SDL_Renderer *gRenderer;
 SDL_Surface *gSurface;
+SDL_Surface *jackSprite;
 SDL_Texture *gTexture;
+Mix_Music *gMusic;
 
 // SDL requires int main(int argc char* argv[]). Remember that.
-int main(int argc, char* argv[]){
-	SDL_Init(SDL_INIT_VIDEO);
-	IMG_Init(IMG_INIT_PNG);
+// Also, should make new functions for init, event, loop, render, close.
+
+int init(){
+	//Setup phase
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+		std::cout << "SDL init failed! " << SDL_GetError() << "\n";
+	}
+	if (!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) {
+		std::cout << "SDL_img init failed! " << SDL_GetError() << "\n";
+	}
+	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
+		std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
+	}
+	
+	//Load phase
 	
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640,480, NULL);
 	if (gWindow == NULL){
@@ -27,16 +42,28 @@ int main(int argc, char* argv[]){
 		return 1;
 	}
 	
-	gSurface = IMG_Load("jack.png");
-	if (!gSurface){
-		std::cout << "we let go of jack! " << SDL_GetError() << "\n";
+	jackSprite = IMG_Load("jack.png");
+	if (!jackSprite){
+		std::cout << "we let go of jack!";
 	}
+	
+	gMusic = Mix_LoadMUS("jack.mid");
+	if (gMusic == NULL){
+		std::cout << "jack.mid refused to load! " << Mix_GetError() << "\n";
+	}
+	
+}
+int main(int argc, char* argv[]){
+	
+	init();
+	
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-	gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
+	gTexture = SDL_CreateTextureFromSurface(gRenderer, jackSprite);
 	//SDL_RenderClear(gRenderer);
 	SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
+	Mix_PlayMusic(gMusic, -1);
 	
-	SDL_Delay(3000);
+	SDL_Delay(30000);
 	SDL_DestroyWindow(gWindow);
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyTexture(gTexture);
