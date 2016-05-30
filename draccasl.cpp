@@ -1,6 +1,8 @@
 // I have no idea what I'm doing. But I won't let that stop me.
 
 #include "draccasl.h"
+#include "gameobject.h"
+#include <vector> //should come along with map.h, but just in case.
 
 
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
@@ -12,7 +14,14 @@ enum gameState_t {
 	cutscene
 };
 
+enum gameObject_t {
+	jack,
+	zombie,
+	door
+};
+
 gameState_t gameState = title;
+GameObject* Jack = new GameObject();
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
@@ -31,7 +40,7 @@ void init(){
 	
 	//Load phase
 	
-	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640,480, NULL);
+	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640,480, 0);
 	if (gWindow == NULL){
 		std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
 	}
@@ -52,6 +61,16 @@ void init(){
 	}
 	
 	gameState = title;
+	currentMap = 0;
+	nextMap = 0;
+	Jack->setXPos(0);
+	Jack->setYPos(0);
+	Jack->setHealth(10);
+	Jack->setMaxHealth(10);
+	Jack->setAttack(0);
+	Jack->setDefense(0);
+	Jack->setType(jack);
+	Jack->unkill();
 	
 }
 
@@ -65,7 +84,9 @@ void exit(){
 	SDL_Quit();
 }
 
+
 bool event(SDL_Event e){
+	// handle keypresses and whatnot.
 	while (SDL_PollEvent(&e) != 0) {
 		
 		if(e.type == SDL_QUIT){
@@ -74,12 +95,8 @@ bool event(SDL_Event e){
 		
 		if (e.key.keysym.sym == SDLK_RETURN){
 			if (gameState == title){
-			Mix_PlayMusic(gMusic, -1);
-	
-	SDL_Delay(3000);
-	Mix_HaltMusic();
-	gMusic = Mix_LoadMUS("jack.mid");
-	gameState = game;
+				gameStart();
+			
 			}
 			else {
 				gameState = pause;
@@ -90,6 +107,8 @@ bool event(SDL_Event e){
 }
 
 void render(){
+	
+	//gotta put some code here to render Jack's sprite and such.
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 	gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
 	SDL_RenderClear(gRenderer);
@@ -99,7 +118,32 @@ void render(){
 }
 
 void loop(){
+	//physics, enemy AI goes here
+	// also handle map transitions?
+}
+
+void gameStart(){
+	//New Game setup goes here. Load map, set up player graphics and such.
+	Mix_PlayMusic(gMusic, -1);
 	
+	SDL_Delay(3000);
+	Mix_HaltMusic();
+	gMusic = Mix_LoadMUS("jack.mid");
+	gameState = game;
+	nextMap = 1;
+}
+
+void changeMap(Map oldMap, Map newMap){
+	//blank screen, move Jack to coordinates taken from newMap, load newMap's graphics, fade in.
+	//or stop rendering Jack, save current screen image, and keep rendering that until the warp is complete.
+	
+	std::vector<Map::entrances_t> entrances = newMap.getEntrances();
+	for (int i = 0; i < entrances.size(); i++){
+		if (entrances.at(i).prevMap == oldMap.getID()) {
+			Jack->setXPos(entrances.at(i).x_pos);
+			Jack->setYPos(entrances.at(i).y_pos);
+		}
+	}
 }
 
 int main(int argc, char* argv[]){
