@@ -2,10 +2,19 @@
 #define __map_h__
 
 //Shit, if I'm gonna be loading these off disk, I'll need to come up with a file format.
-//read everything in as ints, tabs separate?
-//and newline separates entrances struct from map data?
-//and another newline separates map data from gameobject data?
-//but then whatever loads the maps needs to be awate of both map.h and gameobject.h. It'll have to be done in draccasl.
+//All values separated by tabs.
+//ID (integer)
+//width (tiles)
+//height (tiles)
+//tileset to use
+//entrance struct: old map
+//entrance struct: x pos
+//entrance struct: y pos
+//repeat until newline
+//tile data (string of ints representing each tile)
+//another newline
+//gameobject data (int type, int X, int Y). ID and such will be set when loading.
+
 
 #include <vector>
 
@@ -53,5 +62,23 @@ class Map{
 		entrances.y_pos = entrance_y;
 		entranceVector.push_back(entrances);
 	}
+	
+	void setWidth(int w){
+		width = w;
+	}
+	
+	void setHeight(int h){
+		height = h;
+	}
+	void setTileset(int t){
+		tileset = t;
+	}
+	void setID(int i){
+		id = i;
+	}
+	
+	// prototypes to be used later
+	
+	void populateMapVector(std::vector<Map> mapVector);
 };
 #endif

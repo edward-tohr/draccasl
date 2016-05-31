@@ -3,6 +3,8 @@
 #include "draccasl.h"
 #include "gameobject.h"
 #include <vector> //should come along with map.h, but just in case.
+#include <iostream>
+#include <fstream>
 
 
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
@@ -22,6 +24,7 @@ enum gameObject_t {
 
 gameState_t gameState = title;
 GameObject* Jack = new GameObject();
+std::vector<Map> vectorMaps;
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
@@ -84,6 +87,87 @@ void exit(){
 	SDL_Quit();
 }
 
+void populateMapVector(std::vector<Map>mapVector){
+	// if (int)c ==9, it's a tab. if ==10, it's a newline.
+	char c;
+	std::string input;
+	int increment = 0;
+	int mapNum = 0;
+	int oldMap;
+	int entX;
+	int entY;
+	Map* tempMap = new Map();
+	std::ifstream map("maps.map");
+	while (map.get(c)){
+		//std::cout << static_cast<int>(c) << "\n";
+	
+	if (!map.eof()){
+		
+		int inChar = static_cast<int>(c);
+		if (inChar != 9 && inChar != 10) { //If the current character isn't a tab or newline...
+		input += c;
+		} else if (inChar == 9) { //once tab is reached...
+		switch (increment){
+			case 0: //First tab is ID.
+			tempMap->setID(std::strtol(input.c_str(),NULL,10));
+			//std::cout << "tempMap ID is: " << tempMap->getID() << "\n";
+			increment++;
+			input.clear();
+			break;
+			case 1: //Second tab is width in tiles.
+			tempMap->setWidth(std::strtol(input.c_str(),NULL,10));
+			increment++;
+			input.clear();
+			break;
+			case 2: //Third tab is height in tiles.
+			tempMap->setHeight(std::strtol(input.c_str(),NULL,10));
+			increment++;
+			input.clear();
+			break;
+			case 3: //Fourth tab is tileset ID.
+			tempMap->setTileset(std::strtol(input.c_str(),NULL,10));
+			increment++;
+			input.clear();
+			break;
+			default: //Tabs 5 + 3x are old map entrance data. 6 + 3x is player's X from that entrance, 7 + 3x is Y.
+			switch ((increment-4) % 3){
+				case 0:
+				oldMap = std::strtol(input.c_str(),NULL,10);
+				input.clear();
+				increment++;
+				break;
+				case 1:
+				entX = std::strtol(input.c_str(),NULL,10);
+				input.clear();
+				increment++;
+				break;
+				case 2:
+				entY = std::strtol(input.c_str(),NULL,10);
+				input.clear();
+				increment++;
+				//Once we have all three members of the struct, we write them.
+				tempMap->addEntrance(oldMap,entX,entY);
+				std::vector<Map::entrances_t> tempVector = tempMap->getEntrances();
+				std::cout << "tempMap stats: \nID: " << tempMap->getID() << "\nWidth: " << tempMap->getWidth() << "\nHeight: " << tempMap->getHeight() << "\nTileset: " << tempMap->getTileset() <<"\n" << "Entrance from map: " << tempVector.at(0).prevMap <<"\nEntrance X: " << tempVector.at(0).x_pos << "\nEntrance Y: "<< tempVector.at(0).y_pos << "\n";
+				break;
+			    }
+		
+		    }
+	    } else if (inChar == 10){ //Once we hit a newline, things get difficult.
+		//break;
+		}
+	} else {
+		std::cout << "\nEOF reached. Closing.\n";
+		map.close();		
+	}
+	}
+			
+		 
+}	
+		
+	
+	
+
 
 bool event(SDL_Event e){
 	// handle keypresses and whatnot.
@@ -131,6 +215,7 @@ void gameStart(){
 	gMusic = Mix_LoadMUS("jack.mid");
 	gameState = game;
 	nextMap = 1;
+	populateMapVector(vectorMaps);
 }
 
 void changeMap(Map oldMap, Map newMap){
@@ -142,7 +227,12 @@ void changeMap(Map oldMap, Map newMap){
 		if (entrances.at(i).prevMap == oldMap.getID()) {
 			Jack->setXPos(entrances.at(i).x_pos);
 			Jack->setYPos(entrances.at(i).y_pos);
+			currentMap = newMap.getID();
+			break;
 		}
+	}
+	if (currentMap == oldMap.getID()){
+		std::cout << "ERROR! Could not find map "  << newMap.getID() <<"\n";
 	}
 }
 
