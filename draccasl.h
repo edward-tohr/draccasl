@@ -46,5 +46,11 @@ void changeMap(Map oldMap, Map newMap);
 
 void gameStart();
 
+void loadMapInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector);
+
+void loadTileInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector);
+
+void loadEventInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector);
+
 #endif
 //There. Now draccasl files just need to #include draccasl.h. Right?
