@@ -87,7 +87,30 @@ void exit(){
 	SDL_Quit();
 }
 
+void loadMapInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector){
+	char inputChar = '0';
+	int inputCharAsInt = 0;
+	
+	map.get(c);
+	//do map loading stuff
+	//if not eof, loadTileInfo(). else, throw error
+}
+
+void loadTileInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector){
+	//do tile loading stuff
+	//if not eof, loadEventInfo(). else, throw error
+}
+
+void loadEventInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector){
+	//do event loading stuff
+	//if not eof, loadMapInfo(). else, exit gracefully
+}
+
 void populateMapVector(std::vector<Map>mapVector){
+	//craaaaap, this should be split into three subfuctions:
+	  // loadMapInfo() grabs the ID, width/height, tileset, and exit data. When it finds a return character, run loadTileInfo(). Throws noTileData error on EOF.
+	  // loadTileInfo() grabs a tab-separated list of tiles by ID, and arranges them according to the height/width obtained earlier. Calls loadEventInfo() upon return. Throws noEventData error on EOF.
+	  // loadEventInfo() grabs the event ID, type, and X and Y positions from the list. If it encounters another return, runs loadMapInfo(). If it encounters EOF, exits gracefully.
 	// if (int)c ==9, it's a tab. if ==10, it's a newline.
 	char c;
 	std::string input;
@@ -102,6 +125,8 @@ void populateMapVector(std::vector<Map>mapVector){
 		//std::cout << static_cast<int>(c) << "\n";
 	
 	if (!map.eof()){
+		//loadMapInfo(tempMap, map, mapVector);
+
 		
 		int inChar = static_cast<int>(c);
 		if (inChar != 9 && inChar != 10) { //If the current character isn't a tab or newline...
