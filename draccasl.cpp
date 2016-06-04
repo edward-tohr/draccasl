@@ -2,9 +2,6 @@
 
 #include "draccasl.h"
 #include "gameobject.h"
-#include <vector> //should come along with map.h, but just in case.
-#include <iostream>
-#include <fstream>
 
 
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
@@ -87,107 +84,73 @@ void exit(){
 	SDL_Quit();
 }
 
-void loadMapInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector){
-	char inputChar = '0';
-	int inputCharAsInt = 0;
+int parseMapInfo(std::ifstream &mapData){
+	char data[256];
+	int parsedData = 0;
+	mapData.getline(data,256,'\t');
+	if (mapData.gcount() > 0){
+	for (int i = 0; i < mapData.gcount()-1; i++){
+		
+		// char '0' is value 48, so by subtracting 48 from each char, we can convert to int.
+		// the math looks a little hairy, but we're reading a number one at a time, then multiplying it by 10^X where X is the number of characters read - 1
+		// so for single digits we multiply by 10^0, i.e. 1. Since gcount() also counts the tab delimiter, we subtract another one from it to deal with that.
+		// yes, we get two different off-by-one errors at the same time, in the same direction. yaaaaaaaaaaay.
+		parsedData += (data[i]-48) * pow(10,(mapData.gcount()-2) - i);
+		
+	}
+	return parsedData;
+	} else {
+		return -1; //Uh-oh, something went wrong.
+	}
 	
-	map.get(c);
-	//do map loading stuff
-	//if not eof, loadTileInfo(). else, throw error
 }
 
-void loadTileInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector){
+void loadMapInfo(Map* tempMap, std::ifstream &mapData){
+	tempMap->setID(parseMapInfo(mapData));
+	tempMap->setWidth(parseMapInfo(mapData));
+	tempMap->setHeight(parseMapInfo(mapData));
+	tempMap->setTileset(parseMapInfo(mapData));
+	if (mapData.peek() == 10) { //if the next character is a newline...
+		loadExitInfo(tempMap, mapData);
+	} else {
+		std::cout << "mapData.peek() != 10!!!!1!!11one!!\n";
+	}
+	
+	//do map loading stuff
+	//if not eof, loadExitInfo(). else, throw error
+}
+
+void loadTileInfo(Map* tempMap, std::ifstream &mapData){
+	std::cout << "loating tile info....\n";
 	//do tile loading stuff
 	//if not eof, loadEventInfo(). else, throw error
 }
 
-void loadEventInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector){
+void loadEventInfo(Map* tempMap, std::ifstream &mapData){
+	std::cout << "loading event info....\n";
 	//do event loading stuff
 	//if not eof, loadMapInfo(). else, exit gracefully
 }
 
+void loadExitInfo(Map* tempMap, std::ifstream &mapData){
+	std::cout << "loading exit info....\n";
+	//do exit loading stuff.
+	//if not eof, loadTileInfo(). else, throw error
+}
+
 void populateMapVector(std::vector<Map>mapVector){
 	//craaaaap, this should be split into three subfuctions:
-	  // loadMapInfo() grabs the ID, width/height, tileset, and exit data. When it finds a return character, run loadTileInfo(). Throws noTileData error on EOF.
+	  // loadMapInfo() grabs the ID, width/height, tileset. Calls loadExitInfo() on return character.
+	  // loadExitInfo() grabs exit data. When it finds a return character, run loadTileInfo(). Throws noTileData error on EOF.
 	  // loadTileInfo() grabs a tab-separated list of tiles by ID, and arranges them according to the height/width obtained earlier. Calls loadEventInfo() upon return. Throws noEventData error on EOF.
 	  // loadEventInfo() grabs the event ID, type, and X and Y positions from the list. If it encounters another return, runs loadMapInfo(). If it encounters EOF, exits gracefully.
 	// if (int)c ==9, it's a tab. if ==10, it's a newline.
-	char c;
-	std::string input;
-	int increment = 0;
-	int mapNum = 0;
-	int oldMap;
-	int entX;
-	int entY;
-	Map* tempMap = new Map();
-	std::ifstream map("maps.map");
-	while (map.get(c)){
-		//std::cout << static_cast<int>(c) << "\n";
-	
-	if (!map.eof()){
-		//loadMapInfo(tempMap, map, mapVector);
 
-		
-		int inChar = static_cast<int>(c);
-		if (inChar != 9 && inChar != 10) { //If the current character isn't a tab or newline...
-		input += c;
-		} else if (inChar == 9) { //once tab is reached...
-		switch (increment){
-			case 0: //First tab is ID.
-			tempMap->setID(std::strtol(input.c_str(),NULL,10));
-			//std::cout << "tempMap ID is: " << tempMap->getID() << "\n";
-			increment++;
-			input.clear();
-			break;
-			case 1: //Second tab is width in tiles.
-			tempMap->setWidth(std::strtol(input.c_str(),NULL,10));
-			increment++;
-			input.clear();
-			break;
-			case 2: //Third tab is height in tiles.
-			tempMap->setHeight(std::strtol(input.c_str(),NULL,10));
-			increment++;
-			input.clear();
-			break;
-			case 3: //Fourth tab is tileset ID.
-			tempMap->setTileset(std::strtol(input.c_str(),NULL,10));
-			increment++;
-			input.clear();
-			break;
-			default: //Tabs 5 + 3x are old map entrance data. 6 + 3x is player's X from that entrance, 7 + 3x is Y.
-			switch ((increment-4) % 3){
-				case 0:
-				oldMap = std::strtol(input.c_str(),NULL,10);
-				input.clear();
-				increment++;
-				break;
-				case 1:
-				entX = std::strtol(input.c_str(),NULL,10);
-				input.clear();
-				increment++;
-				break;
-				case 2:
-				entY = std::strtol(input.c_str(),NULL,10);
-				input.clear();
-				increment++;
-				//Once we have all three members of the struct, we write them.
-				tempMap->addEntrance(oldMap,entX,entY);
-				std::vector<Map::entrances_t> tempVector = tempMap->getEntrances();
-				std::cout << "tempMap stats: \nID: " << tempMap->getID() << "\nWidth: " << tempMap->getWidth() << "\nHeight: " << tempMap->getHeight() << "\nTileset: " << tempMap->getTileset() <<"\n" << "Entrance from map: " << tempVector.at(0).prevMap <<"\nEntrance X: " << tempVector.at(0).x_pos << "\nEntrance Y: "<< tempVector.at(0).y_pos << "\n";
-				break;
-			    }
-		
-		    }
-	    } else if (inChar == 10){ //Once we hit a newline, things get difficult.
-		//break;
-		}
-	} else {
-		std::cout << "\nEOF reached. Closing.\n";
-		map.close();		
-	}
-	}
-			
-		 
+	Map* tempMap = new Map();
+	std::ifstream mapData("maps.map");
+	loadMapInfo(tempMap,mapData);
+	mapVector.push_back(*tempMap);
+	std::cout << "tempMap ID is " << mapVector.back().getID() << ".\n";
 }	
 		
 	

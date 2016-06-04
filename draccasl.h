@@ -10,6 +10,8 @@
 #include "string"
 #include "sstream"
 #include "vector"
+#include "math.h"
+#include "fstream"
 
 //globals go in header file? Is this also awful?
 SDL_Window *gWindow;
@@ -46,11 +48,15 @@ void changeMap(Map oldMap, Map newMap);
 
 void gameStart();
 
-void loadMapInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector);
+void loadMapInfo(Map* tempMap, std::ifstream &mapData);
 
-void loadTileInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector);
+void loadTileInfo(Map* tempMap, std::ifstream &mapData);
 
-void loadEventInfo(Map tempMap, std::ifstream map, std::vector<Map>mapVector);
+void loadEventInfo(Map* tempMap, std::ifstream &mapData);
+
+void loadExitInfo(Map* tempmap, std::ifstream &mapData);
+
+int parseMapInfo(std::ifstream &mapData);
 
 #endif
 //There. Now draccasl files just need to #include draccasl.h. Right?
