@@ -19,6 +19,7 @@ enum gameObject_t {
 	door
 };
 
+
 gameState_t gameState = title;
 GameObject* Jack = new GameObject();
 std::vector<Map> vectorMaps;
@@ -29,35 +30,42 @@ std::vector<Map> vectorMaps;
 void init(){
 	//Setup phase
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-		std::cout << "SDL init failed! " << SDL_GetError() << "\n";
+		if (DEBUG >= ERROR)
+			std::cout << "SDL init failed! " << SDL_GetError() << "\n";
 	}
 	if (!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) {
-		std::cout << "SDL_img init failed! " << SDL_GetError() << "\n";
+		if (DEBUG >= ERROR)
+			std::cout << "SDL_img init failed! " << SDL_GetError() << "\n";
 	}
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-		std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
+		if (DEBUG >= ERROR)
+			std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
 	}
 	
 	//Load phase
 	
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640,480, 0);
 	if (gWindow == NULL){
-		std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
+		if (DEBUG >= ERROR)
+			std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
 	}
 	
 	jackSprite = IMG_Load("jack.png");
 	if (!jackSprite){
-		std::cout << "we let go of jack!";
+		if (DEBUG >= ERROR)
+			std::cout << "we let go of jack!";
 	}
 	
 	gSurface = IMG_Load("title.png");
 	if (!gSurface){
-		std::cout << "failed to load title screen!";
+		if (DEBUG >= ERROR)
+			std::cout << "failed to load title screen!";
 	}
 	
 	gMusic = Mix_LoadMUS("tocafuge.wav");
 	if (gMusic == NULL){
-		std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
+		if (DEBUG >= ERROR)
+			std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
 	}
 	
 	gameState = title;
@@ -108,47 +116,46 @@ int parseMapInfo(std::ifstream &mapData){
 bool loadMapInfo(Map* tempMap, std::ifstream &mapData){
 	bool success = true;
 	tempMap->setID(parseMapInfo(mapData));
-	std::cout << "tempMap->getID() = " << tempMap->getID() << ".\n";
 	tempMap->setWidth(parseMapInfo(mapData));
-	std::cout << "tempMap->getWidth() = " << tempMap->getWidth() << ".\n";
 	tempMap->setHeight(parseMapInfo(mapData));
-	std::cout << "tempMap->getHeight() = " << tempMap->getHeight() << ".\n";
 	tempMap->setTileset(parseMapInfo(mapData));
-	std::cout << "tempMap->getTileset() = " << tempMap->getTileset() << ".\n";
 	if (mapData.peek() != 10) { // If there's not a newline following the map header...
 	success = false;
 		if (mapData.eof()){
-			std::cout << "Early EOF reached! Map data only contains header info! \n";
+			if (DEBUG >= ERROR)
+				std::cout << "Early EOF reached! Map data only contains header info! \n";
 		}
-		std::cout << "Map header is not followed by a newline. Map file may need to be recreated.\n";
+		if (DEBUG >= ERROR)
+			std::cout << "Map header is not followed by a newline. Map file may need to be recreated.\n";
 	} 
-	std::cout << "Post-header, we are at position " << mapData.tellg() << ".\n";
+	if (DEBUG >= ALL)
+		std::cout << "Post-header, we are at position " << mapData.tellg() << ".\n";
 	return success;
 }
 
 bool loadTileInfo(Map* tempMap, std::ifstream &mapData){
 	bool success = true;
-	std::cout << "loating tile info....\n";
+	if (DEBUG >= ALL)
+		std::cout << "loating tile info....\n";
 	mapData.ignore(5,10); // Skip over the newline character.
 	int tilesLoaded = 0;
 	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline.
-	std::cout << "Loading tile " << tilesLoaded << " of " << tempMap->getWidth() * tempMap->getHeight() << "...\n";
 	tempMap->addTile(parseMapInfo(mapData));
-	std::cout << "Wrote tile " << tempMap->getLatestTile() << ".\n";
 	if (++tilesLoaded > tempMap->getWidth() * tempMap->getHeight()) {
-		std::cout << "too many tiles defined for map's listed size!\n";
-		std::cout << "either remove tiles or increase map's width and/or height.\n";
+		if (DEBUG >= ERROR)
+			std::cout << "too many tiles defined for map's listed size!\neither remove tiles or increase map's width and/or height.\n";
 		success = false;
 		break;
 	}
 	}
 	if (tilesLoaded < tempMap->getWidth() * tempMap->getHeight()){
-		std::cout << "too few tiles defined for map's listed size!\n";
-		std::cout << "either add tiles or decrease map's width and/or height.\n";
+		if (DEBUG >= ERROR)
+			std::cout << "too few tiles defined for map's listed size!\neither add tiles or decrease map's width and/or height.\n";
 		success = false;
 	}
 	if (mapData.eof()) {
-		std::cout << "EOF reached after tile info. No events defined.\n";
+		if (DEBUG >= ERROR)
+			std::cout << "EOF reached after tile info. No events defined.\n";
 		success = false;
 	}
 	
@@ -159,7 +166,8 @@ bool loadTileInfo(Map* tempMap, std::ifstream &mapData){
 
 bool loadEventInfo(Map* tempMap, std::ifstream &mapData){
 	bool repeat = false;
-	std::cout << "loading event info....\n";
+	if (DEBUG >= ALL)
+		std::cout << "loading event info....\n";
 	mapData.ignore(5,10); // Skip over the newline character.
 	int eventID = 0;
 	int eventXPos = 0;
@@ -171,11 +179,8 @@ bool loadEventInfo(Map* tempMap, std::ifstream &mapData){
 	// fuuuuuuuuuuuuuuuuuuuuck.
 	success = false;
 	eventID = parseMapInfo(mapData);
-	std::cout << "eventID is " << eventID << ".\n";
 	eventXPos = parseMapInfo(mapData);
-	std::cout << "eventXPos is " << eventXPos << ".\n";
 	eventYPos = parseMapInfo(mapData);
-	std::cout << "eventYPos is " << eventYPos << ".\n";
 	tempMap->addEvent(eventID,eventXPos,eventYPos);
 	success = true;
 	}
@@ -186,44 +191,38 @@ bool loadEventInfo(Map* tempMap, std::ifstream &mapData){
 			mapData.ignore(5,10);
 		}
 	}
-	std::cout << "Do we repeat? " << repeat << ".\n";
+	if (DEBUG >= ALL)
+		std::cout << "Do we repeat? " << repeat << ".\n";
 	return repeat;
 }
 
 bool loadExitInfo(Map* tempMap, std::ifstream &mapData){
-	//goodie, there's a bug somewhere in here.
 	bool success = true;
-	std::cout << "loading exit info....\n";
-	std::cout << "Pre-seek, we are at position " << mapData.tellg() << ".\n";
 	mapData.ignore(5,10); //ignore a newline within the next 5 characters.
-	std::cout << "(post-seek) Exit ID should be " << mapData.peek() - 48 << ".\n";
-	std::cout << "Post-seek, we are at position " << mapData.tellg() << ".\n";
 	int exitID = 0;
 	int exitXPos = 0;
 	int exitYPos = 0;
 	// For some reason, it's skipping the first proper data point here.
 	// neither peek() nor eof() should consume the next bit....
 	// and parseMapInfo() works perfectly for everything else....
-	std::cout << "(outside loop) Exit ID should be " << mapData.peek() - 48 << ".\n";
 	while (mapData.peek() != 10 && !mapData.eof()){
 	success = false;
-	std::cout << "(inside loop) Exit ID should be " << mapData.peek() - 48 << ".\n";
 	exitID = parseMapInfo(mapData);
-	std::cout << "exitID is " << exitID << ".\n";
 	exitXPos = parseMapInfo(mapData);
-	std::cout << "exitXPos is " << exitXPos << ".\n";
 	exitYPos = parseMapInfo(mapData);
-	std::cout << "exitYPos is " << exitYPos << ".\n";
 	tempMap->addEntrance(exitID,exitXPos,exitYPos);
 	success = true;
 	}
 	
 	if (!success){
-		std::cout << "failed to load map exit data.\n";
+		if (DEBUG >= ERROR)
+			std::cout << "failed to load map exit data.\n";
 		if (mapData.eof()){
-			std::cout << "EOF reached in exit data.\n";
+			if (DEBUG >= ERROR)
+				std::cout << "EOF reached in exit data.\n";
 		} else {
-			std::cout << "Exit data is malformed.\n";
+			if (DEBUG >= ERROR)
+				std::cout << "Exit data is malformed.\n";
 		}
 	}
 	
@@ -253,7 +252,8 @@ void populateMapVector(std::vector<Map>mapVector){
 	}
 	loop = loadEventInfo(tempMap,mapData);
 	mapVector.push_back(*tempMap);
-	std::cout << "tempMap ID is " << mapVector.back().getID() << ".\n";
+	if (DEBUG >= ALL)
+		std::cout << "tempMap ID is " << mapVector.back().getID() << ".\n";
 	} while (loop);
 }	
 		
@@ -301,8 +301,8 @@ void loop(){
 void gameStart(){
 	//New Game setup goes here. Load map, set up player graphics and such.
 	Mix_PlayMusic(gMusic, -1);
-	
-	SDL_Delay(3000);
+	if (DEBUG == NONE)
+		SDL_Delay(3000);
 	Mix_HaltMusic();
 	gMusic = Mix_LoadMUS("jack.mid");
 	gameState = game;
@@ -324,7 +324,8 @@ void changeMap(Map oldMap, Map newMap){
 		}
 	}
 	if (currentMap == oldMap.getID()){
-		std::cout << "ERROR! Could not find map "  << newMap.getID() <<"\n";
+		if (DEBUG >= ERROR)
+			std::cout << "ERROR! Could not find map "  << newMap.getID() <<"\n";
 	}
 }
 

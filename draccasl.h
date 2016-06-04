@@ -31,6 +31,21 @@ int nextMap;
 
 //Right. GameObjects vector. Which means I need a GameObject class.
 
+// Three different debug values. \
+    NONE will not output any debug info. \
+    ERROR will only output error messages. \
+	ALL will output all debug messages.
+	
+
+
+enum DEBUG_T {
+	NONE,
+	ERROR,
+	ALL
+};
+
+const static int DEBUG = ALL;
+
 
 //Prototype functions!
 
