@@ -8,12 +8,12 @@ int parseMapInfo(std::ifstream &mapData){
 	mapData.getline(data,256,'\t');
 	if (mapData.gcount() > 0){
 	for (int i = 0; i < mapData.gcount()-1; i++){
-		
+		parsedData += (data[i]-48) * pow(10,(mapData.gcount()-2) - i);
 		// char '0' is value 48, so by subtracting 48 from each char, we can convert to int.
 		// the math looks a little hairy, but we're reading a number one at a time, then multiplying it by 10^X where X is the number of characters read - 1
 		// so for single digits we multiply by 10^0, i.e. 1. Since gcount() also counts the tab delimiter, we subtract another one from it to deal with that.
 		// yes, we get two different off-by-one errors at the same time, in the same direction. yaaaaaaaaaaay.
-		parsedData += (data[i]-48) * pow(10,(mapData.gcount()-2) - i);
+
 		
 	}
 	return parsedData;
@@ -112,9 +112,6 @@ bool loadExitInfo(Map* tempMap, std::ifstream &mapData){
 	int exitID = 0;
 	int exitXPos = 0;
 	int exitYPos = 0;
-	// For some reason, it's skipping the first proper data point here.
-	// neither peek() nor eof() should consume the next bit....
-	// and parseMapInfo() works perfectly for everything else....
 	while (mapData.peek() != 10 && !mapData.eof()){
 	success = false;
 	exitID = parseMapInfo(mapData);
@@ -165,4 +162,6 @@ void populateMapVector(std::vector<Map>mapVector){
 	if (DEBUG >= ALL)
 		std::cout << "tempMap ID is " << mapVector.back().getID() << ".\n";
 	} while (loop);
+	if (DEBUG >= ALL)
+		std::cout << "Number of maps: " << mapVector.size() << ".\n";
 }
