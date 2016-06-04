@@ -2,18 +2,11 @@
 #define __map_h__
 
 //Shit, if I'm gonna be loading these off disk, I'll need to come up with a file format.
-//All values separated by tabs.
-//ID (integer)
-//width (tiles)
-//height (tiles)
-//tileset to use
-//entrance struct: old map
-//entrance struct: x pos
-//entrance struct: y pos
-//repeat until newline
-//tile data (string of ints representing each tile)
-//another newline
-//gameobject data (int type, int X, int Y). ID and such will be set when loading.
+
+//ID (integer) \t width (tiles) \t height (tiles) \t tileset to use \t
+//entrance struct: old map \t entrance struct: x pos \t entrance struct: y pos \t
+//tile data (tab-separated string of ints representing each tile) \t
+//event ID \t event X \t event Y \t
 
 
 #include <vector>
@@ -22,8 +15,13 @@ class Map{
 	public:
 		struct entrances_t{
 		int prevMap;
-		int x_pos;
-		int y_pos;
+		int exitXPos;
+		int exitYPos;
+	};
+	struct events_t{
+		int eventID;
+		int eventXPos;
+		int eventYPos;
 	};
 	
 	private:
@@ -32,6 +30,8 @@ class Map{
 	int tileset;
 	int id;
 	std::vector<entrances_t> entranceVector;
+	std::vector<Uint8> tiles;
+	std::vector<events_t> eventsVector;
 	
 	public:
 	
@@ -58,9 +58,17 @@ class Map{
 	void addEntrance(int oldMap, int entrance_x, int entrance_y){
 		entrances_t entrances;
 		entrances.prevMap = oldMap;
-		entrances.x_pos = entrance_x;
-		entrances.y_pos = entrance_y;
+		entrances.exitXPos = entrance_x;
+		entrances.exitYPos = entrance_y;
 		entranceVector.push_back(entrances);
+	}
+	
+	void addEvent(int event_id, int event_x, int event_y){
+		events_t event;
+		event.eventID = event_id;
+		event.eventXPos = event_x;
+		event.eventYPos = event_y;
+		eventsVector.push_back(event);
 	}
 	
 	void setWidth(int w){
@@ -75,6 +83,14 @@ class Map{
 	}
 	void setID(int i){
 		id = i;
+	}
+	
+	void addTile(int t) {
+		tiles.push_back(t);
+	}
+	
+	int getLatestTile() {
+		return tiles.back();
 	}
 	
 	// prototypes to be used later

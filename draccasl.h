@@ -48,13 +48,13 @@ void changeMap(Map oldMap, Map newMap);
 
 void gameStart();
 
-void loadMapInfo(Map* tempMap, std::ifstream &mapData);
+bool loadMapInfo(Map* tempMap, std::ifstream &mapData);
 
-void loadTileInfo(Map* tempMap, std::ifstream &mapData);
+bool loadTileInfo(Map* tempMap, std::ifstream &mapData);
 
-void loadEventInfo(Map* tempMap, std::ifstream &mapData);
+bool loadEventInfo(Map* tempMap, std::ifstream &mapData);
 
-void loadExitInfo(Map* tempmap, std::ifstream &mapData);
+bool loadExitInfo(Map* tempmap, std::ifstream &mapData);
 
 int parseMapInfo(std::ifstream &mapData);
 

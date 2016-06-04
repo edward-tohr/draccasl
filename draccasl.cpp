@@ -105,37 +105,129 @@ int parseMapInfo(std::ifstream &mapData){
 	
 }
 
-void loadMapInfo(Map* tempMap, std::ifstream &mapData){
+bool loadMapInfo(Map* tempMap, std::ifstream &mapData){
+	bool success = true;
 	tempMap->setID(parseMapInfo(mapData));
+	std::cout << "tempMap->getID() = " << tempMap->getID() << ".\n";
 	tempMap->setWidth(parseMapInfo(mapData));
+	std::cout << "tempMap->getWidth() = " << tempMap->getWidth() << ".\n";
 	tempMap->setHeight(parseMapInfo(mapData));
+	std::cout << "tempMap->getHeight() = " << tempMap->getHeight() << ".\n";
 	tempMap->setTileset(parseMapInfo(mapData));
-	if (mapData.peek() == 10) { //if the next character is a newline...
-		loadExitInfo(tempMap, mapData);
-	} else {
-		std::cout << "mapData.peek() != 10!!!!1!!11one!!\n";
+	std::cout << "tempMap->getTileset() = " << tempMap->getTileset() << ".\n";
+	if (mapData.peek() != 10) { // If there's not a newline following the map header...
+	success = false;
+		if (mapData.eof()){
+			std::cout << "Early EOF reached! Map data only contains header info! \n";
+		}
+		std::cout << "Map header is not followed by a newline. Map file may need to be recreated.\n";
+	} 
+	std::cout << "Post-header, we are at position " << mapData.tellg() << ".\n";
+	return success;
+}
+
+bool loadTileInfo(Map* tempMap, std::ifstream &mapData){
+	bool success = true;
+	std::cout << "loating tile info....\n";
+	mapData.ignore(5,10); // Skip over the newline character.
+	int tilesLoaded = 0;
+	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline.
+	std::cout << "Loading tile " << tilesLoaded << " of " << tempMap->getWidth() * tempMap->getHeight() << "...\n";
+	tempMap->addTile(parseMapInfo(mapData));
+	std::cout << "Wrote tile " << tempMap->getLatestTile() << ".\n";
+	if (++tilesLoaded > tempMap->getWidth() * tempMap->getHeight()) {
+		std::cout << "too many tiles defined for map's listed size!\n";
+		std::cout << "either remove tiles or increase map's width and/or height.\n";
+		success = false;
+		break;
+	}
+	}
+	if (tilesLoaded < tempMap->getWidth() * tempMap->getHeight()){
+		std::cout << "too few tiles defined for map's listed size!\n";
+		std::cout << "either add tiles or decrease map's width and/or height.\n";
+		success = false;
+	}
+	if (mapData.eof()) {
+		std::cout << "EOF reached after tile info. No events defined.\n";
+		success = false;
 	}
 	
-	//do map loading stuff
-	//if not eof, loadExitInfo(). else, throw error
+	return success;
+	
+
 }
 
-void loadTileInfo(Map* tempMap, std::ifstream &mapData){
-	std::cout << "loating tile info....\n";
-	//do tile loading stuff
-	//if not eof, loadEventInfo(). else, throw error
-}
-
-void loadEventInfo(Map* tempMap, std::ifstream &mapData){
+bool loadEventInfo(Map* tempMap, std::ifstream &mapData){
+	bool repeat = false;
 	std::cout << "loading event info....\n";
-	//do event loading stuff
-	//if not eof, loadMapInfo(). else, exit gracefully
+	mapData.ignore(5,10); // Skip over the newline character.
+	int eventID = 0;
+	int eventXPos = 0;
+	int eventYPos = 0;
+	bool success = true;
+	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline.
+	//Wait wait wait wait wait. This works perfectly fucking fine???
+	// but the shit I copy/pasted this from is broken???
+	// fuuuuuuuuuuuuuuuuuuuuck.
+	success = false;
+	eventID = parseMapInfo(mapData);
+	std::cout << "eventID is " << eventID << ".\n";
+	eventXPos = parseMapInfo(mapData);
+	std::cout << "eventXPos is " << eventXPos << ".\n";
+	eventYPos = parseMapInfo(mapData);
+	std::cout << "eventYPos is " << eventYPos << ".\n";
+	tempMap->addEvent(eventID,eventXPos,eventYPos);
+	success = true;
+	}
+	
+	if (success){
+		if (!mapData.eof()){
+			repeat = true;
+			mapData.ignore(5,10);
+		}
+	}
+	std::cout << "Do we repeat? " << repeat << ".\n";
+	return repeat;
 }
 
-void loadExitInfo(Map* tempMap, std::ifstream &mapData){
+bool loadExitInfo(Map* tempMap, std::ifstream &mapData){
+	//goodie, there's a bug somewhere in here.
+	bool success = true;
 	std::cout << "loading exit info....\n";
-	//do exit loading stuff.
-	//if not eof, loadTileInfo(). else, throw error
+	std::cout << "Pre-seek, we are at position " << mapData.tellg() << ".\n";
+	mapData.ignore(5,10); //ignore a newline within the next 5 characters.
+	std::cout << "(post-seek) Exit ID should be " << mapData.peek() - 48 << ".\n";
+	std::cout << "Post-seek, we are at position " << mapData.tellg() << ".\n";
+	int exitID = 0;
+	int exitXPos = 0;
+	int exitYPos = 0;
+	// For some reason, it's skipping the first proper data point here.
+	// neither peek() nor eof() should consume the next bit....
+	// and parseMapInfo() works perfectly for everything else....
+	std::cout << "(outside loop) Exit ID should be " << mapData.peek() - 48 << ".\n";
+	while (mapData.peek() != 10 && !mapData.eof()){
+	success = false;
+	std::cout << "(inside loop) Exit ID should be " << mapData.peek() - 48 << ".\n";
+	exitID = parseMapInfo(mapData);
+	std::cout << "exitID is " << exitID << ".\n";
+	exitXPos = parseMapInfo(mapData);
+	std::cout << "exitXPos is " << exitXPos << ".\n";
+	exitYPos = parseMapInfo(mapData);
+	std::cout << "exitYPos is " << exitYPos << ".\n";
+	tempMap->addEntrance(exitID,exitXPos,exitYPos);
+	success = true;
+	}
+	
+	if (!success){
+		std::cout << "failed to load map exit data.\n";
+		if (mapData.eof()){
+			std::cout << "EOF reached in exit data.\n";
+		} else {
+			std::cout << "Exit data is malformed.\n";
+		}
+	}
+	
+	return success;
 }
 
 void populateMapVector(std::vector<Map>mapVector){
@@ -148,9 +240,21 @@ void populateMapVector(std::vector<Map>mapVector){
 
 	Map* tempMap = new Map();
 	std::ifstream mapData("maps.map");
-	loadMapInfo(tempMap,mapData);
+	bool loop = true;
+	do {
+	if (!loadMapInfo(tempMap,mapData)) {
+		break;
+	}
+	if (!loadExitInfo(tempMap,mapData)){
+		break;
+	}
+	if (!loadTileInfo(tempMap,mapData)){
+		break;
+	}
+	loop = loadEventInfo(tempMap,mapData);
 	mapVector.push_back(*tempMap);
 	std::cout << "tempMap ID is " << mapVector.back().getID() << ".\n";
+	} while (loop);
 }	
 		
 	
@@ -213,8 +317,8 @@ void changeMap(Map oldMap, Map newMap){
 	std::vector<Map::entrances_t> entrances = newMap.getEntrances();
 	for (int i = 0; i < entrances.size(); i++){
 		if (entrances.at(i).prevMap == oldMap.getID()) {
-			Jack->setXPos(entrances.at(i).x_pos);
-			Jack->setYPos(entrances.at(i).y_pos);
+			Jack->setXPos(entrances.at(i).exitXPos);
+			Jack->setYPos(entrances.at(i).exitYPos);
 			currentMap = newMap.getID();
 			break;
 		}
