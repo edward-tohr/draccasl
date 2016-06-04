@@ -9,7 +9,10 @@
 //event ID \t event X \t event Y \t
 
 
-#include <vector>
+#include "vector"
+#include "iostream"
+#include "math.h"
+#include "fstream"
 
 class Map{
 	public:
@@ -30,7 +33,7 @@ class Map{
 	int tileset;
 	int id;
 	std::vector<entrances_t> entranceVector;
-	std::vector<Uint8> tiles;
+	std::vector<int> tiles;
 	std::vector<events_t> eventsVector;
 	
 	public:
@@ -93,8 +96,18 @@ class Map{
 		return tiles.back();
 	}
 	
-	// prototypes to be used later
+};	// prototypes to be used later
+
+void populateMapVector(std::vector<Map> mapVector);
 	
-	void populateMapVector(std::vector<Map> mapVector);
-};
+bool loadMapInfo(Map* tempMap, std::ifstream &mapData);
+
+bool loadTileInfo(Map* tempMap, std::ifstream &mapData);
+
+bool loadEventInfo(Map* tempMap, std::ifstream &mapData);
+
+bool loadExitInfo(Map* tempmap, std::ifstream &mapData);
+
+int parseMapInfo(std::ifstream &mapData);
+
 #endif

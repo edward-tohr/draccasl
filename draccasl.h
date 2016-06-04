@@ -5,13 +5,10 @@
 #include "SDL_image.h"
 #include "SDL_ttf.h"
 #include "SDL_mixer.h"
-#include "map.h"
 #include "iostream"
 #include "string"
-#include "sstream"
 #include "vector"
-#include "math.h"
-#include "fstream"
+class Map;
 
 //globals go in header file? Is this also awful?
 SDL_Window *gWindow;
@@ -31,21 +28,6 @@ int nextMap;
 
 //Right. GameObjects vector. Which means I need a GameObject class.
 
-// Three different debug values. \
-    NONE will not output any debug info. \
-    ERROR will only output error messages. \
-	ALL will output all debug messages.
-	
-
-
-enum DEBUG_T {
-	NONE,
-	ERROR,
-	ALL
-};
-
-const static int DEBUG = ALL;
-
 
 //Prototype functions!
 
@@ -63,15 +45,8 @@ void changeMap(Map oldMap, Map newMap);
 
 void gameStart();
 
-bool loadMapInfo(Map* tempMap, std::ifstream &mapData);
 
-bool loadTileInfo(Map* tempMap, std::ifstream &mapData);
 
-bool loadEventInfo(Map* tempMap, std::ifstream &mapData);
-
-bool loadExitInfo(Map* tempmap, std::ifstream &mapData);
-
-int parseMapInfo(std::ifstream &mapData);
 
 #endif
 //There. Now draccasl files just need to #include draccasl.h. Right?
