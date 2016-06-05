@@ -14,8 +14,10 @@
 #include "math.h"
 #include "fstream"
 #include "constants.h"
+#include "SDL.h"
 
 extern DEBUG_T DEBUG;
+extern SDL_Renderer *gRenderer;
 
 class Map{
 	public:

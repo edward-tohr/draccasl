@@ -7,12 +7,6 @@
 #include "map.h"
 #include "gameobject.h"
 
-//See definition in constants.h. \
-  Valid values for DEBUG are NONE, ERROR, and ALL.
-
-
-
-
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
 
 enum gameState_t {
@@ -31,6 +25,7 @@ enum gameObject_t {
 gameState_t gameState = title;
 GameObject* Jack = new GameObject();
 std::vector<Map> vectorMaps;
+std::vector<GameObject> vectorObjects;
 
 DEBUG_T DEBUG = NONE;
 
@@ -80,6 +75,9 @@ void init(){
 			std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
 	}
 	
+	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+	gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
+	
 	gameState = title;
 	currentMap = 0;
 	nextMap = 0;
@@ -91,6 +89,14 @@ void init(){
 	Jack->setDefense(0);
 	Jack->setType(jack);
 	Jack->unkill();
+	Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
+	SDL_Rect *jackCollision;
+	jackCollision->x = 0;
+	jackCollision->y = 0;
+	jackCollision->w = jackSprite->w;
+	jackCollision->h = jackSprite->h;
+	Jack->setCollision(jackCollision);
+	vectorObjects.push_back(*Jack);
 	
 }
 
@@ -150,12 +156,21 @@ bool event(SDL_Event e){
 }
 
 void render(){
-	
-	//gotta put some code here to render Jack's sprite and such.
-	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-	gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(gRenderer);
-	SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
+	// clear the renderer.
+	if (!gameState == title){ //If we're on the title screen, don't draw all this crap.
+	//Render terrain
+	//Render Objects
+	for (int i = 0; i < vectorObjects.size();i++){
+		vectorObjects.at(i).render();
+	}
+	
+	} else { //If we are on the title screen, draw that.
+		SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
+	}
+	//Render to the screen.
+	
 	SDL_RenderPresent(gRenderer);
 	
 }

@@ -3,8 +3,10 @@
 
 #include "SDL.h"
 #include "constants.h"
+#include "iostream"
 
 extern DEBUG_T DEBUG;
+extern SDL_Renderer *gRenderer;
 
 
 class GameObject {
@@ -112,6 +114,8 @@ class GameObject {
 		objectTexture = newTexture;
 	}
 	
-	void render(SDL_Rect& camera);
+	void render();
+	
+	void init();
 };
 #endif
