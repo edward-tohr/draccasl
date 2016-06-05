@@ -9,7 +9,7 @@
 
 //See definition in constants.h. \
   Valid values for DEBUG are NONE, ERROR, and ALL.
-DEBUG_T DEBUG = NONE;
+
 
 
 
@@ -32,8 +32,12 @@ gameState_t gameState = title;
 GameObject* Jack = new GameObject();
 std::vector<Map> vectorMaps;
 
+DEBUG_T DEBUG = NONE;
+
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
+
+
 
 void init(){
 	//Setup phase
@@ -107,9 +111,10 @@ bool event(SDL_Event e){
 		
 		if(e.type == SDL_QUIT){
 	        return true;	
-		}
+		} else if (e.type == SDL_KEYDOWN){
+		switch(e.key.keysym.sym) {
 		
-		if (e.key.keysym.sym == SDLK_RETURN){
+		case SDLK_RETURN:
 			if (gameState == title){
 				gameStart();
 			
@@ -117,8 +122,30 @@ bool event(SDL_Event e){
 			else {
 				gameState = pause;
 			}	
+		break;
+		
+		case SDLK_d:
+		if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)){
+		switch (DEBUG){
+			case NONE:
+			DEBUG = ERROR;
+			break;
+			case ERROR:
+			DEBUG = ALL;
+			break;
+			case ALL:
+			DEBUG = NONE;
+			break;
 		}
-		return false;
+		std::cout << "Debug level set to " << DEBUG << ".\n";
+		break;
+	    } else {
+			break;
+		}
+	}
+	}
+	
+	return false;
 	}
 }
 
@@ -186,18 +213,29 @@ void changeMap(Map oldMap, Map newMap){
 int main(int argc, char* argv[]){
 	
 	if (argc == 2){
-		if (std::string(argv[1]) == "--DEBUG-ERROR")
-			DEBUG = ERROR;
-		if (std::string(argv[1]) == "--DEBUG-ALL")
+		if (std::string (argv[1]) == "--DEBUG-ALL"){
 			DEBUG = ALL;
+		} else if (std::string (argv[1]) == "--DEBUG-ERROR"){
+			DEBUG = ERROR;
+		} else {
+			DEBUG = NONE;
+		}
+	} else {
+		DEBUG = NONE;
 	}
+	
 	std::cout << "Debug level is: ";
-	if (DEBUG == NONE)
+	switch (DEBUG){
+		case NONE:
 		std::cout << "none.\n";
-	if (DEBUG == ERROR)
+		break;
+		case ERROR:
 		std::cout << "error messages only.\n";
-	if (DEBUG == ALL)
+		break;
+		case ALL:
 		std::cout << "full debug info.\n";
+		break;
+	}
 	init();
 	bool quit = false;
 	SDL_Event e;
