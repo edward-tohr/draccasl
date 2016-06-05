@@ -89,6 +89,7 @@ void init(){
 	Jack->setDefense(0);
 	Jack->setType(jack);
 	Jack->unkill();
+	SDL_SetColorKey(jackSprite,SDL_TRUE,SDL_MapRGB(jackSprite->format,0xFF,0x00,0xFF));
 	Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	SDL_Rect *jackCollision;
 	jackCollision->x = 0;
@@ -96,7 +97,9 @@ void init(){
 	jackCollision->w = jackSprite->w;
 	jackCollision->h = jackSprite->h;
 	Jack->setCollision(jackCollision);
+	std::cout << "this is just before pushing jack into vectorObjects\n";
 	vectorObjects.push_back(*Jack);
+	std::cout << "this is just after pushing jack into vectorObjects\n";
 	
 }
 
@@ -175,16 +178,22 @@ void render(){
 	
 }
 
-void drawMap(Map currentMap){
-	// Code what draws out the map goes here.
-	// Let's see... first, grab the tileset.
-	// Then split it up into tiles.
-	// Then draw the tiles one at a time until you reach currentMap.getWidth().
-	// Move down a row and repeat. 
-	// populateMapVector() makes sure that the maps have the right number of tiles for their dimensions, so we don't need to check that here.
-	// That should be all we need to draw the maps.
+void loadMap(Map currentMap){
+	// We have a map taken from vectorMaps, taken from maps.map.
+	// We need a surface/texture of the tileset.
+	int tiles = currentMap.getTileset();
+	std::string tileName = "tileset_";
+	tileName.append(std::to_string(tiles));
+	tileName.append(".png");
+	gSurface = IMG_Load(tileName.c_str());
+	if (gSurface == NULL){
+		if (DEBUG >= ERROR){
+			std::cout << "Error loading tileset " << tileName <<"!\n";
+		}
+	}
 	
-	
+	if (gSurface != NULL && DEBUG == ALL)
+		std::cout << "Successfully loaded tileset " << tileName <<"!\n";
 	
 }
 
@@ -202,7 +211,11 @@ void gameStart(){
 	gMusic = Mix_LoadMUS("jack.mid");
 	gameState = game;
 	nextMap = 1;
-	populateMapVector(vectorMaps);
+	populateMapVector(&vectorMaps);
+	//populateObjectVector(&vectorObjects) will work the same way once I do that.
+	if (DEBUG == ALL)
+		std::cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";
+	loadMap(vectorMaps.at(0));
 	Mix_PlayMusic(gMusic,-1);
 }
 
@@ -227,7 +240,9 @@ void changeMap(Map oldMap, Map newMap){
 
 int main(int argc, char* argv[]){
 	
-	if (argc == 2){
+	
+	//Turns out that maybe SDL uses argc and argv[] for its own stuff, and sometimes breaks when it's messed up like this?
+	/*if (argc == 2){
 		if (std::string (argv[1]) == "--DEBUG-ALL"){
 			DEBUG = ALL;
 		} else if (std::string (argv[1]) == "--DEBUG-ERROR"){
@@ -250,7 +265,7 @@ int main(int argc, char* argv[]){
 		case ALL:
 		std::cout << "full debug info.\n";
 		break;
-	}
+	}*/
 	init();
 	bool quit = false;
 	SDL_Event e;

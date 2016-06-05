@@ -1,5 +1,6 @@
 #include "gameobject.h"
 
+//REMEMBER:  When populatingObjectVector, take it in as a pointer (std::vector* objectVector).
 
 
 void GameObject::render() {

@@ -103,7 +103,7 @@ class Map{
 	
 };	// prototypes to be used later
 
-void populateMapVector(std::vector<Map> mapVector);
+void populateMapVector(std::vector<Map>* mapVector);
 	
 bool loadMapInfo(Map* tempMap, std::ifstream &mapData);
 

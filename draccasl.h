@@ -48,9 +48,7 @@ void changeMap(Map oldMap, Map newMap);
 
 void gameStart();
 
-
-
-
+void loadMap(Map currentMap);
 
 #endif
 //There. Now draccasl files just need to #include draccasl.h. Right?

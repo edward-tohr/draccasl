@@ -22,7 +22,7 @@ int parseMapInfo(std::ifstream &mapData){
 	
 }
 
-bool loadMapInfo(Map* tempMap, std::ifstream &mapData){
+bool loadMapInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
 	tempMap->setID(parseMapInfo(mapData));
 	tempMap->setWidth(parseMapInfo(mapData));
@@ -42,7 +42,7 @@ bool loadMapInfo(Map* tempMap, std::ifstream &mapData){
 	return success;
 }
 
-bool loadTileInfo(Map* tempMap, std::ifstream &mapData){
+bool loadTileInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
 	if (DEBUG >= ALL)
 		std::cout << "loating tile info....\n";
@@ -73,7 +73,7 @@ bool loadTileInfo(Map* tempMap, std::ifstream &mapData){
 
 }
 
-bool loadEventInfo(Map* tempMap, std::ifstream &mapData){
+bool loadEventInfo(Map *tempMap, std::ifstream &mapData){
 	bool repeat = false;
 	if (DEBUG >= ALL)
 		std::cout << "loading event info....\n";
@@ -102,7 +102,7 @@ bool loadEventInfo(Map* tempMap, std::ifstream &mapData){
 	return repeat;
 }
 
-bool loadExitInfo(Map* tempMap, std::ifstream &mapData){
+bool loadExitInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
 	mapData.ignore(5,10); //ignore a newline within the next 5 characters.
 	int exitID = 0;
@@ -132,7 +132,7 @@ bool loadExitInfo(Map* tempMap, std::ifstream &mapData){
 	return success;
 }
 
-void populateMapVector(std::vector<Map>mapVector){
+void populateMapVector(std::vector<Map>* mapVector){
 	//craaaaap, this should be split into three subfuctions:
 	  // loadMapInfo() grabs the ID, width/height, tileset. Calls loadExitInfo() on return character.
 	  // loadExitInfo() grabs exit data. When it finds a return character, run loadTileInfo(). Throws noTileData error on EOF.
@@ -140,24 +140,24 @@ void populateMapVector(std::vector<Map>mapVector){
 	  // loadEventInfo() grabs the event ID, type, and X and Y positions from the list. If it encounters another return, runs loadMapInfo(). If it encounters EOF, exits gracefully.
 	// if (int)c ==9, it's a tab. if ==10, it's a newline.
 
-	Map* tempMap = new Map();
+	Map tempMap;
 	std::ifstream mapData("maps.map");
 	bool loop = true;
 	do {
-	if (!loadMapInfo(tempMap,mapData)) {
+	if (!loadMapInfo(&tempMap,mapData)) {
 		break;
 	}
-	if (!loadExitInfo(tempMap,mapData)){
+	if (!loadExitInfo(&tempMap,mapData)){
 		break;
 	}
-	if (!loadTileInfo(tempMap,mapData)){
+	if (!loadTileInfo(&tempMap,mapData)){
 		break;
 	}
-	loop = loadEventInfo(tempMap,mapData);
-	mapVector.push_back(*tempMap);
+	loop = loadEventInfo(&tempMap,mapData);
+	(*mapVector).push_back(tempMap);
 	if (DEBUG >= ALL)
-		std::cout << "tempMap ID is " << mapVector.back().getID() << ".\n";
+		std::cout << "tempMap ID is " << mapVector->back().getID() << ".\n";
 	} while (loop);
 	if (DEBUG >= ALL)
-		std::cout << "Number of maps: " << mapVector.size() << ".\n";
+		std::cout << "Number of maps: " << mapVector->size() << ".\n";
 }
