@@ -13,6 +13,9 @@
 #include "iostream"
 #include "math.h"
 #include "fstream"
+#include "constants.h"
+
+extern DEBUG_T DEBUG;
 
 class Map{
 	public:

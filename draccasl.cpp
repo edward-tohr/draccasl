@@ -2,11 +2,16 @@
 
 //NEXT STEP: Maps are loaded from file properly, so now to display them on-screen.
 
+#include "constants.h"
 #include "draccasl.h"
 #include "map.h"
 #include "gameobject.h"
-#include "constants.h"
-using namespace Constants;
+
+//See definition in constants.h. \
+  Valid values for DEBUG are NONE, ERROR, and ALL.
+DEBUG_T DEBUG = NONE;
+
+
 
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
 
@@ -128,6 +133,19 @@ void render(){
 	
 }
 
+void drawMap(Map currentMap){
+	// Code what draws out the map goes here.
+	// Let's see... first, grab the tileset.
+	// Then split it up into tiles.
+	// Then draw the tiles one at a time until you reach currentMap.getWidth().
+	// Move down a row and repeat. 
+	// populateMapVector() makes sure that the maps have the right number of tiles for their dimensions, so we don't need to check that here.
+	// That should be all we need to draw the maps.
+	
+	
+	
+}
+
 void loop(){
 	//physics, enemy AI goes here
 	// also handle map transitions?
@@ -143,6 +161,7 @@ void gameStart(){
 	gameState = game;
 	nextMap = 1;
 	populateMapVector(vectorMaps);
+	Mix_PlayMusic(gMusic,-1);
 }
 
 void changeMap(Map oldMap, Map newMap){
@@ -166,6 +185,19 @@ void changeMap(Map oldMap, Map newMap){
 
 int main(int argc, char* argv[]){
 	
+	if (argc == 2){
+		if (std::string(argv[1]) == "--DEBUG-ERROR")
+			DEBUG = ERROR;
+		if (std::string(argv[1]) == "--DEBUG-ALL")
+			DEBUG = ALL;
+	}
+	std::cout << "Debug level is: ";
+	if (DEBUG == NONE)
+		std::cout << "none.\n";
+	if (DEBUG == ERROR)
+		std::cout << "error messages only.\n";
+	if (DEBUG == ALL)
+		std::cout << "full debug info.\n";
 	init();
 	bool quit = false;
 	SDL_Event e;

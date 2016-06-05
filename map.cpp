@@ -1,6 +1,5 @@
 #include "map.h"
-#include "constants.h"
-using namespace Constants;
+
 
 int parseMapInfo(std::ifstream &mapData){
 	char data[256];
@@ -10,8 +9,8 @@ int parseMapInfo(std::ifstream &mapData){
 	for (int i = 0; i < mapData.gcount()-1; i++){
 		parsedData += (data[i]-48) * pow(10,(mapData.gcount()-2) - i);
 		// char '0' is value 48, so by subtracting 48 from each char, we can convert to int.
-		// the math looks a little hairy, but we're reading a number one at a time, then multiplying it by 10^X where X is the number of characters read - 1
-		// so for single digits we multiply by 10^0, i.e. 1. Since gcount() also counts the tab delimiter, we subtract another one from it to deal with that.
+		// the math looks a little hairy, but we're reading a number one at a time, then multiplying it by 10^number of characters read - 1
+		// so for single digits we multiply by 10^0, i.e. 1. Since gcount() also counts the tab, we subtract another one from it to deal with that.
 		// yes, we get two different off-by-one errors at the same time, in the same direction. yaaaaaaaaaaay.
 
 		
@@ -83,10 +82,7 @@ bool loadEventInfo(Map* tempMap, std::ifstream &mapData){
 	int eventXPos = 0;
 	int eventYPos = 0;
 	bool success = true;
-	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline.
-	//Wait wait wait wait wait. This works perfectly fucking fine???
-	// but the shit I copy/pasted this from is broken???
-	// fuuuuuuuuuuuuuuuuuuuuck.
+	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline or eof.
 	success = false;
 	eventID = parseMapInfo(mapData);
 	eventXPos = parseMapInfo(mapData);

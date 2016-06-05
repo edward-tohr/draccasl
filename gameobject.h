@@ -1,10 +1,16 @@
 #ifndef __gameobject_h__
 #define __gameobject_h__
 
+#include "SDL.h"
+#include "constants.h"
+
+extern DEBUG_T DEBUG;
+
+
 class GameObject {
 	private:
-	int x_pos;
-	int y_pos;
+	float x_pos;
+	float y_pos;
 	int type;
 	int id;
 	int health;
@@ -13,12 +19,14 @@ class GameObject {
 	int attack;
 	bool dead;
 	
-	public:
+	SDL_Rect *collisionBox;
+	SDL_Texture *objectTexture;
 	
-	int getXPos(){
+	
+	public:float getXPos(){
 		return x_pos;
 	}
-	int getYPos(){
+	float getYPos(){
 		return y_pos;
 	}
 	int getType(){
@@ -43,10 +51,18 @@ class GameObject {
 		return dead;
 	}
 	
-	void setXPos(int x){
+	SDL_Rect* getCollision(){
+		return collisionBox;
+	}
+	
+	SDL_Texture* getTexture(){
+		return objectTexture;
+	}
+	
+	void setXPos(float x){
 		x_pos = x;
 	}
-	void setYPos(int y) {
+	void setYPos(float y) {
 		y_pos = y;
 	}
 	void setType(int t) {
@@ -87,5 +103,15 @@ class GameObject {
 	void unkill(){
 		dead = false;
 	}
+	
+	void setCollision(SDL_Rect *collider){
+		collisionBox = collider;
+	}
+	
+	void setTexture(SDL_Texture *newTexture){
+		objectTexture = newTexture;
+	}
+	
+	void render(SDL_Rect& camera);
 };
 #endif

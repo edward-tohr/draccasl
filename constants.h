@@ -5,7 +5,6 @@
     ERROR will only output error messages. \
 	ALL will output all debug messages.
 	
-namespace Constants{
 
 enum DEBUG_T {
 	NONE,
@@ -13,6 +12,6 @@ enum DEBUG_T {
 	ALL
 };
 
-const static int DEBUG = ALL;
-}
+extern DEBUG_T DEBUG;
+
 #endif

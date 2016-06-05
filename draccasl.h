@@ -8,7 +8,10 @@
 #include "iostream"
 #include "string"
 #include "vector"
+#include "constants.h"
 class Map;
+
+extern DEBUG_T DEBUG;
 
 //globals go in header file? Is this also awful?
 SDL_Window *gWindow;
