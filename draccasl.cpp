@@ -97,9 +97,7 @@ void init(){
 	jackCollision->w = jackSprite->w;
 	jackCollision->h = jackSprite->h;
 	Jack->setCollision(jackCollision);
-	std::cout << "this is just before pushing jack into vectorObjects\n";
 	vectorObjects.push_back(*Jack);
-	std::cout << "this is just after pushing jack into vectorObjects\n";
 	
 }
 
@@ -204,9 +202,9 @@ void loop(){
 
 void gameStart(){
 	//New Game setup goes here. Load map, set up player graphics and such.
-	Mix_PlayMusic(gMusic, -1);
+	Mix_PlayMusic(gMusic, 1);
 	if (DEBUG == NONE)
-		SDL_Delay(3000);
+		SDL_Delay(3500);
 	Mix_HaltMusic();
 	gMusic = Mix_LoadMUS("jack.mid");
 	gameState = game;
