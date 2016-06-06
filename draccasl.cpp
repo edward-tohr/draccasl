@@ -27,6 +27,7 @@ GameObject* Jack = new GameObject();
 std::vector<Map> vectorMaps;
 std::vector<GameObject> vectorObjects;
 
+
 DEBUG_T DEBUG = NONE;
 
 // SDL requires int main(int argc char* argv[]). Remember that.
@@ -162,6 +163,7 @@ void render(){
 	// clear the renderer.
 	if (!gameState == title){ //If we're on the title screen, don't draw all this crap.
 	//Render terrain
+	vectorMaps.at(currentMap).render();
 	//Render Objects
 	for (int i = 0; i < vectorObjects.size();i++){
 		vectorObjects.at(i).render();
@@ -183,16 +185,20 @@ void loadMap(Map currentMap){
 	std::string tileName = "tileset_";
 	tileName.append(std::to_string(tiles));
 	tileName.append(".png");
-	gSurface = IMG_Load(tileName.c_str());
-	if (gSurface == NULL){
+	tileSet = IMG_Load(tileName.c_str());
+	
+	if (tileSet == NULL){
 		if (DEBUG >= ERROR){
 			std::cout << "Error loading tileset " << tileName <<"!\n";
 		}
-	}
+	} else {
 	
-	if (gSurface != NULL && DEBUG == ALL)
+	if (DEBUG == ALL)
 		std::cout << "Successfully loaded tileset " << tileName <<"!\n";
 	
+	// Once we have it loaded, we can slice 
+	
+}
 }
 
 void loop(){

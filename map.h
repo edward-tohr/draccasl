@@ -18,6 +18,8 @@
 
 extern DEBUG_T DEBUG;
 extern SDL_Renderer *gRenderer;
+extern SDL_Surface *tileSet;
+extern const int TILESIZE;
 
 class Map{
 	public:
@@ -114,5 +116,7 @@ bool loadEventInfo(Map* tempMap, std::ifstream &mapData);
 bool loadExitInfo(Map* tempmap, std::ifstream &mapData);
 
 int parseMapInfo(std::ifstream &mapData);
+
+void render(Map currentMap);
 
 #endif

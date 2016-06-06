@@ -161,3 +161,10 @@ void populateMapVector(std::vector<Map>* mapVector){
 	if (DEBUG >= ALL)
 		std::cout << "Number of maps: " << mapVector->size() << ".\n";
 }
+
+void render(Map currentMap) {
+// Let's see... This gets called every frame, so we want it to be as lightweight as possible.
+// tileSet is a global surface that gets updated on map load containing the current tileset.
+// TILESIZE contains the tile's size. 
+
+}

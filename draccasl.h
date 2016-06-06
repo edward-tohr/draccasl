@@ -23,6 +23,8 @@ SDL_Surface *tileSet; //surface reserved for game map.
 Mix_Music *gMusic;
 int currentMap;
 int nextMap;
+
+const int TILESIZE = 32;
 //gameState_t gameState; //Proooooobably can't define that in a header.
 
 //crap, will each individual enemy/projectile/whatever need their own surface? Hmm.
