@@ -1,6 +1,6 @@
 // I have no idea what I'm doing. But I won't let that stop me.
 
-//NEXT STEP: Maps are loaded from file properly, so now to display them on-screen.
+//NEXT STEP: Maps display on-screen properly. Now to get Jack activated with physics and such.
 
 #include "constants.h"
 #include "draccasl.h"
@@ -29,7 +29,7 @@ std::vector<GameObject> vectorObjects;
 std::vector<SDL_Rect> vectorTiles;
 
 
-DEBUG_T DEBUG = NONE;
+DEBUG_T DEBUG = ALL;
 const int TILESIZE = 32;
 
 // SDL requires int main(int argc char* argv[]). Remember that.
@@ -113,6 +113,11 @@ void init(){
 	jackCollision->w = jackSprite->w;
 	jackCollision->h = jackSprite->h;
 	Jack->setCollision(jackCollision);
+	
+	if (DEBUG == ALL) {
+		std::cout << "Jack: x == " << Jack -> getCollision()-> x << " y == " << Jack -> getCollision()-> y << " w == " << Jack ->getCollision() -> w << " h == " << Jack ->getCollision() -> h << "\n";
+	}
+	
 	vectorObjects.push_back(*Jack);
 	
 }
@@ -186,7 +191,7 @@ void render(){
 	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_RenderClear(gRenderer);
 	// clear the renderer.
-	if (!gameState == title){ //If we're on the title screen, don't draw all this crap.
+	if (gameState != title){ //If we're on the title screen, don't draw all this crap.
 	//Render terrain
 	vectorMaps.at(currentMap).render(&vectorTiles, tileSet->w /TILESIZE);
 	//Render Objects
