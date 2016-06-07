@@ -86,6 +86,12 @@ class Map{
 		eventsVector.push_back(event);
 	}
 	
+	void clearMap() {
+		eventsVector.clear();
+		entranceVector.clear();
+		tiles.clear();
+	}
+	
 	void setWidth(int w){
 		width = w;
 	}

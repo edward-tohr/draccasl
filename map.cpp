@@ -15,8 +15,6 @@ int parseMapInfo(std::ifstream &mapData){
 
 		
 	}
-	if (DEBUG == ALL)
-		std::cout << "parsedData == " << parsedData << "\n";
 	return parsedData;
 	} else {
 		return -1; //Uh-oh, something went wrong.
@@ -27,17 +25,25 @@ int parseMapInfo(std::ifstream &mapData){
 bool loadMapInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
 	if (DEBUG == ALL)
-		std::cout << "Parsing map ID...\n";
+		std::cout << "Parsing map ID... ";
 	tempMap->setID(parseMapInfo(mapData));
 	if (DEBUG == ALL)
-		std::cout << "Parsing map width...\n";
+		std::cout << tempMap -> getID() << "\n";
+	if (DEBUG == ALL)
+		std::cout << "Parsing map width... ";
 	tempMap->setWidth(parseMapInfo(mapData));
 	if (DEBUG == ALL)
-		std::cout << "Parsing map height...\n";
+		std::cout << tempMap -> getWidth() << "\n";
+	if (DEBUG == ALL)
+		std::cout << "Parsing map height... ";
 	tempMap->setHeight(parseMapInfo(mapData));
 	if (DEBUG == ALL)
-		std::cout << "Parsing map tileset...\n";
+		std::cout << tempMap -> getHeight() << "\n";
+	if (DEBUG == ALL)
+		std::cout << "Parsing map tileset... ";
 	tempMap->setTileset(parseMapInfo(mapData));
+	if (DEBUG == ALL)
+		std::cout << tempMap -> getTileset() << "\n";
 	if (mapData.peek() != 10) { // If there's not a newline following the map header...
 	success = false;
 		if (mapData.eof()){
@@ -56,11 +62,11 @@ bool loadTileInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
 	if (DEBUG >= ALL)
 		std::cout << "loading tile info....\n";
+	if (DEBUG >= ALL)
+		std::cout << "We are at position " << mapData.tellg() << ".\n";
 	mapData.ignore(5,10); // Skip over the newline character.
 	int tilesLoaded = 0;
 	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline.
-	if (DEBUG == ALL)
-		std::cout << "Tile at pos " << tilesLoaded << " ";
 	tempMap->addTile(parseMapInfo(mapData));
 	if (++tilesLoaded > tempMap->getWidth() * tempMap->getHeight()) {
 		if (DEBUG >= ERROR)
@@ -80,7 +86,7 @@ bool loadTileInfo(Map *tempMap, std::ifstream &mapData){
 		success = false;
 	}
 	if (DEBUG == ALL) {
-		std::cout << "Finished parsing map data. Tiles are as follows: \n";
+		std::cout << "Finished parsing map data for map " << tempMap -> getID() << ":\n";
 		for (int i = 0; i < tempMap->getHeight(); i++){
 			for (int j = 0; j < tempMap->getWidth(); j++) {
 				std::cout << tempMap->getTiles().at((i*tempMap->getWidth()) + j) << " ";
@@ -188,6 +194,7 @@ void populateMapVector(std::vector<Map>* mapVector){
 	}
 	loop = loadEventInfo(&tempMap,mapData);
 	(*mapVector).push_back(tempMap);
+	tempMap.clearMap();
 	if (DEBUG >= ALL)
 		std::cout << "tempMap ID is " << mapVector->back().getID() << ".\n";
 	} while (loop);
