@@ -18,4 +18,6 @@ SDL_RenderCopy(gRenderer,thisTexture,NULL,thisCollision);
 
 //RenderCopy( Renderer to render at, texture to render, source rectangle if not full texture, destination rectangle if not full renderer.)
 
+//Why is Jack not rendering here...?
+
 }

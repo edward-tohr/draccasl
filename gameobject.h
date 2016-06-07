@@ -7,6 +7,7 @@
 
 extern DEBUG_T DEBUG;
 extern SDL_Renderer *gRenderer;
+extern SDL_Rect gCamera;
 
 
 class GameObject {

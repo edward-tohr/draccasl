@@ -15,6 +15,8 @@ int parseMapInfo(std::ifstream &mapData){
 
 		
 	}
+	if (DEBUG == ALL)
+		std::cout << "parsedData == " << parsedData << "\n";
 	return parsedData;
 	} else {
 		return -1; //Uh-oh, something went wrong.
@@ -24,9 +26,17 @@ int parseMapInfo(std::ifstream &mapData){
 
 bool loadMapInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
+	if (DEBUG == ALL)
+		std::cout << "Parsing map ID...\n";
 	tempMap->setID(parseMapInfo(mapData));
+	if (DEBUG == ALL)
+		std::cout << "Parsing map width...\n";
 	tempMap->setWidth(parseMapInfo(mapData));
+	if (DEBUG == ALL)
+		std::cout << "Parsing map height...\n";
 	tempMap->setHeight(parseMapInfo(mapData));
+	if (DEBUG == ALL)
+		std::cout << "Parsing map tileset...\n";
 	tempMap->setTileset(parseMapInfo(mapData));
 	if (mapData.peek() != 10) { // If there's not a newline following the map header...
 	success = false;
@@ -45,10 +55,12 @@ bool loadMapInfo(Map *tempMap, std::ifstream &mapData){
 bool loadTileInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
 	if (DEBUG >= ALL)
-		std::cout << "loating tile info....\n";
+		std::cout << "loading tile info....\n";
 	mapData.ignore(5,10); // Skip over the newline character.
 	int tilesLoaded = 0;
 	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline.
+	if (DEBUG == ALL)
+		std::cout << "Tile at pos " << tilesLoaded << " ";
 	tempMap->addTile(parseMapInfo(mapData));
 	if (++tilesLoaded > tempMap->getWidth() * tempMap->getHeight()) {
 		if (DEBUG >= ERROR)
@@ -67,6 +79,15 @@ bool loadTileInfo(Map *tempMap, std::ifstream &mapData){
 			std::cout << "EOF reached after tile info. No events defined.\n";
 		success = false;
 	}
+	if (DEBUG == ALL) {
+		std::cout << "Finished parsing map data. Tiles are as follows: \n";
+		for (int i = 0; i < tempMap->getHeight(); i++){
+			for (int j = 0; j < tempMap->getWidth(); j++) {
+				std::cout << tempMap->getTiles().at((i*tempMap->getWidth()) + j) << " ";
+			}
+			std::cout << "\n";
+		}
+	}
 	
 	return success;
 	
@@ -84,8 +105,14 @@ bool loadEventInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
 	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline or eof.
 	success = false;
+	if (DEBUG == ALL)
+		std::cout << "Parsing event ID...\n";
 	eventID = parseMapInfo(mapData);
+	if (DEBUG == ALL)
+		std::cout << "Parsing event X pos...\n";
 	eventXPos = parseMapInfo(mapData);
+	if (DEBUG == ALL)
+		std::cout << "Parsing event Y pos...\n";
 	eventYPos = parseMapInfo(mapData);
 	tempMap->addEvent(eventID,eventXPos,eventYPos);
 	success = true;
@@ -110,8 +137,14 @@ bool loadExitInfo(Map *tempMap, std::ifstream &mapData){
 	int exitYPos = 0;
 	while (mapData.peek() != 10 && !mapData.eof()){
 	success = false;
+	if (DEBUG == ALL)
+		std::cout << "Parsing exit ID...\n";
 	exitID = parseMapInfo(mapData);
+	if (DEBUG == ALL)
+		std::cout << "Parsing exit X pos...\n";
 	exitXPos = parseMapInfo(mapData);
+	if (DEBUG == ALL)
+		std::cout << "Parsing exit Y pos...\n";
 	exitYPos = parseMapInfo(mapData);
 	tempMap->addEntrance(exitID,exitXPos,exitYPos);
 	success = true;
@@ -162,9 +195,30 @@ void populateMapVector(std::vector<Map>* mapVector){
 		std::cout << "Number of maps: " << mapVector->size() << ".\n";
 }
 
-void render(Map currentMap) {
-// Let's see... This gets called every frame, so we want it to be as lightweight as possible.
-// tileSet is a global surface that gets updated on map load containing the current tileset.
-// TILESIZE contains the tile's size. 
+void Map::render(std::vector<SDL_Rect>* tileVector, int tileWidth) {
+//so we've got two vectors, tiles, which contains a bunch of ints, and tileVector, which contains a bunch of SDL_Rects.
+// We want to take tileVector.at(tiles.at(i)), slice that rect out of tileSet, and draw it to the screen at the proper coordinates.
+// ... and also make sure that we're only rendering stuff what's on-camera.
+SDL_Rect curSpot; //The spot on the screen we're rendering to.
+SDL_Rect curTile; //The specific tile we're rendering.
+curSpot.w = TILESIZE;
+curSpot.h = TILESIZE;
+curTile.w = TILESIZE;
+curTile.h = TILESIZE;
+int curTileID = 0; //The ID of the current tile.
+// if inside camera bounds
+
+
+for (int i = 0; i < gCamera.h / TILESIZE; i++){
+	for (int j = 0; j < gCamera.w / TILESIZE; j++){
+	curSpot.x = j * TILESIZE;
+	curSpot.y = i * TILESIZE;
+	curTileID = this->getTiles().at((i * this->getWidth()) + j);
+	curTile.x = tileVector->at(curTileID).x;
+	curTile.y = tileVector->at(curTileID).y;
+	
+SDL_RenderCopy(gRenderer, tileTexture,&curTile,&curSpot);
+}
+}
 
 }

@@ -19,12 +19,16 @@ SDL_Renderer *gRenderer;
 SDL_Surface *gSurface; //global surface used for stuff.
 SDL_Surface *jackSprite; //surface reserved for player's sprite
 SDL_Texture *gTexture;
-SDL_Surface *tileSet; //surface reserved for game map.
+SDL_Texture *tileTexture;
+SDL_Surface *tileSet;
 Mix_Music *gMusic;
+SDL_Rect gCamera; //the camera. p. sure this kinda needs to be global.
 int currentMap;
 int nextMap;
 
-const int TILESIZE = 32;
+
+int WINDOW_W = 640;
+int WINDOW_H = 480;
 //gameState_t gameState; //Proooooobably can't define that in a header.
 
 //crap, will each individual enemy/projectile/whatever need their own surface? Hmm.

@@ -18,7 +18,8 @@
 
 extern DEBUG_T DEBUG;
 extern SDL_Renderer *gRenderer;
-extern SDL_Surface *tileSet;
+extern SDL_Texture *tileTexture;
+extern SDL_Rect gCamera;
 extern const int TILESIZE;
 
 class Map{
@@ -65,6 +66,10 @@ class Map{
 		return entranceVector;
 	}
 	
+	std::vector<int> getTiles(){
+		return tiles;
+	}
+	
 	void addEntrance(int oldMap, int entrance_x, int entrance_y){
 		entrances_t entrances;
 		entrances.prevMap = oldMap;
@@ -103,6 +108,8 @@ class Map{
 		return tiles.back();
 	}
 	
+	void render(std::vector<SDL_Rect>* tileVector, int tileWidth);
+	
 };	// prototypes to be used later
 
 void populateMapVector(std::vector<Map>* mapVector);
@@ -117,6 +124,6 @@ bool loadExitInfo(Map* tempmap, std::ifstream &mapData);
 
 int parseMapInfo(std::ifstream &mapData);
 
-void render(Map currentMap);
+
 
 #endif

@@ -26,9 +26,11 @@ gameState_t gameState = title;
 GameObject* Jack = new GameObject();
 std::vector<Map> vectorMaps;
 std::vector<GameObject> vectorObjects;
+std::vector<SDL_Rect> vectorTiles;
 
 
 DEBUG_T DEBUG = NONE;
+const int TILESIZE = 32;
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
@@ -52,7 +54,7 @@ void init(){
 	
 	//Load phase
 	
-	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 640,480, 0);
+	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL){
 		if (DEBUG >= ERROR)
 			std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
@@ -78,6 +80,19 @@ void init(){
 	
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 	gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
+	
+	
+	std::cout << "pre-gCamera setting\n";
+	gCamera.x = 0;
+	std::cout << "gCamera x is set\n";
+	gCamera.y = 0;
+	std::cout << "gCamera y is set\n";
+	gCamera.w = WINDOW_W;
+	std::cout << "gCamera w is set\n";
+	gCamera.h = WINDOW_H;
+	std::cout << "gCamera h is set\n";
+	std::cout << "post-gCamera setting\n";
+	
 	
 	gameState = title;
 	currentMap = 0;
@@ -150,6 +165,16 @@ bool event(SDL_Event e){
 	    } else {
 			break;
 		}
+		
+		case SDLK_UP:
+		if (DEBUG > NONE){
+			currentMap++;
+			currentMap %= vectorMaps.size();
+			std::cout << "loading map " << currentMap << "...\n";
+			loadMap(vectorMaps.at(currentMap));
+			break;
+		}
+			
 	}
 	}
 	
@@ -163,7 +188,7 @@ void render(){
 	// clear the renderer.
 	if (!gameState == title){ //If we're on the title screen, don't draw all this crap.
 	//Render terrain
-	vectorMaps.at(currentMap).render();
+	vectorMaps.at(currentMap).render(&vectorTiles, tileSet->w /TILESIZE);
 	//Render Objects
 	for (int i = 0; i < vectorObjects.size();i++){
 		vectorObjects.at(i).render();
@@ -196,8 +221,23 @@ void loadMap(Map currentMap){
 	if (DEBUG == ALL)
 		std::cout << "Successfully loaded tileset " << tileName <<"!\n";
 	
-	// Once we have it loaded, we can slice 
+	tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 	
+	// Once we have it loaded, we can slice the tileset into tiles, and store it all in a vector<SDL_Rect>.
+	int numCols = tileSet->w / TILESIZE;
+	int numRows = tileSet->h / TILESIZE;
+	SDL_Rect currentTile;
+	currentTile.w = TILESIZE;
+	currentTile.h = TILESIZE;
+	
+	for (int i = 0; i < numRows; i++){
+		for (int j = 0; j < numCols; j++){
+			currentTile.x = j * TILESIZE;
+			currentTile.y = i * TILESIZE;
+			vectorTiles.push_back(currentTile);
+		}
+	}
+	// And now we have std::vector<SDL_Rect> vectorTiles that contains each individual tile, sorted by tile ID.
 }
 }
 
