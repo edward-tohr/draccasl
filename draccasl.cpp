@@ -1,6 +1,6 @@
 // I have no idea what I'm doing. But I won't let that stop me.
 
-//NEXT STEP: Maps display on-screen properly. Now to get Jack activated with physics and such.
+//NEXT STEP: SDL functions lock up when Jack's X position is nonzero.
 
 #include "constants.h"
 #include "draccasl.h"
@@ -31,6 +31,7 @@ std::vector<SDL_Rect> vectorTiles;
 
 DEBUG_T DEBUG = ALL;
 const int TILESIZE = 32;
+const int VELOCITY_MAX = 4;
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
@@ -118,7 +119,7 @@ void init(){
 		std::cout << "Jack: x == " << Jack -> getCollision()-> x << " y == " << Jack -> getCollision()-> y << " w == " << Jack ->getCollision() -> w << " h == " << Jack ->getCollision() -> h << "\n";
 	}
 	
-	vectorObjects.push_back(*Jack);
+	//vectorObjects.push_back(*Jack);
 	
 }
 
@@ -138,7 +139,8 @@ bool event(SDL_Event e){
 	while (SDL_PollEvent(&e) != 0) {
 		
 		if(e.type == SDL_QUIT){
-	        return true;	
+	        return true;
+			
 		} else if (e.type == SDL_KEYDOWN){
 		switch(e.key.keysym.sym) {
 		
@@ -166,25 +168,32 @@ bool event(SDL_Event e){
 			break;
 		}
 		std::cout << "Debug level set to " << DEBUG << ".\n";
+	    } 
 		break;
-	    } else {
-			break;
-		}
 		
-		case SDLK_UP:
+		
+		case SDLK_BACKSLASH:
 		if (DEBUG > NONE){
 			currentMap++;
 			currentMap %= vectorMaps.size();
 			std::cout << "loading map " << currentMap << "...\n";
 			loadMap(vectorMaps.at(currentMap));
-			break;
+		} 
+		break;
+		
+		case SDLK_END:
+		if (DEBUG > NONE){
+		Jack->setXPos(0);
 		}
+		break;
 			
+	}
+	return false;
 	}
 	}
 	
-	return false;
-	}
+	
+	
 }
 
 void render(){
@@ -193,10 +202,11 @@ void render(){
 	// clear the renderer.
 	if (gameState != title){ //If we're on the title screen, don't draw all this crap.
 	//Render terrain
-	vectorMaps.at(currentMap).render(&vectorTiles, tileSet->w /TILESIZE);
+	vectorMaps.at(currentMap).Map::render(&vectorTiles, tileSet->w /TILESIZE);
 	//Render Objects
+	Jack->GameObject::render();
 	for (int i = 0; i < vectorObjects.size();i++){
-		vectorObjects.at(i).render();
+		vectorObjects.at(i).GameObject::render();
 	}
 	
 	} else { //If we are on the title screen, draw that.
@@ -212,10 +222,18 @@ void loadMap(Map currentMap){
 	// We have a map taken from vectorMaps, taken from maps.map.
 	// We need a surface/texture of the tileset.
 	int tiles = currentMap.getTileset();
+	std::cout << "tiles = " << currentMap.getTileset() << "\n";
 	std::string tileName = "tileset_";
 	tileName.append(std::to_string(tiles));
 	tileName.append(".png");
+	std::cout << "tilename = " << tileName << "\n";
+	
+	//This locks up when Jack isn't at 0,0, and I have no flipping idea why.\
+	  GameObject and IMG_Load should have nothing to do with each other at all.
+	SDL_FreeSurface(tileSet);
+	std::cout <<"tileset is freed.\n";
 	tileSet = IMG_Load(tileName.c_str());
+	
 	
 	if (tileSet == NULL){
 		if (DEBUG >= ERROR){
@@ -247,6 +265,10 @@ void loadMap(Map currentMap){
 }
 
 void loop(){
+	Jack->GameObject::update();
+	//for (int i = 0; i < vectorObjects.size(); i++){
+		//vectorObjects.at(i).update();
+	//}
 	//physics, enemy AI goes here
 	// also handle map transitions?
 }

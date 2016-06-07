@@ -8,12 +8,13 @@
 extern DEBUG_T DEBUG;
 extern SDL_Renderer *gRenderer;
 extern SDL_Rect gCamera;
+extern const int VELOCITY_MAX;
 
 
 class GameObject {
 	private:
-	float x_pos;
-	float y_pos;
+	float mXPosition;
+	float mYPosition;
 	int type;
 	int id;
 	int health;
@@ -21,35 +22,60 @@ class GameObject {
 	int defense;
 	int attack;
 	bool dead;
+	float x_vel;
+	float y_vel;
+	bool jump;
 	
 	SDL_Rect *collisionBox;
 	SDL_Texture *objectTexture;
 	
 	
-	public:float getXPos(){
-		return x_pos;
+	public:
+	
+	float getXPos(){
+		return mXPosition;
 	}
+	
 	float getYPos(){
-		return y_pos;
+		return mYPosition;
 	}
+	
+	float getXVel(){
+		return x_vel;
+	}
+	
+	float getYVel(){
+		return y_vel;
+	}
+	
+	bool canJump(){
+		return jump;
+	}
+	
 	int getType(){
 		return type;
 	}
+	
 	int getID(){
 		return id;
 	}
+	
 	int getHealth(){
 		return health;
 	}
+	
 	int getMaxHealth(){
 		return maxhealth;
 	}
+	
 	int getDefense(){
 		return defense;
 	}
+	
 	int getAttack(){
 		return attack;
 	}
+	
 	bool isDead(){
 		return dead;
 	}
@@ -63,17 +89,33 @@ class GameObject {
 	}
 	
 	void setXPos(float x){
-		x_pos = x;
+		mXPosition = x;
 	}
+	
 	void setYPos(float y) {
-		y_pos = y;
+		mYPosition = y;
 	}
+	
+	void setXVel(float x){
+		x_vel = x;
+	}
+	
+	void setYVel(float y){
+		y_vel = y;
+	}
+	
+	void setJump(bool j) {
+		jump = j;
+	}
+	
 	void setType(int t) {
 		type = t;
 	}
+	
 	void setID(int i) {
 		id = i;
 	}
+	
 	void setHealth(int h){
 		health = h;
 		if (health >= maxhealth){
@@ -83,6 +125,7 @@ class GameObject {
 			dead = true;
 		}
 	}
+	
 	void setMaxHealth(int m){
 		maxhealth = m;
 		if (health > maxhealth){
@@ -94,15 +137,19 @@ class GameObject {
 			dead = true;
 		}
 	}
+	
 	void setDefense(int d) {
 		defense = d;
 	}
+	
 	void setAttack(int a) {
 		attack = a;
 	}
+	
 	void kill(){
 		dead = true;
 	}
+	
 	void unkill(){
 		dead = false;
 	}
@@ -118,5 +165,10 @@ class GameObject {
 	void render();
 	
 	void init();
+	
+	void update();
+	
+	void changeXVel(float acc);
+	void changeYVel(float acc);
 };
 #endif

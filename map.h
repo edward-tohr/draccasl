@@ -55,7 +55,7 @@ class Map{
 	}
 	
 	int getTileset(){
-		return tileset;
+		return this -> tileset;
 	}
 	
 	int getID(){
