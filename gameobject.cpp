@@ -88,7 +88,7 @@ void GameObject::changeXVel(float acc){
 	
 	//Commenting this out real quick to prevent crashes from nonzero X position.
 	//No, I don't get it either.
-	/*
+	
 	x_vel += acc;
 	
 	if (x_vel > VELOCITY_MAX){
@@ -97,7 +97,7 @@ void GameObject::changeXVel(float acc){
 	
 	if (x_vel < -VELOCITY_MAX){
 		x_vel = -VELOCITY_MAX;
-	}*/
+	}
 }
 
 void GameObject::changeYVel(float acc){

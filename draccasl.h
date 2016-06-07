@@ -50,8 +50,6 @@ void render();
 
 void loop();
 
-void changeMap(Map oldMap, Map newMap);
-
 void gameStart();
 
 void loadMap(Map currentMap);

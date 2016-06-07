@@ -107,19 +107,17 @@ void init(){
 	Jack->setType(jack);
 	Jack->unkill();
 	SDL_SetColorKey(jackSprite,SDL_TRUE,SDL_MapRGB(jackSprite->format,0xFF,0x00,0xFF));
+	std::cout << "Jack's color-keyed now.\n";
 	Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
+	std::cout << "Jack's sprite is set.\n";
 	SDL_Rect *jackCollision;
-	jackCollision->x = 0;
-	jackCollision->y = 0;
-	jackCollision->w = jackSprite->w;
-	jackCollision->h = jackSprite->h;
-	Jack->setCollision(jackCollision);
-	
-	if (DEBUG == ALL) {
-		std::cout << "Jack: x == " << Jack -> getCollision()-> x << " y == " << Jack -> getCollision()-> y << " w == " << Jack ->getCollision() -> w << " h == " << Jack ->getCollision() -> h << "\n";
-	}
-	
-	//vectorObjects.push_back(*Jack);
+	jackCollision -> x = 0;
+	jackCollision -> y = 0;
+	jackCollision -> w = 64;
+	jackCollision -> h = 64;
+	Jack -> setCollision(jackCollision);
+		
+	vectorObjects.push_back(*Jack);
 	
 }
 
@@ -186,6 +184,12 @@ bool event(SDL_Event e){
 		Jack->setXPos(0);
 		}
 		break;
+		
+		case SDLK_HOME:
+		if (DEBUG > NONE) {
+			std::cout << "X: " << Jack -> getXPos() << " Y: " << Jack -> getYPos() << "\n";
+		}
+		break;
 			
 	}
 	return false;
@@ -218,11 +222,11 @@ void render(){
 	
 }
 
-void loadMap(Map currentMap){
+void loadMap(Map mapToLoad){
 	// We have a map taken from vectorMaps, taken from maps.map.
 	// We need a surface/texture of the tileset.
-	int tiles = currentMap.getTileset();
-	std::cout << "tiles = " << currentMap.getTileset() << "\n";
+	int tiles = mapToLoad.getTileset();
+	std::cout << "tiles = " << mapToLoad.getTileset() << "\n";
 	std::string tileName = "tileset_";
 	tileName.append(std::to_string(tiles));
 	tileName.append(".png");
@@ -260,6 +264,7 @@ void loadMap(Map currentMap){
 			vectorTiles.push_back(currentTile);
 		}
 	}
+	currentMap = mapToLoad.getID();
 	// And now we have std::vector<SDL_Rect> vectorTiles that contains each individual tile, sorted by tile ID.
 }
 }
@@ -271,6 +276,8 @@ void loop(){
 	//}
 	//physics, enemy AI goes here
 	// also handle map transitions?
+	
+			
 }
 
 void gameStart(){
@@ -290,24 +297,6 @@ void gameStart(){
 	Mix_PlayMusic(gMusic,-1);
 }
 
-void changeMap(Map oldMap, Map newMap){
-	//blank screen, move Jack to coordinates taken from newMap, load newMap's graphics, fade in.
-	//or stop rendering Jack, save current screen image, and keep rendering that until the warp is complete.
-	
-	std::vector<Map::entrances_t> entrances = newMap.getEntrances();
-	for (int i = 0; i < entrances.size(); i++){
-		if (entrances.at(i).prevMap == oldMap.getID()) {
-			Jack->setXPos(entrances.at(i).exitXPos);
-			Jack->setYPos(entrances.at(i).exitYPos);
-			currentMap = newMap.getID();
-			break;
-		}
-	}
-	if (currentMap == oldMap.getID()){
-		if (DEBUG >= ERROR)
-			std::cout << "ERROR! Could not find map "  << newMap.getID() <<"\n";
-	}
-}
 
 int main(int argc, char* argv[]){
 	
@@ -324,7 +313,7 @@ int main(int argc, char* argv[]){
 	} else {
 		DEBUG = NONE;
 	}
-	
+	*/
 	std::cout << "Debug level is: ";
 	switch (DEBUG){
 		case NONE:
@@ -336,7 +325,7 @@ int main(int argc, char* argv[]){
 		case ALL:
 		std::cout << "full debug info.\n";
 		break;
-	}*/
+	}
 	init();
 	bool quit = false;
 	SDL_Event e;
