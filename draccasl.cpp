@@ -1,6 +1,6 @@
 // I have no idea what I'm doing. But I won't let that stop me.
 
-//NEXT STEP: SDL functions lock up when Jack's X position is nonzero.
+//NEXT STEP: Fixed the nonzero X pos causes crash bug. Next up, physics.
 
 #include "constants.h"
 #include "draccasl.h"
@@ -27,6 +27,7 @@ GameObject* Jack = new GameObject();
 std::vector<Map> vectorMaps;
 std::vector<GameObject> vectorObjects;
 std::vector<SDL_Rect> vectorTiles;
+std::vector<SDL_Rect> vectorCollision;
 
 
 DEBUG_T DEBUG = ALL;
@@ -231,9 +232,6 @@ void loadMap(Map mapToLoad){
 	tileName.append(std::to_string(tiles));
 	tileName.append(".png");
 	std::cout << "tilename = " << tileName << "\n";
-	
-	//This locks up when Jack isn't at 0,0, and I have no flipping idea why.\
-	  GameObject and IMG_Load should have nothing to do with each other at all.
 	SDL_FreeSurface(tileSet);
 	std::cout <<"tileset is freed.\n";
 	tileSet = IMG_Load(tileName.c_str());
@@ -270,12 +268,25 @@ void loadMap(Map mapToLoad){
 }
 
 void loop(){
-	Jack->GameObject::update();
-	//for (int i = 0; i < vectorObjects.size(); i++){
-		//vectorObjects.at(i).update();
-	//}
+	for (int i = 0; i < vectorObjects.size(); i++){
+		vectorObjects.at(i).beginUpdate();
+		// collision detection goes here.
+		// let's see, let's see......
+		// move collisionBox according to velocity.
+		vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),vectorObjects.at(i).getYVel());
+		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width,\
+     		and y coordinate + height between collider's y and collider's y + height.
+			if (vectorObjects.at(i).getCollision())
+		
+		// if vector is empty, great.
+		// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
+		// also:   check y velocity. If positive, set collider's y equal to smallest y in terrain vector. If negative, set Y equal to largest Y + height.Set velocity to 0 either way.
+		vectorObjects.at(i).collisionUpdate();
+		
+	}
 	//physics, enemy AI goes here
 	// also handle map transitions?
+	
 	
 			
 }

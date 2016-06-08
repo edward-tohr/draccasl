@@ -19,7 +19,7 @@ SDL_RenderCopy(gRenderer,this ->getTexture(),NULL,this -> getCollision());
 }
 
 
-void GameObject::update() {
+void GameObject::beginUpdate() {
 	
 	const Uint8 *state = SDL_GetKeyboardState(NULL);
 	
@@ -75,20 +75,12 @@ void GameObject::update() {
 		
 	}
 	
-	if (getXVel() != 0 || getYVel() != 0) {
-	mXPosition += x_vel;
-	mYPosition += y_vel;
-	}
-	
-	collisionBox -> x = floor(mXPosition);
-	collisionBox -> y = floor(mYPosition);
+	// Gravity. Constant downwards force.
+	changeYVel(.45);
 }
 
 void GameObject::changeXVel(float acc){
-	
-	//Commenting this out real quick to prevent crashes from nonzero X position.
-	//No, I don't get it either.
-	
+
 	x_vel += acc;
 	
 	if (x_vel > VELOCITY_MAX){
@@ -110,4 +102,17 @@ void GameObject::changeYVel(float acc){
 	if (y_vel < -VELOCITY_MAX){
 		y_vel = -VELOCITY_MAX;
 	}
+}
+
+SDL_Rect GameObject::moveCollider(float xVel, float yVel){
+	SDL_Rect tempCollision = getCollsionBox();
+	tempCollision.x += xVel;
+	tempCollision.y += yVel;
+	return tempCollision;
+	
+}
+
+void collisionUpdate(){
+	mXPosition += x_vel;
+	mYPosition += y_vel;
 }

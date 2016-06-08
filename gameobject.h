@@ -80,6 +80,14 @@ class GameObject {
 		return dead;
 	}
 	
+	float getXVel(){
+		return x_vel;
+	}
+	
+	float getYVel(){
+		return y_vel;
+	}
+	
 	SDL_Rect* getCollision(){
 		return collisionBox;
 	}
@@ -170,5 +178,8 @@ class GameObject {
 	
 	void changeXVel(float acc);
 	void changeYVel(float acc);
+	
+	SDL_Rect moveCollider(float xVel, float yVel);
+	void collisionUpdate();
 };
 #endif
