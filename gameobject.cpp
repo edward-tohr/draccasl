@@ -46,12 +46,14 @@ void GameObject::beginUpdate() {
 		if (getXVel() < -0.5) {
 			changeXVel(0.5);
 		}
-		if (getXVel() <= 0.5 && getXVel() > 0) {
+		if (getXVel() <= 0.5 && getXVel() > 0 && getXVel() != 0) {
 			setXVel(0);
+			if (DEBUG == ALL)
 			std::cout << "Jack's XVel is zeroed.\n";
 		}
-		if (getXVel() >= -0.5 && getXVel() < 0) {
+		if (getXVel() >= -0.5 && getXVel() < 0 && getXVel() != 0) {
 			setXVel(0);
+			if (DEBUG == ALL)
 			std::cout << "Jack's XVel is zeroed.\n";
 		}
 		
@@ -64,12 +66,14 @@ void GameObject::beginUpdate() {
 		if (getYVel() < -0.5) {
 			changeYVel(0.5);
 		}
-		if (getYVel() <= 0.5 && getYVel() > 0) {
+		if (getYVel() <= 0.5 && getYVel() > 0 && getYVel() != 0) {
 			setYVel(0);
+			if (DEBUG == ALL)
 			std::cout << "Jack's YVel is zeroed.\n";
 		}
-		if (getYVel() >= -0.5 && getYVel() < 0) {
+		if (getYVel() >= -0.5 && getYVel() < 0 && getYVel() != 0) {
 			setYVel(0);
+			if (DEBUG == ALL)
 			std::cout << "Jack's YVel is zeroed.\n";
 		}
 		
@@ -105,14 +109,14 @@ void GameObject::changeYVel(float acc){
 }
 
 SDL_Rect GameObject::moveCollider(float xVel, float yVel){
-	SDL_Rect tempCollision = getCollsionBox();
+	SDL_Rect tempCollision = *getCollision();
 	tempCollision.x += xVel;
 	tempCollision.y += yVel;
 	return tempCollision;
 	
 }
 
-void collisionUpdate(){
+void GameObject::collisionUpdate(){
 	mXPosition += x_vel;
 	mYPosition += y_vel;
 }
