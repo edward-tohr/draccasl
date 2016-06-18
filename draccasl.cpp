@@ -276,7 +276,7 @@ void loop(){
 		vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),vectorObjects.at(i).getYVel());
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width,\
      		and y coordinate + height between collider's y and collider's y + height.
-			if (vectorObjects.at(i).getCollision())
+			//if (vectorObjects.at(i).getCollision())
 		
 		// if vector is empty, great.
 		// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
@@ -313,7 +313,8 @@ int main(int argc, char* argv[]){
 	
 	
 	//Turns out that maybe SDL uses argc and argv[] for its own stuff, and sometimes breaks when it's messed up like this?
-	/*if (argc == 2){
+	// Maybe not. Let's see.
+	if (argc == 2){
 		if (std::string (argv[1]) == "--DEBUG-ALL"){
 			DEBUG = ALL;
 		} else if (std::string (argv[1]) == "--DEBUG-ERROR"){
@@ -324,7 +325,7 @@ int main(int argc, char* argv[]){
 	} else {
 		DEBUG = NONE;
 	}
-	*/
+	
 	std::cout << "Debug level is: ";
 	switch (DEBUG){
 		case NONE:
