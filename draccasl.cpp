@@ -42,42 +42,35 @@ const int VELOCITY_MAX = 4;
 void init(){
 	//Setup phase
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-		if (DEBUG >= ERROR)
-			std::cout << "SDL init failed! " << SDL_GetError() << "\n";
+		if (DEBUG >= ERROR){std::cout << "SDL init failed! " << SDL_GetError() << "\n";}
 	}
 	if (!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) {
-		if (DEBUG >= ERROR)
-			std::cout << "SDL_img init failed! " << SDL_GetError() << "\n";
+		if (DEBUG >= ERROR){std::cout << "SDL_img init failed! " << SDL_GetError() << "\n";}
 	}
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-		if (DEBUG >= ERROR)
-			std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
+		if (DEBUG >= ERROR){std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";}
 	}
 	
 	//Load phase
 	
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL){
-		if (DEBUG >= ERROR)
-			std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
+		if (DEBUG >= ERROR){std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";}
 	}
 	
 	jackSprite = IMG_Load("jack.png");
 	if (!jackSprite){
-		if (DEBUG >= ERROR)
-			std::cout << "we let go of jack!";
+		if (DEBUG >= ERROR){std::cout << "we let go of jack!";}
 	}
 	
 	gSurface = IMG_Load("title.png");
 	if (!gSurface){
-		if (DEBUG >= ERROR)
-			std::cout << "failed to load title screen!";
+		if (DEBUG >= ERROR){std::cout << "failed to load title screen!";}
 	}
 	
 	gMusic = Mix_LoadMUS("tocafuge.wav");
 	if (gMusic == NULL){
-		if (DEBUG >= ERROR)
-			std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
+		if (DEBUG >= ERROR){std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";}
 	}
 	
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
@@ -111,7 +104,7 @@ void init(){
 	std::cout << "Jack's color-keyed now.\n";
 	Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	std::cout << "Jack's sprite is set.\n";
-	SDL_Rect *jackCollision;
+	SDL_Rect* jackCollision;
 	jackCollision -> x = 0;
 	jackCollision -> y = 0;
 	jackCollision -> w = 64;
@@ -209,9 +202,9 @@ void render(){
 	//Render terrain
 	vectorMaps.at(currentMap).Map::render(&vectorTiles, tileSet->w /TILESIZE);
 	//Render Objects
-	Jack->GameObject::render();
+	//Jack->render();
 	for (int i = 0; i < vectorObjects.size();i++){
-		vectorObjects.at(i).GameObject::render();
+		vectorObjects.at(i).render();
 	}
 	
 	} else { //If we are on the title screen, draw that.
@@ -238,13 +231,10 @@ void loadMap(Map mapToLoad){
 	
 	
 	if (tileSet == NULL){
-		if (DEBUG >= ERROR){
-			std::cout << "Error loading tileset " << tileName <<"!\n";
-		}
+		if (DEBUG >= ERROR){std::cout << "Error loading tileset " << tileName <<"!\n";}
 	} else {
 	
-	if (DEBUG == ALL)
-		std::cout << "Successfully loaded tileset " << tileName <<"!\n";
+	if (DEBUG == ALL){std::cout << "Successfully loaded tileset " << tileName <<"!\n";}
 	
 	tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 	
@@ -294,16 +284,14 @@ void loop(){
 void gameStart(){
 	//New Game setup goes here. Load map, set up player graphics and such.
 	Mix_PlayMusic(gMusic, 1);
-	if (DEBUG == NONE)
-		SDL_Delay(3500);
+	if (DEBUG == NONE){SDL_Delay(3500);}
 	Mix_HaltMusic();
 	gMusic = Mix_LoadMUS("jack.mid");
 	gameState = game;
 	nextMap = 1;
 	populateMapVector(&vectorMaps);
 	//populateObjectVector(&vectorObjects) will work the same way once I do that.
-	if (DEBUG == ALL)
-		std::cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";
+	if (DEBUG == ALL){std::cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";}
 	loadMap(vectorMaps.at(0));
 	Mix_PlayMusic(gMusic,-1);
 }

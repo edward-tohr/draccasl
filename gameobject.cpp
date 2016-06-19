@@ -10,7 +10,7 @@ void GameObject::render() {
 // this'll be tricky. Should I make my own texture class? or just shove all the code here?
 //If (thisCollision is within bounds of camera)
 
-SDL_RenderCopy(gRenderer,this ->getTexture(),NULL,this -> getCollision());
+SDL_RenderCopy(gRenderer,getTexture(),NULL,getCollision());
 
 //RenderCopy( Renderer to render at, texture to render, source rectangle if not full texture, destination rectangle if not full renderer.)
 
