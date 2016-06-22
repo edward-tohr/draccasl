@@ -104,11 +104,11 @@ void init(){
 	std::cout << "Jack's color-keyed now.\n";
 	Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	std::cout << "Jack's sprite is set.\n";
-	SDL_Rect* jackCollision;
-	jackCollision -> x = 0;
-	jackCollision -> y = 0;
-	jackCollision -> w = 64;
-	jackCollision -> h = 64;
+	SDL_Rect jackCollision;
+	jackCollision.x = 0;
+	jackCollision.y = 0;
+	jackCollision.w = 64;
+	jackCollision.h = 64;
 	Jack -> setCollision(jackCollision);
 		
 	vectorObjects.push_back(*Jack);
@@ -173,15 +173,9 @@ bool event(SDL_Event e){
 		} 
 		break;
 		
-		case SDLK_END:
-		if (DEBUG > NONE){
-		Jack->setXPos(0);
-		}
-		break;
-		
 		case SDLK_HOME:
 		if (DEBUG > NONE) {
-			std::cout << "X: " << Jack -> getXPos() << " Y: " << Jack -> getYPos() << "\n";
+			std::cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
 		}
 		break;
 			

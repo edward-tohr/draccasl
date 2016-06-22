@@ -158,6 +158,10 @@ class GameObject {
 		collisionBox = collider;
 	}
 	
+	void setCollision(SDL_Rect collider){
+		*collisionBox = collider;
+	}
+	
 	void setTexture(SDL_Texture *newTexture){
 		objectTexture = newTexture;
 	}

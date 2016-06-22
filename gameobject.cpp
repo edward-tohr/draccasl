@@ -48,13 +48,11 @@ void GameObject::beginUpdate() {
 		}
 		if (getXVel() <= 0.5 && getXVel() > 0 && getXVel() != 0) {
 			setXVel(0);
-			if (DEBUG == ALL)
-			std::cout << "Jack's XVel is zeroed.\n";
+			if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
 		}
 		if (getXVel() >= -0.5 && getXVel() < 0 && getXVel() != 0) {
 			setXVel(0);
-			if (DEBUG == ALL)
-			std::cout << "Jack's XVel is zeroed.\n";
+			if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
 		}
 		
 	}
@@ -68,19 +66,17 @@ void GameObject::beginUpdate() {
 		}
 		if (getYVel() <= 0.5 && getYVel() > 0 && getYVel() != 0) {
 			setYVel(0);
-			if (DEBUG == ALL)
-			std::cout << "Jack's YVel is zeroed.\n";
+			if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
 		}
 		if (getYVel() >= -0.5 && getYVel() < 0 && getYVel() != 0) {
 			setYVel(0);
-			if (DEBUG == ALL)
-			std::cout << "Jack's YVel is zeroed.\n";
+			if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
 		}
 		
 	}
 	
 	// Gravity. Constant downwards force.
-	changeYVel(.45);
+	//changeYVel(.45);
 }
 
 void GameObject::changeXVel(float acc){
@@ -119,4 +115,8 @@ SDL_Rect GameObject::moveCollider(float xVel, float yVel){
 void GameObject::collisionUpdate(){
 	mXPosition += x_vel;
 	mYPosition += y_vel;
+	SDL_Rect tempCollision = *getCollision();
+	tempCollision.x += x_vel;
+	tempCollision.y += y_vel;
+	setCollision(tempCollision);
 }
