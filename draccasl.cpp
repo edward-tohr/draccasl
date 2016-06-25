@@ -50,33 +50,33 @@ void init(){
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
 		if (DEBUG >= ERROR){std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";}
 	}
-	
+
 	//Load phase
-	
+
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL){
 		if (DEBUG >= ERROR){std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";}
 	}
-	
+
 	jackSprite = IMG_Load("jack.png");
 	if (!jackSprite){
 		if (DEBUG >= ERROR){std::cout << "we let go of jack!";}
 	}
-	
+
 	gSurface = IMG_Load("title.png");
 	if (!gSurface){
 		if (DEBUG >= ERROR){std::cout << "failed to load title screen!";}
 	}
-	
+
 	gMusic = Mix_LoadMUS("tocafuge.wav");
 	if (gMusic == NULL){
 		if (DEBUG >= ERROR){std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";}
 	}
-	
+
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
 	gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
-	
-	
+
+
 	std::cout << "pre-gCamera setting\n";
 	gCamera.x = 0;
 	std::cout << "gCamera x is set\n";
@@ -87,8 +87,8 @@ void init(){
 	gCamera.h = WINDOW_H;
 	std::cout << "gCamera h is set\n";
 	std::cout << "post-gCamera setting\n";
-	
-	
+
+
 	gameState = title;
 	currentMap = 0;
 	nextMap = 0;
@@ -104,15 +104,11 @@ void init(){
 	std::cout << "Jack's color-keyed now.\n";
 	Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	std::cout << "Jack's sprite is set.\n";
-	SDL_Rect jackCollision;
-	jackCollision.x = 0;
-	jackCollision.y = 0;
-	jackCollision.w = 64;
-	jackCollision.h = 64;
-	Jack -> setCollision(jackCollision);
-		
+
+	Jack -> setCollision(0,0,64,64);
+
 	vectorObjects.push_back(*Jack);
-	
+
 }
 
 void exit(){
@@ -124,28 +120,28 @@ void exit(){
 	IMG_Quit();
 	SDL_Quit();
 }
-			
+
 
 bool event(SDL_Event e){
 	// handle keypresses and whatnot.
 	while (SDL_PollEvent(&e) != 0) {
-		
+
 		if(e.type == SDL_QUIT){
 	        return true;
-			
+
 		} else if (e.type == SDL_KEYDOWN){
 		switch(e.key.keysym.sym) {
-		
+
 		case SDLK_RETURN:
 			if (gameState == title){
 				gameStart();
-			
+
 			}
 			else {
 				gameState = pause;
-			}	
+			}
 		break;
-		
+
 		case SDLK_d:
 		if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)){
 		switch (DEBUG){
@@ -160,32 +156,30 @@ bool event(SDL_Event e){
 			break;
 		}
 		std::cout << "Debug level set to " << DEBUG << ".\n";
-	    } 
+	    }
 		break;
-		
-		
+
+
 		case SDLK_BACKSLASH:
 		if (DEBUG > NONE){
 			currentMap++;
 			currentMap %= vectorMaps.size();
 			std::cout << "loading map " << currentMap << "...\n";
 			loadMap(vectorMaps.at(currentMap));
-		} 
+		}
 		break;
-		
+
 		case SDLK_HOME:
 		if (DEBUG > NONE) {
 			std::cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
 		}
 		break;
-			
+
 	}
 	return false;
 	}
 	}
-	
-	
-	
+	return false;
 }
 
 void render(){
@@ -200,14 +194,14 @@ void render(){
 	for (int i = 0; i < vectorObjects.size();i++){
 		vectorObjects.at(i).render();
 	}
-	
+
 	} else { //If we are on the title screen, draw that.
 		SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
 	}
 	//Render to the screen.
-	
+
 	SDL_RenderPresent(gRenderer);
-	
+
 }
 
 void loadMap(Map mapToLoad){
@@ -222,23 +216,23 @@ void loadMap(Map mapToLoad){
 	SDL_FreeSurface(tileSet);
 	std::cout <<"tileset is freed.\n";
 	tileSet = IMG_Load(tileName.c_str());
-	
-	
+
+
 	if (tileSet == NULL){
 		if (DEBUG >= ERROR){std::cout << "Error loading tileset " << tileName <<"!\n";}
 	} else {
-	
+
 	if (DEBUG == ALL){std::cout << "Successfully loaded tileset " << tileName <<"!\n";}
-	
+
 	tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
-	
+
 	// Once we have it loaded, we can slice the tileset into tiles, and store it all in a vector<SDL_Rect>.
 	int numCols = tileSet->w / TILESIZE;
 	int numRows = tileSet->h / TILESIZE;
 	SDL_Rect currentTile;
 	currentTile.w = TILESIZE;
 	currentTile.h = TILESIZE;
-	
+
 	for (int i = 0; i < numRows; i++){
 		for (int j = 0; j < numCols; j++){
 			currentTile.x = j * TILESIZE;
@@ -261,18 +255,18 @@ void loop(){
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width,\
      		and y coordinate + height between collider's y and collider's y + height.
 			//if (vectorObjects.at(i).getCollision())
-		
+
 		// if vector is empty, great.
 		// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
 		// also:   check y velocity. If positive, set collider's y equal to smallest y in terrain vector. If negative, set Y equal to largest Y + height.Set velocity to 0 either way.
 		vectorObjects.at(i).collisionUpdate();
-		
+
 	}
 	//physics, enemy AI goes here
 	// also handle map transitions?
-	
-	
-			
+
+
+
 }
 
 void gameStart(){
@@ -292,8 +286,8 @@ void gameStart(){
 
 
 int main(int argc, char* argv[]){
-	
-	
+
+
 	//Turns out that maybe SDL uses argc and argv[] for its own stuff, and sometimes breaks when it's messed up like this?
 	// Maybe not. Let's see.
 	if (argc == 2){
@@ -307,7 +301,7 @@ int main(int argc, char* argv[]){
 	} else {
 		DEBUG = NONE;
 	}
-	
+
 	std::cout << "Debug level is: ";
 	switch (DEBUG){
 		case NONE:
@@ -326,7 +320,7 @@ int main(int argc, char* argv[]){
 	while (!quit){
 		quit = event(e);
 		loop();
-		render();	
+		render();
 	}
 	exit();
 	return 0;
