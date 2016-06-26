@@ -34,7 +34,7 @@ class Map{
 		int eventXPos;
 		int eventYPos;
 	};
-	
+
 	private:
 	int width;
 	int height;
@@ -43,33 +43,33 @@ class Map{
 	std::vector<entrances_t> entranceVector;
 	std::vector<int> tiles;
 	std::vector<events_t> eventsVector;
-	
+
 	public:
-	
+
 	int getWidth(){
 		return width;
 	}
-	
+
 	int getHeight(){
 		return height;
 	}
-	
+
 	int getTileset(){
 		return this -> tileset;
 	}
-	
+
 	int getID(){
 		return id;
 	}
-	
+
 	std::vector<entrances_t> getEntrances(){
 		return entranceVector;
 	}
-	
+
 	std::vector<int> getTiles(){
 		return tiles;
 	}
-	
+
 	void addEntrance(int oldMap, int entrance_x, int entrance_y){
 		entrances_t entrances;
 		entrances.prevMap = oldMap;
@@ -77,7 +77,7 @@ class Map{
 		entrances.exitYPos = entrance_y;
 		entranceVector.push_back(entrances);
 	}
-	
+
 	void addEvent(int event_id, int event_x, int event_y){
 		events_t event;
 		event.eventID = event_id;
@@ -85,17 +85,17 @@ class Map{
 		event.eventYPos = event_y;
 		eventsVector.push_back(event);
 	}
-	
+
 	void clearMap() {
 		eventsVector.clear();
 		entranceVector.clear();
 		tiles.clear();
 	}
-	
+
 	void setWidth(int w){
 		width = w;
 	}
-	
+
 	void setHeight(int h){
 		height = h;
 	}
@@ -105,21 +105,40 @@ class Map{
 	void setID(int i){
 		id = i;
 	}
-	
+
 	void addTile(int t) {
 		tiles.push_back(t);
 	}
-	
+
 	int getLatestTile() {
 		return tiles.back();
 	}
-	
+
 	void render(std::vector<SDL_Rect>* tileVector, int tileWidth);
-	
+
 };	// prototypes to be used later
 
+class Tile {
+
+private:
+    int height;
+    int width;
+    int x_pos;
+    int y_pos;
+    int id;
+    SDL_Rect *tileRect;
+
+public:
+    void setRect(int h, int w, int x, int y);
+    void setID (int i);
+    SDL_Rect* getRect();
+    int getXPos();
+    int getYPos();
+    int getID();
+};
+
 void populateMapVector(std::vector<Map>* mapVector);
-	
+
 bool loadMapInfo(Map* tempMap, std::ifstream &mapData);
 
 bool loadTileInfo(Map* tempMap, std::ifstream &mapData);

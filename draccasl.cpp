@@ -6,6 +6,7 @@
 #include "draccasl.h"
 #include "map.h"
 #include "gameobject.h"
+#include "buildnumber.h"
 
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
 
@@ -191,7 +192,7 @@ void render(){
 	vectorMaps.at(currentMap).Map::render(&vectorTiles, tileSet->w /TILESIZE);
 	//Render Objects
 	//Jack->render();
-	for (int i = 0; i < vectorObjects.size();i++){
+	for (unsigned int i = 0; i < vectorObjects.size();i++){
 		vectorObjects.at(i).render();
 	}
 
@@ -246,19 +247,58 @@ void loadMap(Map mapToLoad){
 }
 
 void loop(){
-	for (int i = 0; i < vectorObjects.size(); i++){
+	for (unsigned int i = 0; i < vectorObjects.size(); i++){
 		vectorObjects.at(i).beginUpdate();
+		vectorCollision.clear();
 		// collision detection goes here.
 		// let's see, let's see......
 		// move collisionBox according to velocity.
-		vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),vectorObjects.at(i).getYVel());
-		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width,\
-     		and y coordinate + height between collider's y and collider's y + height.
-			//if (vectorObjects.at(i).getCollision())
+		SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),vectorObjects.at(i).getYVel());
+		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width,
+        // and y coordinate + height between collider's y and collider's y + height.
+        for (unsigned int j = 0; j < vectorTiles.size(); j++){
+
+        }
 
 		// if vector is empty, great.
+		if (!vectorCollision.empty()){
 		// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
 		// also:   check y velocity. If positive, set collider's y equal to smallest y in terrain vector. If negative, set Y equal to largest Y + height.Set velocity to 0 either way.
+
+		if (vectorObjects.at(i).getXVel() > 0){
+            int minx = vectorObjects.at(i).getXPos();
+            for (unsigned int j = 0; j < vectorCollision.size(); j++){
+                minx = std::min(minx,vectorCollision.at(j).x);
+            }
+            vectorObjects.at(i).setXPos(minx);
+            vectorObjects.at(i).setXVel(0);
+		} else if (vectorObjects.at(i).getXVel() < 0){
+		            int maxx = vectorObjects.at(i).getXPos();
+            for (unsigned int j = 0; j < vectorCollision.size(); j++){
+                maxx = std::max(maxx,vectorCollision.at(j).x);
+            }
+            vectorObjects.at(i).setXPos(maxx);
+            vectorObjects.at(i).setXVel(0);
+		}
+
+		if (vectorObjects.at(i).getYVel() > 0){
+            int miny = vectorObjects.at(i).getYPos();
+            for (unsigned int j = 0; j < vectorCollision.size(); j++){
+                miny = std::min(miny,vectorCollision.at(j).y);
+            }
+            vectorObjects.at(i).setYPos(miny);
+            vectorObjects.at(i).setYVel(0);
+		} else if (vectorObjects.at(i).getYVel() < 0){
+		            int maxy = vectorObjects.at(i).getYPos();
+            for (unsigned int j = 0; j < vectorCollision.size(); j++){
+                maxy = std::max(maxy,vectorCollision.at(j).y);
+            }
+            vectorObjects.at(i).setYPos(maxy);
+            vectorObjects.at(i).setYVel(0);
+		}
+
+
+		}
 		vectorObjects.at(i).collisionUpdate();
 
 	}
@@ -286,6 +326,11 @@ void gameStart(){
 
 
 int main(int argc, char* argv[]){
+
+    std::cout<< "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
+    std::cout<< __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
+    std::cout<< "Build number: " << BUILDNUMBER_STR << "\n";
+
 
 
 	//Turns out that maybe SDL uses argc and argv[] for its own stuff, and sometimes breaks when it's messed up like this?

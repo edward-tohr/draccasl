@@ -6,6 +6,7 @@
 #include "SDL_ttf.h"
 #include "SDL_mixer.h"
 #include "iostream"
+#include "fstream"
 #include "string"
 #include "vector"
 #include "constants.h"

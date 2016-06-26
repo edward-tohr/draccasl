@@ -24,7 +24,7 @@ class GameObject {
 	bool dead;
 	float x_vel;
 	float y_vel;
-	bool jump;
+	bool jump = false;
 
 	SDL_Rect collisionBox;
 	SDL_Texture *objectTexture;

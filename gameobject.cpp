@@ -35,6 +35,9 @@ void GameObject::beginUpdate() {
 		changeXVel(1.5);
 	}
 
+	//Commenting out floatmode.
+
+
 	if (state[SDL_SCANCODE_UP]){
 		changeYVel(-1.5);
 	}
@@ -42,6 +45,8 @@ void GameObject::beginUpdate() {
 	if (state[SDL_SCANCODE_DOWN]){
 		changeYVel(1.5);
 	}
+
+
 
 	if (!state[SDL_SCANCODE_RIGHT] && !state[SDL_SCANCODE_LEFT]) {
 		if (getXVel() > 0.5){
@@ -52,16 +57,18 @@ void GameObject::beginUpdate() {
 		}
 		if (getXVel() <= 0.5 && getXVel() > 0 && getXVel() != 0) {
 			setXVel(0);
-			if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
+			//if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
 		}
 		if (getXVel() >= -0.5 && getXVel() < 0 && getXVel() != 0) {
 			setXVel(0);
-			if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
+			//if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
 		}
 
 	}
 
-	if (!state[SDL_SCANCODE_UP] && !state[SDL_SCANCODE_DOWN]) {
+
+      //Really, there's no need to apply physics to floatmode.
+	/*if (!state[SDL_SCANCODE_UP] && !state[SDL_SCANCODE_DOWN]) {
 		if (getYVel() > 0.5){
 			changeYVel(-.5);
 		}
@@ -70,17 +77,19 @@ void GameObject::beginUpdate() {
 		}
 		if (getYVel() <= 0.5 && getYVel() > 0 && getYVel() != 0) {
 			setYVel(0);
-			if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
+			//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
 		}
 		if (getYVel() >= -0.5 && getYVel() < 0 && getYVel() != 0) {
 			setYVel(0);
-			if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
+			//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
 		}
 
+
 	}
+	*/
 
 	// Gravity. Constant downwards force.
-	//changeYVel(.45);
+	changeYVel(.45);
 }
 
 void GameObject::changeXVel(float acc){
