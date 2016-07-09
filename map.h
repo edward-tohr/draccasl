@@ -22,6 +22,26 @@ extern SDL_Texture *tileTexture;
 extern SDL_Rect gCamera;
 extern const int TILESIZE;
 
+class Tile {
+
+private:
+    int x_pos;          //Tile's x location in tiles.
+    int y_pos;          //Tile's y location in tiles.
+    int id;             //The tiletype ID.
+    SDL_Rect tileRect; //Contains the size and location in pixels of the tile.
+
+public:
+    void setRect(int x, int y);
+    void setID (int i);
+    SDL_Rect getRect();
+    int getXPos();
+    int getYPos();
+    void setXPos(int x);
+    void setYPos(int y);
+    int getID();
+};
+
+
 class Map{
 	public:
 		struct entrances_t{
@@ -41,7 +61,7 @@ class Map{
 	int tileset;
 	int id;
 	std::vector<entrances_t> entranceVector;
-	std::vector<int> tiles;
+	std::vector<Tile> tiles;
 	std::vector<events_t> eventsVector;
 
 	public:
@@ -66,7 +86,7 @@ class Map{
 		return entranceVector;
 	}
 
-	std::vector<int> getTiles(){
+	std::vector<Tile> getTiles(){
 		return tiles;
 	}
 
@@ -106,36 +126,18 @@ class Map{
 		id = i;
 	}
 
-	void addTile(int t) {
+	void addTile(Tile t) {
 		tiles.push_back(t);
 	}
 
-	int getLatestTile() {
+	Tile getLatestTile() {
 		return tiles.back();
 	}
 
-	void render(std::vector<SDL_Rect>* tileVector, int tileWidth);
+	void render(std::vector<Tile>* tileVector, int tileWidth);
 
 };	// prototypes to be used later
 
-class Tile {
-
-private:
-    int height;
-    int width;
-    int x_pos;
-    int y_pos;
-    int id;
-    SDL_Rect *tileRect;
-
-public:
-    void setRect(int h, int w, int x, int y);
-    void setID (int i);
-    SDL_Rect* getRect();
-    int getXPos();
-    int getYPos();
-    int getID();
-};
 
 void populateMapVector(std::vector<Map>* mapVector);
 

@@ -1,5 +1,38 @@
 #include "map.h"
+int Tile::getID(){
+return id;
+}
 
+int Tile::getXPos(){
+return x_pos;
+}
+
+int Tile::getYPos(){
+return y_pos;
+}
+
+SDL_Rect Tile::getRect(){
+    return tileRect;
+}
+
+void Tile::setID(int i){
+id = i;
+}
+
+void Tile::setXPos(int x){
+x_pos = x;
+}
+
+void Tile::setYPos(int y){
+y_pos = y;
+}
+
+void Tile::setRect(int x_in, int y_in){
+tileRect.x = x_in;
+tileRect.y = y_in;
+tileRect.w = TILESIZE;
+tileRect.h = TILESIZE;
+}
 
 int parseMapInfo(std::ifstream &mapData){
 	char data[256];
@@ -13,13 +46,13 @@ int parseMapInfo(std::ifstream &mapData){
 		// so for single digits we multiply by 10^0, i.e. 1. Since gcount() also counts the tab, we subtract another one from it to deal with that.
 		// yes, we get two different off-by-one errors at the same time, in the same direction. yaaaaaaaaaaay.
 
-		
+
 	}
 	return parsedData;
 	} else {
 		return -1; //Uh-oh, something went wrong.
 	}
-	
+
 }
 
 bool loadMapInfo(Map *tempMap, std::ifstream &mapData){
@@ -48,19 +81,31 @@ bool loadMapInfo(Map *tempMap, std::ifstream &mapData){
 			if (DEBUG >= ERROR){std::cout << "Early EOF reached! Map data only contains header info! \n";}
 		}
 		if (DEBUG >= ERROR){std::cout << "Map header is not followed by a newline. Map file may need to be recreated.\n";}
-	} 
+	}
 	if (DEBUG >= ALL){std::cout << "Post-header, we are at position " << mapData.tellg() << ".\n";}
 	return success;
 }
 
 bool loadTileInfo(Map *tempMap, std::ifstream &mapData){
 	bool success = true;
+	Tile tempTile;
 	if (DEBUG >= ALL){		std::cout << "loading tile info....\n";}
 	if (DEBUG >= ALL){		std::cout << "We are at position " << mapData.tellg() << ".\n";}
 	mapData.ignore(5,10); // Skip over the newline character.
 	int tilesLoaded = 0;
+	int tempX = 0;
+	int tempY = 0;
 	while (mapData.peek() != 10 && !mapData.eof()){ //Keep loading exit data until you hit a newline.
-	tempMap->addTile(parseMapInfo(mapData));
+	tempTile.setID(parseMapInfo(mapData));
+	if (tempX > tempMap->getWidth()){
+	    tempX = 0;
+        tempY++;
+	}
+	tempTile.setXPos(tempX);
+	tempTile.setYPos(tempY);
+	tempX++;
+	tempMap->addTile(tempTile);
+
 	if (++tilesLoaded > tempMap->getWidth() * tempMap->getHeight()) {
 		if (DEBUG >= ERROR){			std::cout << "too many tiles defined for map's listed size!\neither remove tiles or increase map's width and/or height.\n";}
 		success = false;
@@ -79,14 +124,14 @@ bool loadTileInfo(Map *tempMap, std::ifstream &mapData){
 		std::cout << "Finished parsing map data for map " << tempMap -> getID() << ":\n";
 		for (int i = 0; i < tempMap->getHeight(); i++){
 			for (int j = 0; j < tempMap->getWidth(); j++) {
-				std::cout << tempMap->getTiles().at((i*tempMap->getWidth()) + j) << " ";
+				std::cout << tempMap->getTiles().at((i*tempMap->getWidth()) + j).getID() << " ";
 			}
 			std::cout << "\n";
 		}
 	}
-	
+
 	return success;
-	
+
 
 }
 
@@ -109,7 +154,7 @@ bool loadEventInfo(Map *tempMap, std::ifstream &mapData){
 	tempMap->addEvent(eventID,eventXPos,eventYPos);
 	success = true;
 	}
-	
+
 	if (success){
 		if (!mapData.eof()){
 			repeat = true;
@@ -137,7 +182,7 @@ bool loadExitInfo(Map *tempMap, std::ifstream &mapData){
 	tempMap->addEntrance(exitID,exitXPos,exitYPos);
 	success = true;
 	}
-	
+
 	if (!success && DEBUG >= ERROR){
 		std::cout << "failed to load map exit data.\n";
 		if (mapData.eof()){
@@ -146,7 +191,7 @@ bool loadExitInfo(Map *tempMap, std::ifstream &mapData){
 			std::cout << "Exit data is malformed.\n";
 		}
 	}
-	
+
 	return success;
 }
 
@@ -179,7 +224,7 @@ void populateMapVector(std::vector<Map>* mapVector){
 	if (DEBUG >= ALL){std::cout << "Number of maps: " << mapVector->size() << ".\n";}
 }
 
-void Map::render(std::vector<SDL_Rect>* tileVector, int tileWidth) {
+void Map::render(std::vector<Tile>* tileVector, int tileWidth) {
 //so we've got two vectors, tiles, which contains a bunch of ints, and tileVector, which contains a bunch of SDL_Rects.
 // We want to take tileVector.at(tiles.at(i)), slice that rect out of tileSet, and draw it to the screen at the proper coordinates.
 // ... and also make sure that we're only rendering stuff what's on-camera.
@@ -197,10 +242,10 @@ for (int i = 0; i < gCamera.h / TILESIZE; i++){
 	for (int j = 0; j < gCamera.w / TILESIZE; j++){
 	curSpot.x = j * TILESIZE;
 	curSpot.y = i * TILESIZE;
-	curTileID = this->getTiles().at((i * this->getWidth()) + j);
-	curTile.x = tileVector->at(curTileID).x;
-	curTile.y = tileVector->at(curTileID).y;
-	
+	curTileID = this->getTiles().at((i * this->getWidth()) + j).getID();
+	curTile.x = tileVector->at(curTileID).getRect().x;
+	curTile.y = tileVector->at(curTileID).getRect().y;
+
 SDL_RenderCopy(gRenderer, tileTexture,&curTile,&curSpot);
 }
 }

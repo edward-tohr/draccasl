@@ -27,7 +27,7 @@ gameState_t gameState = title;
 GameObject* Jack = new GameObject();
 std::vector<Map> vectorMaps;
 std::vector<GameObject> vectorObjects;
-std::vector<SDL_Rect> vectorTiles;
+std::vector<Tile> vectorTiles;
 std::vector<SDL_Rect> vectorCollision;
 
 
@@ -227,22 +227,18 @@ void loadMap(Map mapToLoad){
 
 	tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 
-	// Once we have it loaded, we can slice the tileset into tiles, and store it all in a vector<SDL_Rect>.
+	// Once we have it loaded, we can slice the tileset into tiles, and store it all in a vector<Tile>.
 	int numCols = tileSet->w / TILESIZE;
 	int numRows = tileSet->h / TILESIZE;
-	SDL_Rect currentTile;
-	currentTile.w = TILESIZE;
-	currentTile.h = TILESIZE;
-
-	for (int i = 0; i < numRows; i++){
+	Tile currentTile;
+		for (int i = 0; i < numRows; i++){
 		for (int j = 0; j < numCols; j++){
-			currentTile.x = j * TILESIZE;
-			currentTile.y = i * TILESIZE;
+			currentTile.setRect(j*TILESIZE,i*TILESIZE);
 			vectorTiles.push_back(currentTile);
 		}
 	}
 	currentMap = mapToLoad.getID();
-	// And now we have std::vector<SDL_Rect> vectorTiles that contains each individual tile, sorted by tile ID.
+	// And now we have std::vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
 }
 }
 
@@ -252,12 +248,11 @@ void loop(){
 		vectorCollision.clear();
 		// collision detection goes here.
 		// let's see, let's see......
-		// move collisionBox according to velocity.
-		SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),vectorObjects.at(i).getYVel());
-		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width,
-        // and y coordinate + height between collider's y and collider's y + height.
+		// move collisionBox in the X direction according to velocity.
+		SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
+		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
         for (unsigned int j = 0; j < vectorTiles.size(); j++){
-
+                //if
         }
 
 		// if vector is empty, great.
