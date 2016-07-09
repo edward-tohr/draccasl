@@ -29,6 +29,7 @@ std::vector<Map> vectorMaps;
 std::vector<GameObject> vectorObjects;
 std::vector<Tile> vectorTiles;
 std::vector<SDL_Rect> vectorCollision;
+Map curMap;
 
 
 DEBUG_T DEBUG = ALL;
@@ -93,8 +94,8 @@ void init(){
 	gameState = title;
 	currentMap = 0;
 	nextMap = 0;
-	Jack->setXPos(0);
-	Jack->setYPos(0);
+	Jack->setXPos(64);
+	Jack->setYPos(64);
 	Jack->setHealth(10);
 	Jack->setMaxHealth(10);
 	Jack->setAttack(0);
@@ -238,11 +239,13 @@ void loadMap(Map mapToLoad){
 		}
 	}
 	currentMap = mapToLoad.getID();
+	curMap = mapToLoad;
 	// And now we have std::vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
 }
 }
 
 void loop(){
+
 	for (unsigned int i = 0; i < vectorObjects.size(); i++){
 		vectorObjects.at(i).beginUpdate();
 		vectorCollision.clear();
@@ -251,14 +254,21 @@ void loop(){
 		// move collisionBox in the X direction according to velocity.
 		SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
-        for (unsigned int j = 0; j < vectorTiles.size(); j++){
-                //if
+        for (unsigned int j = 0; j < curMap.getTiles().size(); j++){
+                if (curMap.getTiles().at(j).getID() != 1){
+                        if (tempRect.x > curMap.getTiles().at(j).getXPos() && tempRect.x < curMap.getTiles().at(j).getXPos()+TILESIZE){
+                    vectorCollision.push_back(curMap.getTiles().at(j).getRect());
+                        }
+                        if (tempRect.x + tempRect.w > curMap.getTiles().at(j).getXPos() && tempRect.x + tempRect.w < curMap.getTiles().at(j).getXPos() + TILESIZE){
+                            vectorCollision.push_back(curMap.getTiles().at(j).getRect());
+                        }
+                }
         }
 
 		// if vector is empty, great.
 		if (!vectorCollision.empty()){
 		// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
-		// also:   check y velocity. If positive, set collider's y equal to smallest y in terrain vector. If negative, set Y equal to largest Y + height.Set velocity to 0 either way.
+
 
 		if (vectorObjects.at(i).getXVel() > 0){
             int minx = vectorObjects.at(i).getXPos();
@@ -275,6 +285,22 @@ void loop(){
             vectorObjects.at(i).setXPos(maxx);
             vectorObjects.at(i).setXVel(0);
 		}
+		}
+
+		vectorCollision.clear();
+	    tempRect = vectorObjects.at(i).moveCollider(0,vectorObjects.at(i).getYVel());
+		 for (unsigned int j = 0; j < curMap.getTiles().size(); j++){
+                if (curMap.getTiles().at(j).getID() != 1){
+                        if (tempRect.y > curMap.getTiles().at(j).getYPos() && tempRect.y < curMap.getTiles().at(j).getYPos() + TILESIZE){
+                    vectorCollision.push_back(curMap.getTiles().at(j).getRect());
+                        }
+                        if (tempRect.y + tempRect.h > curMap.getTiles().at(j).getYPos() && tempRect.y + tempRect.h < curMap.getTiles().at(j).getYPos() + TILESIZE){
+                            vectorCollision.push_back(curMap.getTiles().at(j).getRect());
+                        }
+                }
+        }
+
+        if(!vectorCollision.empty()){
 
 		if (vectorObjects.at(i).getYVel() > 0){
             int miny = vectorObjects.at(i).getYPos();
@@ -294,6 +320,7 @@ void loop(){
 
 
 		}
+
 		vectorObjects.at(i).collisionUpdate();
 
 	}
@@ -359,7 +386,7 @@ int main(int argc, char* argv[]){
 	SDL_Event e;
 	while (!quit){
 		quit = event(e);
-		loop();
+		if (gameState == game){ loop();}
 		render();
 	}
 	exit();

@@ -25,8 +25,6 @@ extern const int TILESIZE;
 class Tile {
 
 private:
-    int x_pos;          //Tile's x location in tiles.
-    int y_pos;          //Tile's y location in tiles.
     int id;             //The tiletype ID.
     SDL_Rect tileRect; //Contains the size and location in pixels of the tile.
 
@@ -39,6 +37,7 @@ public:
     void setXPos(int x);
     void setYPos(int y);
     int getID();
+    Tile();
 };
 
 

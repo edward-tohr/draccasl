@@ -4,11 +4,11 @@ return id;
 }
 
 int Tile::getXPos(){
-return x_pos;
+return tileRect.x;
 }
 
 int Tile::getYPos(){
-return y_pos;
+return tileRect.y;
 }
 
 SDL_Rect Tile::getRect(){
@@ -20,11 +20,11 @@ id = i;
 }
 
 void Tile::setXPos(int x){
-x_pos = x;
+tileRect.x = x;
 }
 
 void Tile::setYPos(int y){
-y_pos = y;
+tileRect.y = y;
 }
 
 void Tile::setRect(int x_in, int y_in){
@@ -32,6 +32,11 @@ tileRect.x = x_in;
 tileRect.y = y_in;
 tileRect.w = TILESIZE;
 tileRect.h = TILESIZE;
+}
+
+Tile::Tile(){
+setRect(0,0);
+setID(0);
 }
 
 int parseMapInfo(std::ifstream &mapData){
