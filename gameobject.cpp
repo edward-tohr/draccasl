@@ -1,5 +1,5 @@
 #include "gameobject.h"
-#include "math.h"
+//#include "math.h"
 //REMEMBER:  When populatingObjectVector, take it in as a pointer (std::vector* objectVector).
 
 

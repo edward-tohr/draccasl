@@ -28,6 +28,7 @@ GameObject* Jack = new GameObject();
 std::vector<Map> vectorMaps;
 std::vector<GameObject> vectorObjects;
 std::vector<Tile> vectorTiles;
+std::vector<Tile> mapTiles;
 std::vector<SDL_Rect> vectorCollision;
 Map curMap;
 
@@ -174,6 +175,7 @@ bool event(SDL_Event e){
 		case SDLK_HOME:
 		if (DEBUG > NONE) {
 			std::cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
+			std::cout << Jack->getXPos() << " " << Jack->getYPos() << "\n";
 		}
 		break;
 
@@ -240,6 +242,8 @@ void loadMap(Map mapToLoad){
 	}
 	currentMap = mapToLoad.getID();
 	curMap = mapToLoad;
+	mapTiles = curMap.getTiles();
+	if (DEBUG == ALL){std::cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";}
 	// And now we have std::vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
 }
 }
@@ -254,13 +258,14 @@ void loop(){
 		// move collisionBox in the X direction according to velocity.
 		SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
-        for (unsigned int j = 0; j < curMap.getTiles().size(); j++){
-                if (curMap.getTiles().at(j).getID() != 1){
-                        if (tempRect.x > curMap.getTiles().at(j).getXPos() && tempRect.x < curMap.getTiles().at(j).getXPos()+TILESIZE){
-                    vectorCollision.push_back(curMap.getTiles().at(j).getRect());
+		//if (DEBUG == ALL){std::cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
+        for (unsigned int j = 0; j < mapTiles.size(); j++){
+                if (mapTiles.at(j).getID() != 1){
+                        if (tempRect.x > mapTiles.at(j).getXPos() && tempRect.x < mapTiles.at(j).getXPos()+TILESIZE){
+                            vectorCollision.push_back(mapTiles.at(j).getRect());
                         }
-                        if (tempRect.x + tempRect.w > curMap.getTiles().at(j).getXPos() && tempRect.x + tempRect.w < curMap.getTiles().at(j).getXPos() + TILESIZE){
-                            vectorCollision.push_back(curMap.getTiles().at(j).getRect());
+                        if (tempRect.x + tempRect.w > mapTiles.at(j).getXPos() && tempRect.x + tempRect.w < mapTiles.at(j).getXPos() + TILESIZE){
+                            vectorCollision.push_back(mapTiles.at(j).getRect());
                         }
                 }
         }
@@ -268,14 +273,12 @@ void loop(){
 		// if vector is empty, great.
 		if (!vectorCollision.empty()){
 		// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
-
-
 		if (vectorObjects.at(i).getXVel() > 0){
             int minx = vectorObjects.at(i).getXPos();
             for (unsigned int j = 0; j < vectorCollision.size(); j++){
                 minx = std::min(minx,vectorCollision.at(j).x);
             }
-            vectorObjects.at(i).setXPos(minx);
+            vectorObjects.at(i).setXPos(minx-vectorObjects.at(i).getWidth());
             vectorObjects.at(i).setXVel(0);
 		} else if (vectorObjects.at(i).getXVel() < 0){
 		            int maxx = vectorObjects.at(i).getXPos();
@@ -289,13 +292,13 @@ void loop(){
 
 		vectorCollision.clear();
 	    tempRect = vectorObjects.at(i).moveCollider(0,vectorObjects.at(i).getYVel());
-		 for (unsigned int j = 0; j < curMap.getTiles().size(); j++){
-                if (curMap.getTiles().at(j).getID() != 1){
-                        if (tempRect.y > curMap.getTiles().at(j).getYPos() && tempRect.y < curMap.getTiles().at(j).getYPos() + TILESIZE){
-                    vectorCollision.push_back(curMap.getTiles().at(j).getRect());
+		 for (unsigned int j = 0; j < mapTiles.size(); j++){
+                if (mapTiles.at(j).getID() != 1){
+                        if (tempRect.y > mapTiles.at(j).getYPos() && tempRect.y < mapTiles.at(j).getYPos() + TILESIZE){
+                    vectorCollision.push_back(mapTiles.at(j).getRect());
                         }
-                        if (tempRect.y + tempRect.h > curMap.getTiles().at(j).getYPos() && tempRect.y + tempRect.h < curMap.getTiles().at(j).getYPos() + TILESIZE){
-                            vectorCollision.push_back(curMap.getTiles().at(j).getRect());
+                        if (tempRect.y + tempRect.h > mapTiles.at(j).getYPos() && tempRect.y + tempRect.h < mapTiles.at(j).getYPos() + TILESIZE){
+                            vectorCollision.push_back(mapTiles.at(j).getRect());
                         }
                 }
         }
