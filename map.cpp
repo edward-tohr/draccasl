@@ -106,8 +106,8 @@ bool loadTileInfo(Map *tempMap, std::ifstream &mapData) {
             tempX = 0;
             tempY++;
         }
-        tempTile.setXPos(tempX);
-        tempTile.setYPos(tempY);
+        tempTile.setXPos(tempX * TILESIZE);
+        tempTile.setYPos(tempY * TILESIZE);
         tempX++;
         tempMap->addTile(tempTile);
 

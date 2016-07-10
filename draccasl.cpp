@@ -112,7 +112,7 @@ void init() {
     Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
     std::cout << "Jack's sprite is set.\n";
 
-    Jack -> setCollision(0,0,64,64);
+    Jack -> setCollision(70,70,64,64);
 
     vectorObjects.push_back(*Jack);
 
@@ -266,10 +266,10 @@ void loop() {
         //if (DEBUG == ALL){std::cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
         for (unsigned int j = 0; j < mapTiles.size(); j++) {
             if (mapTiles.at(j).getID() != 1) {
-                if (tempRect.x > mapTiles.at(j).getXPos()*TILESIZE && tempRect.x < (mapTiles.at(j).getXPos()*TILESIZE)+TILESIZE) {
+                if (tempRect.x >= mapTiles.at(j).getXPos() && tempRect.x <= mapTiles.at(j).getXPos() + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
-                if (tempRect.x + tempRect.w > mapTiles.at(j).getXPos()*TILESIZE && tempRect.x + tempRect.w < (mapTiles.at(j).getXPos()*TILESIZE) + TILESIZE) {
+                if (tempRect.x + tempRect.w >= mapTiles.at(j).getXPos() && tempRect.x + tempRect.w <= mapTiles.at(j).getXPos() + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
             }
@@ -281,9 +281,9 @@ void loop() {
         // This should prune tiles that aren't in the same row, leaving only tiles that the object is truly overlapping.
 
         for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-            if (tempRect.y > (vectorCollision.at(j).y * TILESIZE) && tempRect.y < ((vectorCollision.at(j).y * TILESIZE) + TILESIZE)) {
+            if (tempRect.y >= vectorCollision.at(j).y && tempRect.y <= vectorCollision.at(j).y + TILESIZE) {
 
-            } else if ((tempRect.y + tempRect.h) > (vectorCollision.at(j).y * TILESIZE) && (tempRect.y + tempRect.h) < ((vectorCollision.at(j).y * TILESIZE) + TILESIZE)) {
+            } else if (tempRect.y + tempRect.h >= vectorCollision.at(j).y && tempRect.y + tempRect.h <= vectorCollision.at(j).y + TILESIZE) {
 
             } else {
                 vectorCollision.erase(vectorCollision.begin()+j);
@@ -297,16 +297,16 @@ void loop() {
         if (!vectorCollision.empty()) {
             // if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
             if (vectorObjects.at(i).getXVel() > 0) {
-                int minx = vectorObjects.at(i).getXPos() + vectorObjects.at(i).getWidth();
+                int minx = tempRect.x + tempRect.w;
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    minx = std::min(minx,vectorCollision.at(j).x * TILESIZE);
+                    minx = std::min(minx,vectorCollision.at(j).x);
                 }
                 vectorObjects.at(i).setXPos(minx-vectorObjects.at(i).getWidth());
                 vectorObjects.at(i).setXVel(0);
             } else if (vectorObjects.at(i).getXVel() < 0) {
-                int maxx = vectorObjects.at(i).getXPos();
+                int maxx = tempRect.x;
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    maxx = std::max(maxx,(vectorCollision.at(j).x * TILESIZE) + TILESIZE);
+                    maxx = std::max(maxx,vectorCollision.at(j).x + TILESIZE);
                 }
                 vectorObjects.at(i).setXPos(maxx);
                 vectorObjects.at(i).setXVel(0);
@@ -317,10 +317,10 @@ void loop() {
         tempRect = vectorObjects.at(i).moveCollider(0,vectorObjects.at(i).getYVel());
         for (unsigned int j = 0; j < mapTiles.size(); j++) {
             if (mapTiles.at(j).getID() != 1) {
-                if (tempRect.y > mapTiles.at(j).getYPos()*TILESIZE && tempRect.y < (mapTiles.at(j).getYPos()*TILESIZE) + TILESIZE) {
+                if (tempRect.y >= mapTiles.at(j).getYPos() && tempRect.y <= mapTiles.at(j).getYPos() + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
-                if (tempRect.y + tempRect.h > mapTiles.at(j).getYPos()*TILESIZE && tempRect.y + tempRect.h < (mapTiles.at(j).getYPos()*TILESIZE) + TILESIZE) {
+                if (tempRect.y + tempRect.h >= mapTiles.at(j).getYPos()&& tempRect.y + tempRect.h <= mapTiles.at(j).getYPos() + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
             }
@@ -328,9 +328,9 @@ void loop() {
 
 
         for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-            if (tempRect.x > vectorCollision.at(j).x * TILESIZE && tempRect.x < (vectorCollision.at(j).x * TILESIZE) + TILESIZE) {
+            if (tempRect.x >= vectorCollision.at(j).x && tempRect.x <= vectorCollision.at(j).x + TILESIZE) {
 
-            } else if (tempRect.x + tempRect.w > vectorCollision.at(j).x * TILESIZE && tempRect.x + tempRect.w < (vectorCollision.at(j).x * TILESIZE) + TILESIZE) {
+            } else if (tempRect.x + tempRect.w >= vectorCollision.at(j).x && tempRect.x + tempRect.w <= vectorCollision.at(j).x + TILESIZE) {
 
             } else {
                 vectorCollision.erase(vectorCollision.begin()+j);
@@ -341,17 +341,17 @@ void loop() {
 
         if(!vectorCollision.empty()) {
 
-            if (vectorObjects.at(i).getYVel() > 0) {
-                int miny = vectorObjects.at(i).getYPos() + vectorObjects.at(i).getHeight();
+            if (vectorObjects.at(i).getYVel() > 0) { // If Y velocity is positive, object is moving downwards and should snap to top of terrain minus object's height.
+                int miny = tempRect.y + tempRect.h; // get position of object's feet
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    miny = std::min(miny,(vectorCollision.at(j).y * TILESIZE) + vectorCollision.at(j).h);
+                    miny = std::min(miny,vectorCollision.at(j).y - vectorObjects.at(i).getHeight()); //Set YPos equal to whichever is higher, the object's feet, or top of terrain.
                 }
                 vectorObjects.at(i).setYPos(miny);
                 vectorObjects.at(i).setYVel(0);
-            } else if (vectorObjects.at(i).getYVel() < 0) {
-                int maxy = vectorObjects.at(i).getYPos();
+            } else if (vectorObjects.at(i).getYVel() < 0) { //If Y velocity is negative, object is moving upwards and should snap to bottom of terrain.
+                int maxy = tempRect.y;
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    maxy = std::max(maxy,(vectorCollision.at(j).y * TILESIZE) + TILESIZE);
+                    maxy = std::max(maxy, vectorCollision.at(j).y + TILESIZE);
                 }
                 vectorObjects.at(i).setYPos(maxy);
                 vectorObjects.at(i).setYVel(0);
@@ -378,7 +378,7 @@ void gameStart() {
         Mix_HaltMusic();
         gMusic = Mix_LoadMUS("jack.mid");
     }
-    gameState = game;
+    gameState = pause;
     nextMap = 1;
     populateMapVector(&vectorMaps);
     //populateObjectVector(&vectorObjects) will work the same way once I do that.
@@ -395,10 +395,10 @@ int main(int argc, char* argv[]) {
     std::ofstream outFile ("version.txt",std::ofstream::trunc);
     std::cout<< "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
     std::cout<< __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
-    std::cout << "Build number: " << AutoVersion::BUILDS_COUNT << "\n";
+    std::cout << "Build number: " << AutoVersion::BUILD << "\n";
     outFile << "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
     outFile << __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
-    outFile<< "Build number: " << AutoVersion::BUILDS_COUNT << "\n";
+    outFile<< "Build number: " << AutoVersion::BUILD << "\n";
 
 
 
