@@ -315,6 +315,7 @@ void loop() {
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
                     minx = std::min(minx,vectorCollision.at(j).x);
                 }
+                minx--;
                 vectorObjects.at(i).setXPos(minx-vectorObjects.at(i).getWidth());
                 vectorObjects.at(i).setXVel(0);
             } else if (vectorObjects.at(i).getXVel() < 0) {
@@ -322,6 +323,7 @@ void loop() {
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
                     maxx = std::max(maxx,vectorCollision.at(j).x + TILESIZE);
                 }
+                maxx++;
                 vectorObjects.at(i).setXPos(maxx);
                 vectorObjects.at(i).setXVel(0);
             }
@@ -360,6 +362,7 @@ void loop() {
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
                     miny = std::min(miny,vectorCollision.at(j).y - vectorObjects.at(i).getHeight()); //Set YPos equal to whichever is higher, the object's feet, or top of terrain.
                 }
+                miny--;
                 vectorObjects.at(i).setYPos(miny);
                 vectorObjects.at(i).setYVel(0);
             } else if (vectorObjects.at(i).getYVel() < 0) { //If Y velocity is negative, object is moving upwards and should snap to bottom of terrain.
@@ -367,6 +370,7 @@ void loop() {
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
                     maxy = std::max(maxy, vectorCollision.at(j).y + TILESIZE);
                 }
+                maxy++;
                 vectorObjects.at(i).setYPos(maxy);
                 vectorObjects.at(i).setYVel(0);
             }

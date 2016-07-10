@@ -82,7 +82,7 @@ void GameObject::beginUpdate() {
     	if (getYVel() >= -0.5 && getYVel() < 0 && getYVel() != 0) {
     		setYVel(0);
     		//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
-    	}d
+    	}
 
 
     }
