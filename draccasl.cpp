@@ -31,6 +31,7 @@ std::vector<Tile> vectorTiles;
 std::vector<Tile> mapTiles;
 std::vector<SDL_Rect> vectorCollision;
 Map curMap;
+bool sound = true;
 
 
 DEBUG_T DEBUG = ALL;
@@ -44,6 +45,7 @@ const int VELOCITY_MAX = 4;
 
 void init(){
 	//Setup phase
+	sound = !DEBUG;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		if (DEBUG >= ERROR){std::cout << "SDL init failed! " << SDL_GetError() << "\n";}
 	}
@@ -71,9 +73,11 @@ void init(){
 		if (DEBUG >= ERROR){std::cout << "failed to load title screen!";}
 	}
 
+	if (sound){
 	gMusic = Mix_LoadMUS("tocafuge.wav");
 	if (gMusic == NULL){
 		if (DEBUG >= ERROR){std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";}
+	}
 	}
 
 	gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
@@ -336,18 +340,21 @@ void loop(){
 
 void gameStart(){
 	//New Game setup goes here. Load map, set up player graphics and such.
-	Mix_PlayMusic(gMusic, 1);
+	if (sound){
+    Mix_PlayMusic(gMusic, 1);
 	if (DEBUG == NONE){SDL_Delay(3500);}
 	Mix_HaltMusic();
 	gMusic = Mix_LoadMUS("jack.mid");
+	}
 	gameState = game;
 	nextMap = 1;
 	populateMapVector(&vectorMaps);
 	//populateObjectVector(&vectorObjects) will work the same way once I do that.
 	if (DEBUG == ALL){std::cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";}
 	loadMap(vectorMaps.at(0));
-	Mix_PlayMusic(gMusic,-1);
+	if (sound) {Mix_PlayMusic(gMusic,-1);}
 }
+
 
 
 int main(int argc, char* argv[]){
