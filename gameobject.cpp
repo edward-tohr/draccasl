@@ -68,7 +68,7 @@ void GameObject::beginUpdate() {
 
 
     //Really, there's no need to apply physics to floatmode.
-    /*if (!state[SDL_SCANCODE_UP] && !state[SDL_SCANCODE_DOWN]) {
+    if (!state[SDL_SCANCODE_UP] && !state[SDL_SCANCODE_DOWN]) {
     	if (getYVel() > 0.5){
     		changeYVel(-.5);
     	}
@@ -82,14 +82,14 @@ void GameObject::beginUpdate() {
     	if (getYVel() >= -0.5 && getYVel() < 0 && getYVel() != 0) {
     		setYVel(0);
     		//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
-    	}
+    	}d
 
 
     }
-    */
+
 
     // Gravity. Constant downwards force.
-    changeYVel(.45);
+    if (gravity) {changeYVel(.45);}
 }
 
 void GameObject::changeXVel(float acc) {
