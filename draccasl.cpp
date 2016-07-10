@@ -6,7 +6,7 @@
 #include "draccasl.h"
 #include "map.h"
 #include "gameobject.h"
-#include "buildnumber.h"
+#include "version.h"
 
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
 
@@ -143,8 +143,10 @@ bool event(SDL_Event e) {
                 if (gameState == title) {
                     gameStart();
 
-                } else {
+                } else if (gameState == game) {
                     gameState = pause;
+                } else if (gameState == pause) {
+                    gameState = game;
                 }
                 break;
 
@@ -295,16 +297,16 @@ void loop() {
         if (!vectorCollision.empty()) {
             // if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
             if (vectorObjects.at(i).getXVel() > 0) {
-                int minx = vectorObjects.at(i).getXPos();
+                int minx = vectorObjects.at(i).getXPos() + vectorObjects.at(i).getWidth();
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    minx = std::min(minx,vectorCollision.at(j).x);
+                    minx = std::min(minx,vectorCollision.at(j).x * TILESIZE);
                 }
                 vectorObjects.at(i).setXPos(minx-vectorObjects.at(i).getWidth());
                 vectorObjects.at(i).setXVel(0);
             } else if (vectorObjects.at(i).getXVel() < 0) {
                 int maxx = vectorObjects.at(i).getXPos();
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    maxx = std::max(maxx,vectorCollision.at(j).x);
+                    maxx = std::max(maxx,(vectorCollision.at(j).x * TILESIZE) + TILESIZE);
                 }
                 vectorObjects.at(i).setXPos(maxx);
                 vectorObjects.at(i).setXVel(0);
@@ -340,16 +342,16 @@ void loop() {
         if(!vectorCollision.empty()) {
 
             if (vectorObjects.at(i).getYVel() > 0) {
-                int miny = vectorObjects.at(i).getYPos();
+                int miny = vectorObjects.at(i).getYPos() + vectorObjects.at(i).getHeight();
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    miny = std::min(miny,vectorCollision.at(j).y);
+                    miny = std::min(miny,(vectorCollision.at(j).y * TILESIZE) + vectorCollision.at(j).h);
                 }
                 vectorObjects.at(i).setYPos(miny);
                 vectorObjects.at(i).setYVel(0);
             } else if (vectorObjects.at(i).getYVel() < 0) {
                 int maxy = vectorObjects.at(i).getYPos();
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    maxy = std::max(maxy,vectorCollision.at(j).y);
+                    maxy = std::max(maxy,(vectorCollision.at(j).y * TILESIZE) + TILESIZE);
                 }
                 vectorObjects.at(i).setYPos(maxy);
                 vectorObjects.at(i).setYVel(0);
@@ -389,9 +391,14 @@ void gameStart() {
 
 int main(int argc, char* argv[]) {
 
+
+    std::ofstream outFile ("version.txt",std::ofstream::trunc);
     std::cout<< "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
     std::cout<< __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
-    std::cout<< "Build number: " << BUILDNUMBER_STR << "\n";
+    std::cout << "Build number: " << AutoVersion::BUILDS_COUNT << "\n";
+    outFile << "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
+    outFile << __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
+    outFile<< "Build number: " << AutoVersion::BUILDS_COUNT << "\n";
 
 
 
