@@ -99,8 +99,8 @@ void init() {
     gameState = title;
     currentMap = 0;
     nextMap = 0;
-    Jack->setXPos(64);
-    Jack->setYPos(64);
+    Jack->setXPos(70);
+    Jack->setYPos(70);
     Jack->setHealth(10);
     Jack->setMaxHealth(10);
     Jack->setAttack(0);
@@ -264,14 +264,32 @@ void loop() {
         //if (DEBUG == ALL){std::cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
         for (unsigned int j = 0; j < mapTiles.size(); j++) {
             if (mapTiles.at(j).getID() != 1) {
-                if (tempRect.x > mapTiles.at(j).getXPos() && tempRect.x < mapTiles.at(j).getXPos()+TILESIZE) {
+                if (tempRect.x > mapTiles.at(j).getXPos()*TILESIZE && tempRect.x < (mapTiles.at(j).getXPos()*TILESIZE)+TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
-                if (tempRect.x + tempRect.w > mapTiles.at(j).getXPos() && tempRect.x + tempRect.w < mapTiles.at(j).getXPos() + TILESIZE) {
+                if (tempRect.x + tempRect.w > mapTiles.at(j).getXPos()*TILESIZE && tempRect.x + tempRect.w < (mapTiles.at(j).getXPos()*TILESIZE) + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
             }
         }
+
+
+        // Ugh, this conditional is still horrible, but here goes....
+        // vectorCollision contains all non-air tiles that are in the same column as the object.
+        // This should prune tiles that aren't in the same row, leaving only tiles that the object is truly overlapping.
+
+        for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+            if (tempRect.y > (vectorCollision.at(j).y * TILESIZE) && tempRect.y < ((vectorCollision.at(j).y * TILESIZE) + TILESIZE)) {
+
+            } else if ((tempRect.y + tempRect.h) > (vectorCollision.at(j).y * TILESIZE) && (tempRect.y + tempRect.h) < ((vectorCollision.at(j).y * TILESIZE) + TILESIZE)) {
+
+            } else {
+                vectorCollision.erase(vectorCollision.begin()+j);
+                j = -1;
+            }
+
+        }
+
 
         // if vector is empty, great.
         if (!vectorCollision.empty()) {
@@ -297,13 +315,26 @@ void loop() {
         tempRect = vectorObjects.at(i).moveCollider(0,vectorObjects.at(i).getYVel());
         for (unsigned int j = 0; j < mapTiles.size(); j++) {
             if (mapTiles.at(j).getID() != 1) {
-                if (tempRect.y > mapTiles.at(j).getYPos() && tempRect.y < mapTiles.at(j).getYPos() + TILESIZE) {
+                if (tempRect.y > mapTiles.at(j).getYPos()*TILESIZE && tempRect.y < (mapTiles.at(j).getYPos()*TILESIZE) + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
-                if (tempRect.y + tempRect.h > mapTiles.at(j).getYPos() && tempRect.y + tempRect.h < mapTiles.at(j).getYPos() + TILESIZE) {
+                if (tempRect.y + tempRect.h > mapTiles.at(j).getYPos()*TILESIZE && tempRect.y + tempRect.h < (mapTiles.at(j).getYPos()*TILESIZE) + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
             }
+        }
+
+
+        for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+            if (tempRect.x > vectorCollision.at(j).x * TILESIZE && tempRect.x < (vectorCollision.at(j).x * TILESIZE) + TILESIZE) {
+
+            } else if (tempRect.x + tempRect.w > vectorCollision.at(j).x * TILESIZE && tempRect.x + tempRect.w < (vectorCollision.at(j).x * TILESIZE) + TILESIZE) {
+
+            } else {
+                vectorCollision.erase(vectorCollision.begin()+j);
+                j = -1;
+            }
+
         }
 
         if(!vectorCollision.empty()) {
