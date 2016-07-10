@@ -102,7 +102,7 @@ bool loadTileInfo(Map *tempMap, std::ifstream &mapData) {
     int tempY = 0;
     while (mapData.peek() != 10 && !mapData.eof()) { //Keep loading exit data until you hit a newline.
         tempTile.setID(parseMapInfo(mapData));
-        if (tempX > tempMap->getWidth()) {
+        if (tempX >= tempMap->getWidth()) {
             tempX = 0;
             tempY++;
         }

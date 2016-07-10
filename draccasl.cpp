@@ -32,6 +32,7 @@ std::vector<Tile> mapTiles;
 std::vector<SDL_Rect> vectorCollision;
 Map curMap;
 bool sound = true;
+bool gravity = true;
 
 
 DEBUG_T DEBUG = ALL;
@@ -167,6 +168,14 @@ bool event(SDL_Event e) {
                 }
                 break;
 
+            case SDLK_g:
+                if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)) {
+                        gravity = !gravity;
+                std::cout << "gravity set to " << gravity << "\n";
+                        break;
+                }
+                break;
+
 
             case SDLK_BACKSLASH:
                 if (DEBUG > NONE) {
@@ -247,7 +256,12 @@ void loadMap(Map mapToLoad) {
         }
         currentMap = mapToLoad.getID();
         curMap = mapToLoad;
-        mapTiles = curMap.getTiles();
+        std::vector<Tile> tempTiles = curMap.getTiles();
+        for (unsigned int i = 0; i < tempTiles.size(); i++){
+            if (tempTiles.at(i).getID() != 1){
+                mapTiles.push_back(tempTiles.at(i)); //mapTiles should now only contain non-air tiles.
+            }
+        }
         if (DEBUG == ALL) {std::cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";}
         // And now we have std::vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
     }

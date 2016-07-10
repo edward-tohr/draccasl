@@ -9,6 +9,7 @@ extern DEBUG_T DEBUG;
 extern SDL_Renderer *gRenderer;
 extern SDL_Rect gCamera;
 extern const int VELOCITY_MAX;
+extern bool gravity;
 
 
 class GameObject {
