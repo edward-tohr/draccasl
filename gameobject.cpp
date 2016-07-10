@@ -9,12 +9,12 @@ void GameObject::render() {
 // ... no, the texture.render() function was overloaded in the tutorial. Hmm.
 // this'll be tricky. Should I make my own texture class? or just shove all the code here?
 //If (thisCollision is within bounds of camera)
-SDL_Rect *sprite = new SDL_Rect();
-sprite->h = collisionBox.h;
-sprite->w = collisionBox.w;
-sprite->x = collisionBox.x;
-sprite->y = collisionBox.y;
-SDL_RenderCopy(gRenderer,getTexture(),NULL,sprite);
+    SDL_Rect *sprite = new SDL_Rect();
+    sprite->h = collisionBox.h;
+    sprite->w = collisionBox.w;
+    sprite->x = collisionBox.x;
+    sprite->y = collisionBox.y;
+    SDL_RenderCopy(gRenderer,getTexture(),NULL,sprite);
 
 //RenderCopy( Renderer to render at, texture to render, source rectangle if not full texture, destination rectangle if not full renderer.)
 
@@ -25,108 +25,108 @@ SDL_RenderCopy(gRenderer,getTexture(),NULL,sprite);
 
 void GameObject::beginUpdate() {
 
-	const Uint8 *state = SDL_GetKeyboardState(NULL);
+    const Uint8 *state = SDL_GetKeyboardState(NULL);
 
-	if (state[SDL_SCANCODE_LEFT]){
-		changeXVel(-1.5);
-	}
+    if (state[SDL_SCANCODE_LEFT]) {
+        changeXVel(-1.5);
+    }
 
-	if (state[SDL_SCANCODE_RIGHT]){
-		changeXVel(1.5);
-	}
+    if (state[SDL_SCANCODE_RIGHT]) {
+        changeXVel(1.5);
+    }
 
-	//Commenting out floatmode.
-
-
-	if (state[SDL_SCANCODE_UP]){
-		changeYVel(-1.5);
-	}
-
-	if (state[SDL_SCANCODE_DOWN]){
-		changeYVel(1.5);
-	}
+    //Commenting out floatmode.
 
 
+    if (state[SDL_SCANCODE_UP]) {
+        changeYVel(-1.5);
+    }
 
-	if (!state[SDL_SCANCODE_RIGHT] && !state[SDL_SCANCODE_LEFT]) {
-		if (getXVel() > 0.5){
-			changeXVel(-.5);
-		}
-		if (getXVel() < -0.5) {
-			changeXVel(0.5);
-		}
-		if (getXVel() <= 0.5 && getXVel() > 0 && getXVel() != 0) {
-			setXVel(0);
-			//if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
-		}
-		if (getXVel() >= -0.5 && getXVel() < 0 && getXVel() != 0) {
-			setXVel(0);
-			//if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
-		}
-
-	}
+    if (state[SDL_SCANCODE_DOWN]) {
+        changeYVel(1.5);
+    }
 
 
-      //Really, there's no need to apply physics to floatmode.
-	/*if (!state[SDL_SCANCODE_UP] && !state[SDL_SCANCODE_DOWN]) {
-		if (getYVel() > 0.5){
-			changeYVel(-.5);
-		}
-		if (getYVel() < -0.5) {
-			changeYVel(0.5);
-		}
-		if (getYVel() <= 0.5 && getYVel() > 0 && getYVel() != 0) {
-			setYVel(0);
-			//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
-		}
-		if (getYVel() >= -0.5 && getYVel() < 0 && getYVel() != 0) {
-			setYVel(0);
-			//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
-		}
+
+    if (!state[SDL_SCANCODE_RIGHT] && !state[SDL_SCANCODE_LEFT]) {
+        if (getXVel() > 0.5) {
+            changeXVel(-.5);
+        }
+        if (getXVel() < -0.5) {
+            changeXVel(0.5);
+        }
+        if (getXVel() <= 0.5 && getXVel() > 0 && getXVel() != 0) {
+            setXVel(0);
+            //if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
+        }
+        if (getXVel() >= -0.5 && getXVel() < 0 && getXVel() != 0) {
+            setXVel(0);
+            //if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
+        }
+
+    }
 
 
-	}
-	*/
+    //Really, there's no need to apply physics to floatmode.
+    /*if (!state[SDL_SCANCODE_UP] && !state[SDL_SCANCODE_DOWN]) {
+    	if (getYVel() > 0.5){
+    		changeYVel(-.5);
+    	}
+    	if (getYVel() < -0.5) {
+    		changeYVel(0.5);
+    	}
+    	if (getYVel() <= 0.5 && getYVel() > 0 && getYVel() != 0) {
+    		setYVel(0);
+    		//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
+    	}
+    	if (getYVel() >= -0.5 && getYVel() < 0 && getYVel() != 0) {
+    		setYVel(0);
+    		//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
+    	}
 
-	// Gravity. Constant downwards force.
-	changeYVel(.45);
+
+    }
+    */
+
+    // Gravity. Constant downwards force.
+    changeYVel(.45);
 }
 
-void GameObject::changeXVel(float acc){
+void GameObject::changeXVel(float acc) {
 
-	x_vel += acc;
+    x_vel += acc;
 
-	if (x_vel > VELOCITY_MAX){
-		x_vel = VELOCITY_MAX;
-	}
+    if (x_vel > VELOCITY_MAX) {
+        x_vel = VELOCITY_MAX;
+    }
 
-	if (x_vel < -VELOCITY_MAX){
-		x_vel = -VELOCITY_MAX;
-	}
+    if (x_vel < -VELOCITY_MAX) {
+        x_vel = -VELOCITY_MAX;
+    }
 }
 
-void GameObject::changeYVel(float acc){
-	y_vel += acc;
+void GameObject::changeYVel(float acc) {
+    y_vel += acc;
 
-	if (y_vel > VELOCITY_MAX){
-		y_vel = VELOCITY_MAX;
-	}
+    if (y_vel > VELOCITY_MAX) {
+        y_vel = VELOCITY_MAX;
+    }
 
-	if (y_vel < -VELOCITY_MAX){
-		y_vel = -VELOCITY_MAX;
-	}
+    if (y_vel < -VELOCITY_MAX) {
+        y_vel = -VELOCITY_MAX;
+    }
 }
 
-SDL_Rect GameObject::moveCollider(float xVel, float yVel){
-	SDL_Rect tempCollision = getCollision();
-	tempCollision.x += xVel;
-	tempCollision.y += yVel;
-	return tempCollision;
+SDL_Rect GameObject::moveCollider(float xVel, float yVel) {
+    SDL_Rect tempCollision = getCollision();
+    tempCollision.x += xVel;
+    tempCollision.y += yVel;
+    return tempCollision;
 
 }
 
-void GameObject::collisionUpdate(){
-	mXPosition += x_vel;
-	mYPosition += y_vel;
-	setCollision(mXPosition,mYPosition,this->getWidth(),this->getHeight());
+void GameObject::collisionUpdate() {
+    mXPosition += x_vel;
+    mYPosition += y_vel;
+    setCollision(mXPosition,mYPosition,this->getWidth(),this->getHeight());
 }
