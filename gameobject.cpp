@@ -22,6 +22,20 @@ void GameObject::render() {
 
 }
 
+void GameObject::loadSprite(std::string name){
+    name.append(".png");
+SDL_Surface* tempTexture = IMG_Load(name.c_str());
+if (!tempTexture){
+    if (DEBUG >= ERROR){
+        std::cout << "Couldn't load " << name << "!\n";
+    }
+} else {
+    SDL_SetColorKey(tempTexture,SDL_TRUE,SDL_MapRGB(tempTexture->format,0xFF,0x00,0xFF));
+setTexture(SDL_CreateTextureFromSurface(gRenderer, tempTexture));
+}
+
+}
+
 
 void GameObject::beginUpdate() {
 

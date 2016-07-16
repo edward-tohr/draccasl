@@ -2,8 +2,10 @@
 #define __gameobject_h__
 
 #include "SDL.h"
+#include "SDL_image.h"
 #include "constants.h"
 #include "iostream"
+#include "string"
 
 extern DEBUG_T DEBUG;
 extern SDL_Renderer *gRenderer;
@@ -199,5 +201,6 @@ public:
 
     SDL_Rect moveCollider(float xVel, float yVel);
     void collisionUpdate();
+    void loadSprite(std::string name);
 };
 #endif

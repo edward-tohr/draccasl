@@ -1,6 +1,6 @@
 // I have no idea what I'm doing. But I won't let that stop me.
 
-//NEXT STEP: Fixed the nonzero X pos causes crash bug. Next up, physics.
+//NEXT STEP: Yay, physics! Time to add other objects. Or ramps/stairs.
 
 #include "constants.h"
 #include "draccasl.h"
@@ -108,9 +108,10 @@ void init() {
     Jack->setDefense(0);
     Jack->setType(jack);
     Jack->unkill();
-    SDL_SetColorKey(jackSprite,SDL_TRUE,SDL_MapRGB(jackSprite->format,0xFF,0x00,0xFF));
-    std::cout << "Jack's color-keyed now.\n";
-    Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
+    //SDL_SetColorKey(jackSprite,SDL_TRUE,SDL_MapRGB(jackSprite->format,0xFF,0x00,0xFF));
+    //std::cout << "Jack's color-keyed now.\n";
+    //Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
+    Jack->loadSprite("jack");
     std::cout << "Jack's sprite is set.\n";
 
     Jack -> setCollision(70,70,64,64);
@@ -318,7 +319,7 @@ void loop() {
             }
                 if (eraseTile){
                 vectorCollision.erase(vectorCollision.begin()+j);
-                j = -1;
+
                 }
             }
 
