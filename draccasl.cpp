@@ -276,6 +276,7 @@ void loop() {
         // let's see, let's see......
         // move collisionBox in the X direction according to velocity.
         SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
+        bool eraseTile = false;
         // get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
         //if (DEBUG == ALL){std::cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
         for (unsigned int j = 0; j < mapTiles.size(); j++) {
@@ -286,6 +287,11 @@ void loop() {
                 if (tempRect.x + tempRect.w >= mapTiles.at(j).getXPos() && tempRect.x + tempRect.w <= mapTiles.at(j).getXPos() + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
+                for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE){
+                    if (tempRect.x + k >= mapTiles.at(j).getXPos() && tempRect.x + k <= mapTiles.at(j).getXPos() + TILESIZE){
+                        vectorCollision.push_back(mapTiles.at(j).getRect());
+                    }
+                }
             }
         }
 
@@ -295,16 +301,29 @@ void loop() {
         // This should prune tiles that aren't in the same row, leaving only tiles that the object is truly overlapping.
 
         for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+            eraseTile = true;
+                for (unsigned int k = 0; k < tempRect.h; k += TILESIZE){
             if (tempRect.y >= vectorCollision.at(j).y && tempRect.y <= vectorCollision.at(j).y + TILESIZE) {
+                    eraseTile = false;
+                    break;
 
             } else if (tempRect.y + tempRect.h >= vectorCollision.at(j).y && tempRect.y + tempRect.h <= vectorCollision.at(j).y + TILESIZE) {
+                eraseTile = false;
+                break;
 
-            } else {
+            } else if (tempRect.y + k >= vectorCollision.at(j).y && tempRect.y + k <= vectorCollision.at(j).y + TILESIZE){
+                eraseTile = false;
+                break;
+            }
+            }
+                if (eraseTile){
                 vectorCollision.erase(vectorCollision.begin()+j);
                 j = -1;
+                }
             }
 
-        }
+
+
 
 
         // if vector is empty, great.
@@ -339,20 +358,36 @@ void loop() {
                 if (tempRect.y + tempRect.h >= mapTiles.at(j).getYPos()&& tempRect.y + tempRect.h <= mapTiles.at(j).getYPos() + TILESIZE) {
                     vectorCollision.push_back(mapTiles.at(j).getRect());
                 }
+                for (unsigned int k = 0; k <= tempRect.h; k += TILESIZE){
+                    if (tempRect.y + k >= mapTiles.at(j).getYPos() && tempRect.y + k <= mapTiles.at(j).getYPos() + TILESIZE){
+                        vectorCollision.push_back(mapTiles.at(j).getRect());
+                    }
+                }
             }
         }
 
 
         for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+                eraseTile = true;
+                for (unsigned int k = TILESIZE; k <= tempRect.w; k += TILESIZE){
             if (tempRect.x >= vectorCollision.at(j).x && tempRect.x <= vectorCollision.at(j).x + TILESIZE) {
+                eraseTile = false;
+                break;
 
             } else if (tempRect.x + tempRect.w >= vectorCollision.at(j).x && tempRect.x + tempRect.w <= vectorCollision.at(j).x + TILESIZE) {
+                eraseTile = false;
+                break;
 
-            } else {
-                vectorCollision.erase(vectorCollision.begin()+j);
-                j = -1;
+            } else if (tempRect.x + k >= vectorCollision.at(j).x && tempRect.x + k <= vectorCollision.at(j).x + TILESIZE){
+                eraseTile = false;
+                break;
             }
 
+        }
+        if (eraseTile){
+            vectorCollision.erase(vectorCollision.begin()+j);
+                j = -1;
+        }
         }
 
         if(!vectorCollision.empty()) {
@@ -365,6 +400,7 @@ void loop() {
                 miny--;
                 vectorObjects.at(i).setYPos(miny);
                 vectorObjects.at(i).setYVel(0);
+                gravity = false;
             } else if (vectorObjects.at(i).getYVel() < 0) { //If Y velocity is negative, object is moving upwards and should snap to bottom of terrain.
                 int maxy = tempRect.y;
                 for (unsigned int j = 0; j < vectorCollision.size(); j++) {
