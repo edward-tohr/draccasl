@@ -194,6 +194,11 @@ bool event(SDL_Event e) {
                 }
                 break;
 
+            case SDLK_END:
+                if (DEBUG > NONE){
+                    vectorObjects.at(0).loadSprite("dracula");
+                }
+
             }
             return false;
         }
@@ -257,6 +262,7 @@ void loadMap(Map mapToLoad) {
         }
         currentMap = mapToLoad.getID();
         curMap = mapToLoad;
+        mapTiles.clear();
         std::vector<Tile> tempTiles = curMap.getTiles();
         for (unsigned int i = 0; i < tempTiles.size(); i++){
             if (tempTiles.at(i).getID() != 1){
@@ -371,7 +377,7 @@ void loop() {
 
         for (unsigned int j = 0; j < vectorCollision.size(); j++) {
                 eraseTile = true;
-                for (unsigned int k = TILESIZE; k <= tempRect.w; k += TILESIZE){
+                for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE){
             if (tempRect.x >= vectorCollision.at(j).x && tempRect.x <= vectorCollision.at(j).x + TILESIZE) {
                 eraseTile = false;
                 break;
