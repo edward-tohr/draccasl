@@ -319,6 +319,7 @@ void loop() {
             }
                 if (eraseTile){
                 vectorCollision.erase(vectorCollision.begin()+j);
+                j = -1;
 
                 }
             }
