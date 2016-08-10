@@ -325,7 +325,7 @@ void loop() {
             }
                 if (eraseTile){
                 vectorCollision.erase(vectorCollision.begin()+j);
-                j = -1;
+                j--; // No need to back up all the way to the start since we're only erasing one tile at a time.
 
                 }
             }
@@ -394,7 +394,7 @@ void loop() {
         }
         if (eraseTile){
             vectorCollision.erase(vectorCollision.begin()+j);
-                j = -1;
+                j--;
         }
         }
 
