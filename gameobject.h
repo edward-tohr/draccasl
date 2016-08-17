@@ -10,8 +10,10 @@
 extern DEBUG_T DEBUG;
 extern SDL_Renderer *gRenderer;
 extern SDL_Rect gCamera;
-extern const int VELOCITY_MAX;
 extern bool gravity;
+extern const float GRAVITY_V;
+extern const float MOVE_ACCEL;
+extern const float DRAG;
 
 
 class GameObject {
@@ -28,6 +30,7 @@ private:
     float x_vel;
     float y_vel;
     bool jump = false;
+    float gravMult = 1.0;
 
     SDL_Rect collisionBox;
     SDL_Texture *objectTexture;
@@ -97,6 +100,10 @@ public:
 
     SDL_Texture* getTexture() {
         return objectTexture;
+    }
+
+    float getGravMult(){
+        return gravMult;
     }
 
     void setXPos(float x) {
@@ -188,6 +195,10 @@ public:
 
     void setTexture(SDL_Texture *newTexture) {
         objectTexture = newTexture;
+    }
+
+    void setGravMult(float gm){
+        gravMult = gm;
     }
 
     void render();

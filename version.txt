@@ -1,4 +1,4 @@
 jack DANGER strong in: castle of the draculas
-Build Date: Aug  9 2016 21:00:17
-Y:\draccasl\draccasl.cpp last modified: Tue Aug 09 20:54:21 2016
-Build number: 124
+Build Date: Aug 17 2016 17:07:48
+E:\draccasl\draccasl\draccasl.cpp last modified: Wed Aug 17 16:59:09 2016
+Build number: 126

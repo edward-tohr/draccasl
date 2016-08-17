@@ -13,6 +13,8 @@
 class Map;
 
 extern DEBUG_T DEBUG;
+extern const int TILESIZE;
+extern const float VELOCITY_MAX;
 
 //globals go in header file? Is this also awful?
 SDL_Window *gWindow;

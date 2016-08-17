@@ -36,8 +36,7 @@ bool gravity = true;
 
 
 DEBUG_T DEBUG = ALL;
-const int TILESIZE = 32;
-const int VELOCITY_MAX = 4;
+
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
@@ -84,22 +83,14 @@ void init() {
     gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
     gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
 
-
-    std::cout << "pre-gCamera setting\n";
     gCamera.x = 0;
-    std::cout << "gCamera x is set\n";
     gCamera.y = 0;
-    std::cout << "gCamera y is set\n";
     gCamera.w = WINDOW_W;
-    std::cout << "gCamera w is set\n";
     gCamera.h = WINDOW_H;
-    std::cout << "gCamera h is set\n";
-    std::cout << "post-gCamera setting\n";
-
-
     gameState = title;
     currentMap = 0;
     nextMap = 0;
+
     Jack->setXPos(70);
     Jack->setYPos(70);
     Jack->setHealth(10);
@@ -112,10 +103,11 @@ void init() {
     //std::cout << "Jack's color-keyed now.\n";
     //Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
     Jack->loadSprite("jack");
-    std::cout << "Jack's sprite is set.\n";
+    if (DEBUG == ALL){
+            std::cout << "Jack's sprite is set.\n";
+    }
 
     Jack -> setCollision(70,70,64,64);
-
     vectorObjects.push_back(*Jack);
 
 }
