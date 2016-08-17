@@ -18,7 +18,6 @@ void GameObject::render() {
 
 //RenderCopy( Renderer to render at, texture to render, source rectangle if not full texture, destination rectangle if not full renderer.)
 
-//Why is Jack not rendering here...?
 
 }
 
@@ -44,38 +43,38 @@ void GameObject::beginUpdate() {
     const Uint8 *state = SDL_GetKeyboardState(NULL);
 
     if (state[SDL_SCANCODE_LEFT]) {
-        changeXVel(-1.5);
+        changeXVel(-MOVE_ACCEL);
     }
 
     if (state[SDL_SCANCODE_RIGHT]) {
-        changeXVel(1.5);
+        changeXVel(MOVE_ACCEL);
     }
 
     //Commenting out floatmode.
 
 
     if (state[SDL_SCANCODE_UP]) {
-        changeYVel(-1.5);
+        changeYVel(-MOVE_ACCEL);
     }
 
     if (state[SDL_SCANCODE_DOWN]) {
-        changeYVel(1.5);
+        changeYVel(MOVE_ACCEL);
     }
 
 
 
     if (!state[SDL_SCANCODE_RIGHT] && !state[SDL_SCANCODE_LEFT]) {
-        if (getXVel() > 0.5) {
-            changeXVel(-.5);
+        if (getXVel() > DRAG) {
+            changeXVel(-DRAG);
         }
-        if (getXVel() < -0.5) {
-            changeXVel(0.5);
+        if (getXVel() < -DRAG) {
+            changeXVel(DRAG);
         }
-        if (getXVel() <= 0.5 && getXVel() > 0 && getXVel() != 0) {
+        if (getXVel() <= DRAG && getXVel() > 0) {
             setXVel(0);
             //if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
         }
-        if (getXVel() >= -0.5 && getXVel() < 0 && getXVel() != 0) {
+        if (getXVel() >= -DRAG && getXVel() < 0) {
             setXVel(0);
             //if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
         }
@@ -85,17 +84,17 @@ void GameObject::beginUpdate() {
 
     //Really, there's no need to apply physics to floatmode.
     if (!state[SDL_SCANCODE_UP] && !state[SDL_SCANCODE_DOWN]) {
-    	if (getYVel() > 0.5){
-    		changeYVel(-.5);
+    	if (getYVel() > DRAG){
+    		changeYVel(-DRAG);
     	}
-    	if (getYVel() < -0.5) {
-    		changeYVel(0.5);
+    	if (getYVel() < -DRAG) {
+    		changeYVel(DRAG);
     	}
-    	if (getYVel() <= 0.5 && getYVel() > 0 && getYVel() != 0) {
+    	if (getYVel() <= DRAG && getYVel() > 0) {
     		setYVel(0);
     		//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
     	}
-    	if (getYVel() >= -0.5 && getYVel() < 0 && getYVel() != 0) {
+    	if (getYVel() >= -DRAG && getYVel() < 0 ) {
     		setYVel(0);
     		//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
     	}
@@ -105,7 +104,7 @@ void GameObject::beginUpdate() {
 
 
     // Gravity. Constant downwards force.
-    if (gravity) {changeYVel(.45);}
+    if (gravity) {changeYVel(GRAVITY_V * getGravMult());}
 }
 
 void GameObject::changeXVel(float acc) {
