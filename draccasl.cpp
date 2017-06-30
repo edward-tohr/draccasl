@@ -466,7 +466,7 @@ int main(int argc, char* argv[]) {
         DEBUG = NONE;
       } else if (argv[i] == "--DEBUG_ERROR") {
         DEBUG = ERROR;
-      } else if (argv[i] == "DEBUG_ALL") {
+      } else if (argv[i] == "--DEBUG_ALL") {
         DEBUG = ALL;
       }
     }
