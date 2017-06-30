@@ -11,16 +11,16 @@
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
 
 enum gameState_t {
-    title,
-    game,
-    pause,
-    cutscene
+  title,
+  game,
+  pause,
+  cutscene
 };
 
 enum gameObject_t {
-    jack,
-    zombie,
-    door
+  jack,
+  zombie,
+  door
 };
 
 gameState_t gameState = title;
@@ -44,401 +44,403 @@ DEBUG_T DEBUG = ALL;
 
 
 void init() {
-    //Setup phase
-    sound = !DEBUG;
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-        if (DEBUG >= ERROR) {std::cout << "SDL init failed! " << SDL_GetError() << "\n";}
+  //Setup phase
+  sound = !DEBUG;
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
+    if (DEBUG >= ERROR) {std::cout << "SDL init failed! " << SDL_GetError() << "\n";}
+  }
+  if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+    if (DEBUG >= ERROR) {std::cout << "SDL_img init failed! " << SDL_GetError() << "\n";}
+  }
+  if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
+    if (DEBUG >= ERROR) {std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";}
+  }
+
+  //Load phase
+
+  gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
+  if (gWindow == NULL) {
+    if (DEBUG >= ERROR) {std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";}
+  }
+
+  jackSprite = IMG_Load("jack.png");
+  if (!jackSprite) {
+    if (DEBUG >= ERROR) {std::cout << "we let go of jack!";}
+  }
+
+  gSurface = IMG_Load("title.png");
+  if (!gSurface) {
+    if (DEBUG >= ERROR) {std::cout << "failed to load title screen!";}
+  }
+
+  if (sound) {
+    gMusic = Mix_LoadMUS("tocafuge.wav");
+    if (gMusic == NULL) {
+      if (DEBUG >= ERROR) {std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";}
     }
-    if (!IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) {
-        if (DEBUG >= ERROR) {std::cout << "SDL_img init failed! " << SDL_GetError() << "\n";}
-    }
-    if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-        if (DEBUG >= ERROR) {std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";}
-    }
+  }
 
-    //Load phase
+  gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
+  gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
 
-    gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
-    if (gWindow == NULL) {
-        if (DEBUG >= ERROR) {std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";}
-    }
+  gCamera.x = 0;
+  gCamera.y = 0;
+  gCamera.w = WINDOW_W;
+  gCamera.h = WINDOW_H;
+  gameState = title;
+  currentMap = 0;
+  nextMap = 0;
 
-    jackSprite = IMG_Load("jack.png");
-    if (!jackSprite) {
-        if (DEBUG >= ERROR) {std::cout << "we let go of jack!";}
-    }
+  Jack->setXPos(70);
+  Jack->setYPos(70);
+  Jack->setHealth(10);
+  Jack->setMaxHealth(10);
+  Jack->setAttack(0);
+  Jack->setDefense(0);
+  Jack->setType(jack);
+  Jack->unkill();
+  //SDL_SetColorKey(jackSprite,SDL_TRUE,SDL_MapRGB(jackSprite->format,0xFF,0x00,0xFF));
+  //std::cout << "Jack's color-keyed now.\n";
+  //Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
+  Jack->loadSprite("jack");
+  if (DEBUG == ALL){
+      std::cout << "Jack's sprite is set.\n";
+  }
 
-    gSurface = IMG_Load("title.png");
-    if (!gSurface) {
-        if (DEBUG >= ERROR) {std::cout << "failed to load title screen!";}
-    }
-
-    if (sound) {
-        gMusic = Mix_LoadMUS("tocafuge.wav");
-        if (gMusic == NULL) {
-            if (DEBUG >= ERROR) {std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";}
-        }
-    }
-
-    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_PRESENTVSYNC);
-    gTexture = SDL_CreateTextureFromSurface(gRenderer, gSurface);
-
-    gCamera.x = 0;
-    gCamera.y = 0;
-    gCamera.w = WINDOW_W;
-    gCamera.h = WINDOW_H;
-    gameState = title;
-    currentMap = 0;
-    nextMap = 0;
-
-    Jack->setXPos(70);
-    Jack->setYPos(70);
-    Jack->setHealth(10);
-    Jack->setMaxHealth(10);
-    Jack->setAttack(0);
-    Jack->setDefense(0);
-    Jack->setType(jack);
-    Jack->unkill();
-    //SDL_SetColorKey(jackSprite,SDL_TRUE,SDL_MapRGB(jackSprite->format,0xFF,0x00,0xFF));
-    //std::cout << "Jack's color-keyed now.\n";
-    //Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
-    Jack->loadSprite("jack");
-    if (DEBUG == ALL){
-            std::cout << "Jack's sprite is set.\n";
-    }
-
-    Jack -> setCollision(70,70,64,64);
-    vectorObjects.push_back(*Jack);
+  Jack -> setCollision(70,70,64,64);
+  vectorObjects.push_back(*Jack);
 
 }
 
 void exit() {
-    SDL_DestroyWindow(gWindow);
-    SDL_DestroyRenderer(gRenderer);
-    SDL_DestroyTexture(gTexture);
-    Mix_CloseAudio();
-    Mix_Quit();
-    IMG_Quit();
-    SDL_Quit();
+  SDL_DestroyWindow(gWindow);
+  SDL_DestroyRenderer(gRenderer);
+  SDL_DestroyTexture(gTexture);
+  Mix_CloseAudio();
+  Mix_Quit();
+  IMG_Quit();
+  SDL_QuitSubSystem(SDL_INIT_EVERYTHING);
+  SDL_Quit();
+  std::exit(0);
 }
 
 
 bool event(SDL_Event e) {
-    // handle keypresses and whatnot.
-    while (SDL_PollEvent(&e) != 0) {
+  // handle keypresses and whatnot.
+  while (SDL_PollEvent(&e) != 0) {
 
-        if(e.type == SDL_QUIT) {
-            return true;
+    if(e.type == SDL_QUIT) {
+      return true;
 
-        } else if (e.type == SDL_KEYDOWN) {
-            switch(e.key.keysym.sym) {
+    } else if (e.type == SDL_KEYDOWN) {
+      switch(e.key.keysym.sym) {
 
-            case SDLK_RETURN:
-                if (gameState == title) {
-                    gameStart();
+      case SDLK_RETURN:
+        if (gameState == title) {
+          gameStart();
 
-                } else if (gameState == game) {
-                    gameState = pause;
-                } else if (gameState == pause) {
-                    gameState = game;
-                }
-                break;
-
-            case SDLK_d:
-                if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)) {
-                    switch (DEBUG) {
-                    case NONE:
-                        DEBUG = ERROR;
-                        break;
-                    case ERROR:
-                        DEBUG = ALL;
-                        break;
-                    case ALL:
-                        DEBUG = NONE;
-                        break;
-                    }
-                    std::cout << "Debug level set to " << DEBUG << ".\n";
-                }
-                break;
-
-            case SDLK_g:
-                if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)) {
-                        gravity = !gravity;
-                std::cout << "gravity set to " << gravity << "\n";
-                        break;
-                }
-                break;
-
-
-            case SDLK_BACKSLASH:
-                if (DEBUG > NONE) {
-                    currentMap++;
-                    currentMap %= vectorMaps.size();
-                    std::cout << "loading map " << currentMap << "...\n";
-                    loadMap(vectorMaps.at(currentMap));
-                }
-                break;
-
-            case SDLK_HOME:
-                if (DEBUG > NONE) {
-                    std::cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
-                    std::cout << Jack->getXPos() << " " << Jack->getYPos() << "\n";
-                }
-                break;
-
-            case SDLK_END:
-                if (DEBUG > NONE){
-                    vectorObjects.at(0).loadSprite("dracula");
-                }
-
-            }
-            return false;
+        } else if (gameState == game) {
+          gameState = pause;
+        } else if (gameState == pause) {
+          gameState = game;
         }
+        break;
+
+      case SDLK_d:
+        if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)) {
+          switch (DEBUG) {
+          case NONE:
+            DEBUG = ERROR;
+            break;
+          case ERROR:
+            DEBUG = ALL;
+            break;
+          case ALL:
+            DEBUG = NONE;
+            break;
+          }
+          std::cout << "Debug level set to " << DEBUG << ".\n";
+        }
+        break;
+
+      case SDLK_g:
+        if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)) {
+            gravity = !gravity;
+        std::cout << "gravity set to " << gravity << "\n";
+            break;
+        }
+        break;
+
+
+      case SDLK_BACKSLASH:
+        if (DEBUG > NONE) {
+          currentMap++;
+          currentMap %= vectorMaps.size();
+          std::cout << "loading map " << currentMap << "...\n";
+          loadMap(vectorMaps.at(currentMap));
+        }
+        break;
+
+      case SDLK_HOME:
+        if (DEBUG > NONE) {
+          std::cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
+          std::cout << Jack->getXPos() << " " << Jack->getYPos() << "\n";
+        }
+        break;
+
+      case SDLK_END:
+        if (DEBUG > NONE){
+          vectorObjects.at(0).loadSprite("dracula");
+        }
+
+      }
+      return false;
     }
-    return false;
+  }
+  return false;
 }
 
 void render() {
-    SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-    SDL_RenderClear(gRenderer);
-    // clear the renderer.
-    if (gameState != title) { //If we're on the title screen, don't draw all this crap.
-        //Render terrain
-        vectorMaps.at(currentMap).Map::render(&vectorTiles, tileSet->w /TILESIZE);
-        //Render Objects
-        //Jack->render();
-        for (unsigned int i = 0; i < vectorObjects.size(); i++) {
-            vectorObjects.at(i).render();
-        }
-
-    } else { //If we are on the title screen, draw that.
-        SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
+  SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+  SDL_RenderClear(gRenderer);
+  // clear the renderer.
+  if (gameState != title) { //If we're on the title screen, don't draw all this crap.
+    //Render terrain
+    vectorMaps.at(currentMap).Map::render(&vectorTiles, tileSet->w /TILESIZE);
+    //Render Objects
+    //Jack->render();
+    for (unsigned int i = 0; i < vectorObjects.size(); i++) {
+      vectorObjects.at(i).render();
     }
-    //Render to the screen.
 
-    SDL_RenderPresent(gRenderer);
+  } else { //If we are on the title screen, draw that.
+    SDL_RenderCopy(gRenderer,gTexture,NULL,NULL);
+  }
+  //Render to the screen.
+
+  SDL_RenderPresent(gRenderer);
 
 }
 
 void loadMap(Map mapToLoad) {
-    // We have a map taken from vectorMaps, taken from maps.map.
-    // We need a surface/texture of the tileset.
-    int tiles = mapToLoad.getTileset();
-    std::cout << "tiles = " << mapToLoad.getTileset() << "\n";
-    std::string tileName = "tileset_";
-    tileName.append(std::to_string(tiles));
-    tileName.append(".png");
-    std::cout << "tilename = " << tileName << "\n";
-    SDL_FreeSurface(tileSet);
-    std::cout <<"tileset is freed.\n";
-    tileSet = IMG_Load(tileName.c_str());
+  // We have a map taken from vectorMaps, taken from maps.map.
+  // We need a surface/texture of the tileset.
+  int tiles = mapToLoad.getTileset();
+  std::cout << "tiles = " << mapToLoad.getTileset() << "\n";
+  std::string tileName = "tileset_";
+  tileName.append(std::to_string(tiles));
+  tileName.append(".png");
+  std::cout << "tilename = " << tileName << "\n";
+  SDL_FreeSurface(tileSet);
+  std::cout <<"tileset is freed.\n";
+  tileSet = IMG_Load(tileName.c_str());
 
 
-    if (tileSet == NULL) {
-        if (DEBUG >= ERROR) {std::cout << "Error loading tileset " << tileName <<"!\n";}
-    } else {
+  if (tileSet == NULL) {
+    if (DEBUG >= ERROR) {std::cout << "Error loading tileset " << tileName <<"!\n";}
+  } else {
 
-        if (DEBUG == ALL) {std::cout << "Successfully loaded tileset " << tileName <<"!\n";}
+    if (DEBUG == ALL) {std::cout << "Successfully loaded tileset " << tileName <<"!\n";}
 
-        tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
+    tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 
-        // Once we have it loaded, we can slice the tileset into tiles, and store it all in a vector<Tile>.
-        int numCols = tileSet->w / TILESIZE;
-        int numRows = tileSet->h / TILESIZE;
-        Tile currentTile;
-        for (int i = 0; i < numRows; i++) {
-            for (int j = 0; j < numCols; j++) {
-                currentTile.setRect(j*TILESIZE,i*TILESIZE);
-                vectorTiles.push_back(currentTile);
-            }
-        }
-        currentMap = mapToLoad.getID();
-        curMap = mapToLoad;
-        mapTiles.clear();
-        std::vector<Tile> tempTiles = curMap.getTiles();
-        for (unsigned int i = 0; i < tempTiles.size(); i++){
-            if (tempTiles.at(i).getID() != 1){
-                mapTiles.push_back(tempTiles.at(i)); //mapTiles should now only contain non-air tiles.
-            }
-        }
-        if (DEBUG == ALL) {std::cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";}
-        // And now we have std::vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
+    // Once we have it loaded, we can slice the tileset into tiles, and store it all in a vector<Tile>.
+    int numCols = tileSet->w / TILESIZE;
+    int numRows = tileSet->h / TILESIZE;
+    Tile currentTile;
+    for (int i = 0; i < numRows; i++) {
+      for (int j = 0; j < numCols; j++) {
+        currentTile.setRect(j*TILESIZE,i*TILESIZE);
+        vectorTiles.push_back(currentTile);
+      }
     }
+    currentMap = mapToLoad.getID();
+    curMap = mapToLoad;
+    mapTiles.clear();
+    std::vector<Tile> tempTiles = curMap.getTiles();
+    for (unsigned int i = 0; i < tempTiles.size(); i++){
+      if (tempTiles.at(i).getID() != 1){
+        mapTiles.push_back(tempTiles.at(i)); //mapTiles should now only contain non-air tiles.
+      }
+    }
+    if (DEBUG == ALL) {std::cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";}
+    // And now we have std::vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
+  }
 }
 
 void loop() {
 
-    for (unsigned int i = 0; i < vectorObjects.size(); i++) {
-        vectorObjects.at(i).beginUpdate();
-        vectorCollision.clear();
-        // collision detection goes here.
-        // let's see, let's see......
-        // move collisionBox in the X direction according to velocity.
-        SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
-        bool eraseTile = false;
-        // get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
-        //if (DEBUG == ALL){std::cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
-        for (unsigned int j = 0; j < mapTiles.size(); j++) {
-            if (mapTiles.at(j).getID() != 1) {
-                if (tempRect.x >= mapTiles.at(j).getXPos() && tempRect.x <= mapTiles.at(j).getXPos() + TILESIZE) {
-                    vectorCollision.push_back(mapTiles.at(j).getRect());
-                }
-                if (tempRect.x + tempRect.w >= mapTiles.at(j).getXPos() && tempRect.x + tempRect.w <= mapTiles.at(j).getXPos() + TILESIZE) {
-                    vectorCollision.push_back(mapTiles.at(j).getRect());
-                }
-                for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE){
-                    if (tempRect.x + k >= mapTiles.at(j).getXPos() && tempRect.x + k <= mapTiles.at(j).getXPos() + TILESIZE){
-                        vectorCollision.push_back(mapTiles.at(j).getRect());
-                    }
-                }
-            }
+  for (unsigned int i = 0; i < vectorObjects.size(); i++) {
+    vectorObjects.at(i).beginUpdate();
+    vectorCollision.clear();
+    // collision detection goes here.
+    // let's see, let's see......
+    // move collisionBox in the X direction according to velocity.
+    SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
+    bool eraseTile = false;
+    // get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
+    //if (DEBUG == ALL){std::cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
+    for (unsigned int j = 0; j < mapTiles.size(); j++) {
+      if (mapTiles.at(j).getID() != 1) {
+        if (tempRect.x >= mapTiles.at(j).getXPos() && tempRect.x <= mapTiles.at(j).getXPos() + TILESIZE) {
+          vectorCollision.push_back(mapTiles.at(j).getRect());
         }
-
-
-        // Ugh, this conditional is still horrible, but here goes....
-        // vectorCollision contains all non-air tiles that are in the same column as the object.
-        // This should prune tiles that aren't in the same row, leaving only tiles that the object is truly overlapping.
-
-        for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-            eraseTile = true;
-                for (unsigned int k = 0; k < tempRect.h; k += TILESIZE){
-            if (tempRect.y >= vectorCollision.at(j).y && tempRect.y <= vectorCollision.at(j).y + TILESIZE) {
-                    eraseTile = false;
-                    break;
-
-            } else if (tempRect.y + tempRect.h >= vectorCollision.at(j).y && tempRect.y + tempRect.h <= vectorCollision.at(j).y + TILESIZE) {
-                eraseTile = false;
-                break;
-
-            } else if (tempRect.y + k >= vectorCollision.at(j).y && tempRect.y + k <= vectorCollision.at(j).y + TILESIZE){
-                eraseTile = false;
-                break;
-            }
-            }
-                if (eraseTile){
-                vectorCollision.erase(vectorCollision.begin()+j);
-                j--; // No need to back up all the way to the start since we're only erasing one tile at a time.
-
-                }
-            }
-
-
-
-
-
-        // if vector is empty, great.
-        if (!vectorCollision.empty()) {
-            // if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
-            if (vectorObjects.at(i).getXVel() > 0) {
-                int minx = tempRect.x + tempRect.w;
-                for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    minx = std::min(minx,vectorCollision.at(j).x);
-                }
-                minx--;
-                vectorObjects.at(i).setXPos(minx-vectorObjects.at(i).getWidth());
-                vectorObjects.at(i).setXVel(0);
-            } else if (vectorObjects.at(i).getXVel() < 0) {
-                int maxx = tempRect.x;
-                for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    maxx = std::max(maxx,vectorCollision.at(j).x + TILESIZE);
-                }
-                maxx++;
-                vectorObjects.at(i).setXPos(maxx);
-                vectorObjects.at(i).setXVel(0);
-            }
+        if (tempRect.x + tempRect.w >= mapTiles.at(j).getXPos() && tempRect.x + tempRect.w <= mapTiles.at(j).getXPos() + TILESIZE) {
+          vectorCollision.push_back(mapTiles.at(j).getRect());
         }
-
-        vectorCollision.clear();
-        tempRect = vectorObjects.at(i).moveCollider(0,vectorObjects.at(i).getYVel());
-        for (unsigned int j = 0; j < mapTiles.size(); j++) {
-            if (mapTiles.at(j).getID() != 1) {
-                if (tempRect.y >= mapTiles.at(j).getYPos() && tempRect.y <= mapTiles.at(j).getYPos() + TILESIZE) {
-                    vectorCollision.push_back(mapTiles.at(j).getRect());
-                }
-                if (tempRect.y + tempRect.h >= mapTiles.at(j).getYPos()&& tempRect.y + tempRect.h <= mapTiles.at(j).getYPos() + TILESIZE) {
-                    vectorCollision.push_back(mapTiles.at(j).getRect());
-                }
-                for (unsigned int k = 0; k <= tempRect.h; k += TILESIZE){
-                    if (tempRect.y + k >= mapTiles.at(j).getYPos() && tempRect.y + k <= mapTiles.at(j).getYPos() + TILESIZE){
-                        vectorCollision.push_back(mapTiles.at(j).getRect());
-                    }
-                }
-            }
+        for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE){
+          if (tempRect.x + k >= mapTiles.at(j).getXPos() && tempRect.x + k <= mapTiles.at(j).getXPos() + TILESIZE){
+            vectorCollision.push_back(mapTiles.at(j).getRect());
+          }
         }
+      }
+    }
 
 
-        for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                eraseTile = true;
-                for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE){
-            if (tempRect.x >= vectorCollision.at(j).x && tempRect.x <= vectorCollision.at(j).x + TILESIZE) {
-                eraseTile = false;
-                break;
+    // Ugh, this conditional is still horrible, but here goes....
+    // vectorCollision contains all non-air tiles that are in the same column as the object.
+    // This should prune tiles that aren't in the same row, leaving only tiles that the object is truly overlapping.
 
-            } else if (tempRect.x + tempRect.w >= vectorCollision.at(j).x && tempRect.x + tempRect.w <= vectorCollision.at(j).x + TILESIZE) {
-                eraseTile = false;
-                break;
+    for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+      eraseTile = true;
+        for (unsigned int k = 0; k < tempRect.h; k += TILESIZE){
+      if (tempRect.y >= vectorCollision.at(j).y && tempRect.y <= vectorCollision.at(j).y + TILESIZE) {
+          eraseTile = false;
+          break;
 
-            } else if (tempRect.x + k >= vectorCollision.at(j).x && tempRect.x + k <= vectorCollision.at(j).x + TILESIZE){
-                eraseTile = false;
-                break;
-            }
+      } else if (tempRect.y + tempRect.h >= vectorCollision.at(j).y && tempRect.y + tempRect.h <= vectorCollision.at(j).y + TILESIZE) {
+        eraseTile = false;
+        break;
 
-        }
+      } else if (tempRect.y + k >= vectorCollision.at(j).y && tempRect.y + k <= vectorCollision.at(j).y + TILESIZE){
+        eraseTile = false;
+        break;
+      }
+      }
         if (eraseTile){
-            vectorCollision.erase(vectorCollision.begin()+j);
-                j--;
-        }
-        }
-
-        if(!vectorCollision.empty()) {
-
-            if (vectorObjects.at(i).getYVel() > 0) { // If Y velocity is positive, object is moving downwards and should snap to top of terrain minus object's height.
-                int miny = tempRect.y + tempRect.h; // get position of object's feet
-                for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    miny = std::min(miny,vectorCollision.at(j).y - vectorObjects.at(i).getHeight()); //Set YPos equal to whichever is higher, the object's feet, or top of terrain.
-                }
-                miny--;
-                vectorObjects.at(i).setYPos(miny);
-                vectorObjects.at(i).setYVel(0);
-                gravity = false;
-            } else if (vectorObjects.at(i).getYVel() < 0) { //If Y velocity is negative, object is moving upwards and should snap to bottom of terrain.
-                int maxy = tempRect.y;
-                for (unsigned int j = 0; j < vectorCollision.size(); j++) {
-                    maxy = std::max(maxy, vectorCollision.at(j).y + TILESIZE);
-                }
-                maxy++;
-                vectorObjects.at(i).setYPos(maxy);
-                vectorObjects.at(i).setYVel(0);
-            }
-
+        vectorCollision.erase(vectorCollision.begin()+j);
+        j--; // No need to back up all the way to the start since we're only erasing one tile at a time.
 
         }
+      }
 
-        vectorObjects.at(i).collisionUpdate();
+
+
+
+
+    // if vector is empty, great.
+    if (!vectorCollision.empty()) {
+      // if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
+      if (vectorObjects.at(i).getXVel() > 0) {
+        int minx = tempRect.x + tempRect.w;
+        for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+          minx = std::min(minx,vectorCollision.at(j).x);
+        }
+        minx--;
+        vectorObjects.at(i).setXPos(minx-vectorObjects.at(i).getWidth());
+        vectorObjects.at(i).setXVel(0);
+      } else if (vectorObjects.at(i).getXVel() < 0) {
+        int maxx = tempRect.x;
+        for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+          maxx = std::max(maxx,vectorCollision.at(j).x + TILESIZE);
+        }
+        maxx++;
+        vectorObjects.at(i).setXPos(maxx);
+        vectorObjects.at(i).setXVel(0);
+      }
+    }
+
+    vectorCollision.clear();
+    tempRect = vectorObjects.at(i).moveCollider(0,vectorObjects.at(i).getYVel());
+    for (unsigned int j = 0; j < mapTiles.size(); j++) {
+      if (mapTiles.at(j).getID() != 1) {
+        if (tempRect.y >= mapTiles.at(j).getYPos() && tempRect.y <= mapTiles.at(j).getYPos() + TILESIZE) {
+          vectorCollision.push_back(mapTiles.at(j).getRect());
+        }
+        if (tempRect.y + tempRect.h >= mapTiles.at(j).getYPos()&& tempRect.y + tempRect.h <= mapTiles.at(j).getYPos() + TILESIZE) {
+          vectorCollision.push_back(mapTiles.at(j).getRect());
+        }
+        for (unsigned int k = 0; k <= tempRect.h; k += TILESIZE){
+          if (tempRect.y + k >= mapTiles.at(j).getYPos() && tempRect.y + k <= mapTiles.at(j).getYPos() + TILESIZE){
+            vectorCollision.push_back(mapTiles.at(j).getRect());
+          }
+        }
+      }
+    }
+
+
+    for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+        eraseTile = true;
+        for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE){
+      if (tempRect.x >= vectorCollision.at(j).x && tempRect.x <= vectorCollision.at(j).x + TILESIZE) {
+        eraseTile = false;
+        break;
+
+      } else if (tempRect.x + tempRect.w >= vectorCollision.at(j).x && tempRect.x + tempRect.w <= vectorCollision.at(j).x + TILESIZE) {
+        eraseTile = false;
+        break;
+
+      } else if (tempRect.x + k >= vectorCollision.at(j).x && tempRect.x + k <= vectorCollision.at(j).x + TILESIZE){
+        eraseTile = false;
+        break;
+      }
 
     }
-    //physics, enemy AI goes here
-    // also handle map transitions?
+    if (eraseTile){
+      vectorCollision.erase(vectorCollision.begin()+j);
+        j--;
+    }
+    }
+
+    if(!vectorCollision.empty()) {
+
+      if (vectorObjects.at(i).getYVel() > 0) { // If Y velocity is positive, object is moving downwards and should snap to top of terrain minus object's height.
+        int miny = tempRect.y + tempRect.h; // get position of object's feet
+        for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+          miny = std::min(miny,vectorCollision.at(j).y - vectorObjects.at(i).getHeight()); //Set YPos equal to whichever is higher, the object's feet, or top of terrain.
+        }
+        miny--;
+        vectorObjects.at(i).setYPos(miny);
+        vectorObjects.at(i).setYVel(0);
+        gravity = false;
+      } else if (vectorObjects.at(i).getYVel() < 0) { //If Y velocity is negative, object is moving upwards and should snap to bottom of terrain.
+        int maxy = tempRect.y;
+        for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+          maxy = std::max(maxy, vectorCollision.at(j).y + TILESIZE);
+        }
+        maxy++;
+        vectorObjects.at(i).setYPos(maxy);
+        vectorObjects.at(i).setYVel(0);
+      }
+
+
+    }
+
+    vectorObjects.at(i).collisionUpdate();
+
+  }
+  //physics, enemy AI goes here
+  // also handle map transitions?
 
 
 
 }
 
 void gameStart() {
-    //New Game setup goes here. Load map, set up player graphics and such.
-    if (sound) {
-        Mix_PlayMusic(gMusic, 1);
-        if (DEBUG == NONE) {SDL_Delay(3500);}
-        Mix_HaltMusic();
-        gMusic = Mix_LoadMUS("jack.mid");
-    }
-    gameState = pause;
-    nextMap = 1;
-    populateMapVector(&vectorMaps);
-    //populateObjectVector(&vectorObjects) will work the same way once I do that.
-    if (DEBUG == ALL) {std::cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";}
-    loadMap(vectorMaps.at(0));
-    if (sound) {Mix_PlayMusic(gMusic,-1);}
+  //New Game setup goes here. Load map, set up player graphics and such.
+  if (sound) {
+    Mix_PlayMusic(gMusic, 1);
+    if (DEBUG == NONE) {SDL_Delay(3500);}
+    Mix_HaltMusic();
+    gMusic = Mix_LoadMUS("jack.mid");
+  }
+  gameState = pause;
+  nextMap = 1;
+  populateMapVector(&vectorMaps);
+  //populateObjectVector(&vectorObjects) will work the same way once I do that.
+  if (DEBUG == ALL) {std::cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";}
+  loadMap(vectorMaps.at(0));
+  if (sound) {Mix_PlayMusic(gMusic,-1);}
 }
 
 
@@ -446,50 +448,51 @@ void gameStart() {
 int main(int argc, char* argv[]) {
 
 
-    std::ofstream outFile ("version.txt",std::ofstream::trunc);
-    std::cout<< "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
-    std::cout<< __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
-    std::cout << "Build number: " << AutoVersion::BUILD << "\n";
-    outFile << "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
-    outFile << __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
-    outFile<< "Build number: " << AutoVersion::BUILD << "\n";
+  std::ofstream outFile ("version.txt",std::ofstream::trunc);
+  std::cout<< "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
+  std::cout<< __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
+  std::cout << "Build number: " << AutoVersion::BUILD << "\n";
+  outFile << "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
+  outFile << __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
+  outFile<< "Build number: " << AutoVersion::BUILD << "\n";
 
 
 
-    //Turns out that maybe SDL uses argc and argv[] for its own stuff, and sometimes breaks when it's messed up like this?
-    // Maybe not. Let's see.
-    if (argc == 2) {
-        if (std::string (argv[1]) == "--DEBUG-ALL") {
-            DEBUG = ALL;
-        } else if (std::string (argv[1]) == "--DEBUG-ERROR") {
-            DEBUG = ERROR;
-        } else {
-            DEBUG = NONE;
-        }
-    } else {
+  //Turns out that maybe SDL uses argc and argv[] for its own stuff, and sometimes breaks when it's messed up like this?
+  // Maybe not. Let's see.
+  if (argc >= 2) {
+    for (int i = 0; i < argc; i++) {
+      if (argv[i] == "--DEBUG_NONE") {
         DEBUG = NONE;
+      } else if (argv[i] == "--DEBUG_ERROR") {
+        DEBUG = ERROR;
+      } else if (argv[i] == "DEBUG_ALL") {
+        DEBUG = ALL;
+      }
     }
 
-    std::cout << "Debug level is: ";
-    switch (DEBUG) {
-    case NONE:
-        std::cout << "none.\n";
-        break;
-    case ERROR:
-        std::cout << "error messages only.\n";
-        break;
-    case ALL:
-        std::cout << "full debug info.\n";
-        break;
-    }
-    init();
-    bool quit = false;
-    SDL_Event e;
-    while (!quit) {
-        quit = event(e);
-        if (gameState == game) { loop();}
-        render();
-    }
-    exit();
-    return 0;
+  }
+
+  std::cout << "Debug level is: ";
+  switch (DEBUG) {
+  case NONE:
+    std::cout << "none.\n";
+    break;
+  case ERROR:
+    std::cout << "error messages only.\n";
+    break;
+  case ALL:
+    std::cout << "full debug info.\n";
+    break;
+  }
+  init();
+  bool quit = false;
+  SDL_Event e;
+  while (!quit) {
+    quit = event(e);
+    if (gameState == game) { loop();}
+    render();
+  }
+  exit();
+  return 0;
 }
