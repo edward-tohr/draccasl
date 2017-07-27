@@ -8,6 +8,10 @@
 #include "gameobject.h"
 #include "version.h"
 
+using std::vector;
+using std::cout;
+using std::string;
+
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
 
 enum gameState_t {
@@ -25,11 +29,11 @@ enum gameObject_t {
 
 gameState_t gameState = title;
 GameObject* Jack = new GameObject();
-std::vector<Map> vectorMaps;
-std::vector<GameObject> vectorObjects;
-std::vector<Tile> vectorTiles;
-std::vector<Tile> mapTiles;
-std::vector<SDL_Rect> vectorCollision;
+vector<Map> vectorMaps;
+vector<GameObject> vectorObjects;
+vector<Tile> vectorTiles;
+vector<Tile> mapTiles;
+vector<SDL_Rect> vectorCollision;
 Map curMap;
 bool sound = true;
 bool gravity = true;
@@ -47,36 +51,36 @@ void init() {
   //Setup phase
   sound = !DEBUG;
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-    if (DEBUG >= ERROR) {std::cout << "SDL init failed! " << SDL_GetError() << "\n";}
+    if (DEBUG >= ERROR) {cout << "SDL init failed! " << SDL_GetError() << "\n";}
   }
   if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-    if (DEBUG >= ERROR) {std::cout << "SDL_img init failed! " << SDL_GetError() << "\n";}
+    if (DEBUG >= ERROR) {cout << "SDL_img init failed! " << SDL_GetError() << "\n";}
   }
   if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-    if (DEBUG >= ERROR) {std::cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";}
+    if (DEBUG >= ERROR) {cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";}
   }
 
   //Load phase
 
   gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
   if (gWindow == NULL) {
-    if (DEBUG >= ERROR) {std::cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";}
+    if (DEBUG >= ERROR) {cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";}
   }
 
   jackSprite = IMG_Load("jack.png");
   if (!jackSprite) {
-    if (DEBUG >= ERROR) {std::cout << "we let go of jack!";}
+    if (DEBUG >= ERROR) {cout << "we let go of jack!";}
   }
 
   gSurface = IMG_Load("title.png");
   if (!gSurface) {
-    if (DEBUG >= ERROR) {std::cout << "failed to load title screen!";}
+    if (DEBUG >= ERROR) {cout << "failed to load title screen!";}
   }
 
   if (sound) {
     gMusic = Mix_LoadMUS("tocafuge.wav");
     if (gMusic == NULL) {
-      if (DEBUG >= ERROR) {std::cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";}
+      if (DEBUG >= ERROR) {cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";}
     }
   }
 
@@ -100,11 +104,11 @@ void init() {
   Jack->setType(jack);
   Jack->unkill();
   //SDL_SetColorKey(jackSprite,SDL_TRUE,SDL_MapRGB(jackSprite->format,0xFF,0x00,0xFF));
-  //std::cout << "Jack's color-keyed now.\n";
+  //cout << "Jack's color-keyed now.\n";
   //Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
   Jack->loadSprite("jack");
   if (DEBUG == ALL){
-      std::cout << "Jack's sprite is set.\n";
+      cout << "Jack's sprite is set.\n";
   }
 
   Jack -> setCollision(70,70,64,64);
@@ -159,14 +163,14 @@ bool event(SDL_Event e) {
             DEBUG = NONE;
             break;
           }
-          std::cout << "Debug level set to " << DEBUG << ".\n";
+          cout << "Debug level set to " << DEBUG << ".\n";
         }
         break;
 
       case SDLK_g:
         if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)) {
             gravity = !gravity;
-        std::cout << "gravity set to " << gravity << "\n";
+        cout << "gravity set to " << gravity << "\n";
             break;
         }
         break;
@@ -176,15 +180,15 @@ bool event(SDL_Event e) {
         if (DEBUG > NONE) {
           currentMap++;
           currentMap %= vectorMaps.size();
-          std::cout << "loading map " << currentMap << "...\n";
+          cout << "loading map " << currentMap << "...\n";
           loadMap(vectorMaps.at(currentMap));
         }
         break;
 
       case SDLK_HOME:
         if (DEBUG > NONE) {
-          std::cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
-          std::cout << Jack->getXPos() << " " << Jack->getYPos() << "\n";
+          cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
+          cout << Jack->getXPos() << " " << Jack->getYPos() << "\n";
         }
         break;
 
@@ -226,21 +230,21 @@ void loadMap(Map mapToLoad) {
   // We have a map taken from vectorMaps, taken from maps.map.
   // We need a surface/texture of the tileset.
   int tiles = mapToLoad.getTileset();
-  std::cout << "tiles = " << mapToLoad.getTileset() << "\n";
-  std::string tileName = "tileset_";
+  cout << "tiles = " << mapToLoad.getTileset() << "\n";
+  string tileName = "tileset_";
   tileName.append(std::to_string(tiles));
   tileName.append(".png");
-  std::cout << "tilename = " << tileName << "\n";
+  cout << "tilename = " << tileName << "\n";
   SDL_FreeSurface(tileSet);
-  std::cout <<"tileset is freed.\n";
+  cout <<"tileset is freed.\n";
   tileSet = IMG_Load(tileName.c_str());
 
 
   if (tileSet == NULL) {
-    if (DEBUG >= ERROR) {std::cout << "Error loading tileset " << tileName <<"!\n";}
+    if (DEBUG >= ERROR) {cout << "Error loading tileset " << tileName <<"!\n";}
   } else {
 
-    if (DEBUG == ALL) {std::cout << "Successfully loaded tileset " << tileName <<"!\n";}
+    if (DEBUG == ALL) {cout << "Successfully loaded tileset " << tileName <<"!\n";}
 
     tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 
@@ -257,14 +261,14 @@ void loadMap(Map mapToLoad) {
     currentMap = mapToLoad.getID();
     curMap = mapToLoad;
     mapTiles.clear();
-    std::vector<Tile> tempTiles = curMap.getTiles();
+    vector<Tile> tempTiles = curMap.getTiles();
     for (unsigned int i = 0; i < tempTiles.size(); i++){
       if (tempTiles.at(i).getID() != 1){
         mapTiles.push_back(tempTiles.at(i)); //mapTiles should now only contain non-air tiles.
       }
     }
-    if (DEBUG == ALL) {std::cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";}
-    // And now we have std::vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
+    if (DEBUG == ALL) {cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";}
+    // And now we have vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
   }
 }
 
@@ -279,7 +283,7 @@ void loop() {
     SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
     bool eraseTile = false;
     // get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
-    //if (DEBUG == ALL){std::cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
+    //if (DEBUG == ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
     for (unsigned int j = 0; j < mapTiles.size(); j++) {
       if (mapTiles.at(j).getID() != 1) {
         if (tempRect.x >= mapTiles.at(j).getXPos() && tempRect.x <= mapTiles.at(j).getXPos() + TILESIZE) {
@@ -438,7 +442,7 @@ void gameStart() {
   nextMap = 1;
   populateMapVector(&vectorMaps);
   //populateObjectVector(&vectorObjects) will work the same way once I do that.
-  if (DEBUG == ALL) {std::cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";}
+  if (DEBUG == ALL) {cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";}
   loadMap(vectorMaps.at(0));
   if (sound) {Mix_PlayMusic(gMusic,-1);}
 }
@@ -449,9 +453,9 @@ int main(int argc, char* argv[]) {
 
 
   std::ofstream outFile ("version.txt",std::ofstream::trunc);
-  std::cout<< "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
-  std::cout<< __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
-  std::cout << "Build number: " << AutoVersion::BUILD << "\n";
+  cout<< "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
+  cout<< __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
+  cout << "Build number: " << AutoVersion::BUILD << "\n";
   outFile << "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
   outFile << __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
   outFile<< "Build number: " << AutoVersion::BUILD << "\n";
@@ -462,27 +466,27 @@ int main(int argc, char* argv[]) {
   // Maybe not. Let's see.
   if (argc >= 2) {
     for (int i = 0; i < argc; i++) {
-      if (argv[i] == "--DEBUG_NONE") {
+      if (string(argv[i]) == "--DEBUG_NONE") {
         DEBUG = NONE;
-      } else if (argv[i] == "--DEBUG_ERROR") {
+      } else if (string(argv[i]) == "--DEBUG_ERROR") {
         DEBUG = ERROR;
-      } else if (argv[i] == "--DEBUG_ALL") {
+      } else if (string(argv[i]) == "--DEBUG_ALL") {
         DEBUG = ALL;
       }
     }
 
   }
 
-  std::cout << "Debug level is: ";
+  cout << "Debug level is: ";
   switch (DEBUG) {
   case NONE:
-    std::cout << "none.\n";
+    cout << "none.\n";
     break;
   case ERROR:
-    std::cout << "error messages only.\n";
+    cout << "error messages only.\n";
     break;
   case ALL:
-    std::cout << "full debug info.\n";
+    cout << "full debug info.\n";
     break;
   }
   init();

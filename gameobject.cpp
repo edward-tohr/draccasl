@@ -2,6 +2,9 @@
 //#include "math.h"
 //REMEMBER: When populatingObjectVector, take it in as a pointer (std::vector* objectVector).
 
+using std::cout;
+using std::string;
+
 
 void GameObject::render() {
 // Okay. Check if the object is within the bounds of the camera.
@@ -21,12 +24,12 @@ void GameObject::render() {
 
 }
 
-void GameObject::loadSprite(std::string name){
+void GameObject::loadSprite(string name){
   name.append(".png");
 SDL_Surface* tempTexture = IMG_Load(name.c_str());
 if (!tempTexture){
   if (DEBUG >= ERROR){
-    std::cout << "Couldn't load " << name << "!\n";
+    cout << "Couldn't load " << name << "!\n";
   }
 } else {
   SDL_SetColorKey(tempTexture,SDL_TRUE,SDL_MapRGB(tempTexture->format,0xFF,0x00,0xFF));
