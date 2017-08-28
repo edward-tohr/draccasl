@@ -87,16 +87,16 @@ void GameObject::beginUpdate() {
 
   //Really, there's no need to apply physics to floatmode.
   if (!state[SDL_SCANCODE_UP] && !state[SDL_SCANCODE_DOWN]) {
-   if (getYVel() > DRAG){
-    changeYVel(-DRAG);
-   }
+   //if (getYVel() > DRAG){
+   // changeYVel(-DRAG);
+   //}
    if (getYVel() < -DRAG) {
     changeYVel(DRAG);
    }
-   if (getYVel() <= DRAG && getYVel() > 0) {
-    setYVel(0);
+   //if (getYVel() <= DRAG && getYVel() > 0) {
+   // setYVel(0);
     //if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
-   }
+   //}
    if (getYVel() >= -DRAG && getYVel() < 0 ) {
     setYVel(0);
     //if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}

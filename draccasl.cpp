@@ -406,7 +406,7 @@ void loop() {
         miny--;
         vectorObjects.at(i).setYPos(miny);
         vectorObjects.at(i).setYVel(0);
-        gravity = false;
+        //gravity = false;
       } else if (vectorObjects.at(i).getYVel() < 0) { //If Y velocity is negative, object is moving upwards and should snap to bottom of terrain.
         int maxy = tempRect.y;
         for (unsigned int j = 0; j < vectorCollision.size(); j++) {
