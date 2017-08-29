@@ -49,15 +49,21 @@ DEBUG_T DEBUG = ALL;
 
 void init() {
   //Setup phase
-  sound = !DEBUG;
+  //sound = !DEBUG;
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
     if (DEBUG >= ERROR) {cout << "SDL init failed! " << SDL_GetError() << "\n";}
+  } else {
+    if (DEBUG >= ERROR) {cout << "SDL init succeeded!" << "\n";}
   }
   if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
     if (DEBUG >= ERROR) {cout << "SDL_img init failed! " << SDL_GetError() << "\n";}
+  } else {
+    if (DEBUG >= ERROR) {cout << "SDL_img init succeeded!" << "\n";}
   }
   if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
     if (DEBUG >= ERROR) {cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";}
+  } else {
+    if (DEBUG >= ERROR) {cout << "SDL_mixer init succeeded!" << "\n";}
   }
 
   //Load phase
@@ -453,26 +459,37 @@ int main(int argc, char* argv[]) {
 
 
   std::ofstream outFile ("version.txt",std::ofstream::trunc);
-  cout<< "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
-  cout<< __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
-  cout << "Build number: " << AutoVersion::BUILD << "\n";
-  outFile << "jack DANGER strong in: castle of the draculas\nBuild Date: " <<__DATE__<<" "<< __TIME__<<"\n";
-  outFile << __FILE__ <<" last modified: " __TIMESTAMP__ << "\n";
-  outFile<< "Build number: " << AutoVersion::BUILD << "\n";
+  
+  string fileOutput;
+  fileOutput  = "jack DANGER strong in: castle of the draculas\nBuild Date: " + __DATE__ + " " + __TIME__;
+  fileOutput += "\n" + __FILE__ + " last modified: " + __TIMESTAMP__;
+  fileOutput += "\nBuild Number: " + AutoVersion::BUILD + "\n";
+
+  cout << fileOutput;
+  
+  outFile << fileOutput;
 
 
 
   //Turns out that maybe SDL uses argc and argv[] for its own stuff, and sometimes breaks when it's messed up like this?
   // Maybe not. Let's see.
   if (argc >= 2) {
+    string argument;
     for (int i = 0; i < argc; i++) {
-      if (string(argv[i]) == "--DEBUG_NONE") {
+      argument = string(argv[i]);
+      if (argument == "--DEBUG-NONE" || argument == "-d") {
         DEBUG = NONE;
-      } else if (string(argv[i]) == "--DEBUG_ERROR") {
+      }
+      if (argument == "--DEBUG-ERROR" || argument == "-E") {
         DEBUG = ERROR;
-      } else if (string(argv[i]) == "--DEBUG_ALL") {
+      }
+      if (argument == "--DEBUG_ALL" || argument == "-D") {
         DEBUG = ALL;
       }
+      if (argument == "--NO-SOUND" || argument = "-s") {
+        sound = false;
+      }
+
     }
 
   }
