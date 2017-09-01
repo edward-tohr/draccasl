@@ -459,11 +459,12 @@ int main(int argc, char* argv[]) {
 
 
   std::ofstream outFile ("version.txt",std::ofstream::trunc);
+  std::stringstream fileOutput;
   
-  string fileOutput;
-  fileOutput  = "jack DANGER strong in: castle of the draculas\nBuild Date: " + __DATE__ + " " + __TIME__;
-  fileOutput += "\n" + __FILE__ + " last modified: " + __TIMESTAMP__;
-  fileOutput += "\nBuild Number: " + AutoVersion::BUILD + "\n";
+  //string fileOutput;
+  fileOutput  << "jack DANGER strong in: castle of the draculas\nBuild Date: " << __DATE__ << " " << __TIME__;
+  fileOutput << "\n" << __FILE__ << " last modified: " << __TIMESTAMP__;
+  fileOutput << "\nBuild Number: " << AutoVersion::BUILD << "\n";
 
   cout << fileOutput;
   
@@ -486,7 +487,7 @@ int main(int argc, char* argv[]) {
       if (argument == "--DEBUG_ALL" || argument == "-D") {
         DEBUG = ALL;
       }
-      if (argument == "--NO-SOUND" || argument = "-s") {
+      if (argument == "--NO-SOUND" || argument == "-s") {
         sound = false;
       }
 
