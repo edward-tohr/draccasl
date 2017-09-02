@@ -7,7 +7,7 @@ WIN_OBJ_NAME = draccasl.exe
 
 LINUX_COMPILER_FLAGS = -Wall -Wextra --std=c++11
 LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
-WIN_COMPILER_FLAGS = -w --std=c++11
+WIN_COMPILER_FLAGS = -Wall -Wextra --std=c++11
 WIN_LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 WIN_INCLUDE_PATHS = -IE:/draccasl/draccasl/dev/include/
 WIN_LIBRARY_PATHS = -LE:/draccasl/draccasl/dev/lib/
