@@ -459,13 +459,21 @@ int main(int argc, char* argv[]) {
 
 
   std::ofstream outFile ("version.txt",std::ofstream::trunc);
-  std::stringstream fileOutput;
-  
-  //string fileOutput;
-  fileOutput  << "jack DANGER strong in: castle of the draculas\nBuild Date: " << __DATE__ << " " << __TIME__;
-  fileOutput << "\n" << __FILE__ << " last modified: " << __TIMESTAMP__;
-  fileOutput << "\nBuild Number: " << AutoVersion::BUILD << "\n";
 
+  string fileOutput;
+  fileOutput  = "jack DANGER strong in: castle of the draculas\nBuild Date: ";
+  fileOutput += __DATE__; 
+  fileOutput += " ";
+  fileOutput += __TIME__;
+  fileOutput += "\n";
+  fileOutput += __FILE__; 
+  fileOutput += " last modified: "; 
+  fileOutput += __TIMESTAMP__;
+  fileOutput += "\nBuild Number: "; 
+  fileOutput += AutoVersion::BUILD; 
+  fileOutput += "\n";
+
+  
   cout << fileOutput;
   
   outFile << fileOutput;
