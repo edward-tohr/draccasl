@@ -14,7 +14,7 @@
 #include "cmath"
 #include "fstream"
 #include "constants.h"
-#include <SDL2/SDL.h>
+#include "sdl_files.h"
 
 extern DEBUG_T DEBUG;
 extern SDL_Renderer *gRenderer;

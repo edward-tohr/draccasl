@@ -1,8 +1,7 @@
 #ifndef __gameobject_h__
 #define __gameobject_h__
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "sdl_files.h"
 #include "constants.h"
 #include "iostream"
 #include "string"
