@@ -1,0 +1,15 @@
+what needs doing:
+
+01: make camera follow Jack in large rooms
+02: get jumping working
+03: ramps and such
+04: doors
+05: enemies
+06: attacks
+07: hazards
+08: doors/teleporters
+09: water/ice physics
+0A: animations
+0B: sketch out overall map
+0C: design bosses
+0D: music
