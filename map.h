@@ -24,116 +24,116 @@ extern const int TILESIZE;
 
 class Tile {
 
-private:
-    int id;             //The tiletype ID.
-    SDL_Rect tileRect; //Contains the size and location in pixels of the tile.
+ private:
+	int id;             //The tiletype ID.
+	SDL_Rect tileRect; //Contains the size and location in pixels of the tile.
 
-public:
-    void setRect(int x, int y);
-    void setID (int i);
-    SDL_Rect getRect();
-    int getXPos();
-    int getYPos();
-    void setXPos(int x);
-    void setYPos(int y);
-    int getID();
-    Tile();
+ public:
+	void setRect(int x, int y);
+	void setID (int i);
+	SDL_Rect getRect();
+	int getXPos();
+	int getYPos();
+	void setXPos(int x);
+	void setYPos(int y);
+	int getID();
+	Tile();
 };
 
 
 class Map {
-public:
-    struct entrances_t {
-        int prevMap;
-        int exitXPos;
-        int exitYPos;
-    };
-    struct events_t {
-        int eventID;
-        int eventXPos;
-        int eventYPos;
-    };
+ public:
+	struct entrances_t {
+		int prevMap;
+		int exitXPos;
+		int exitYPos;
+	};
+	struct events_t {
+		int eventID;
+		int eventXPos;
+		int eventYPos;
+	};
 
-private:
-    int width;
-    int height;
-    int tileset;
-    int id;
-    std::vector<entrances_t> entranceVector;
-    std::vector<Tile> tiles;
-    std::vector<events_t> eventsVector;
+ private:
+	int width;
+	int height;
+	int tileset;
+	int id;
+	std::vector<entrances_t> entranceVector;
+	std::vector<Tile> tiles;
+	std::vector<events_t> eventsVector;
 
-public:
+ public:
 
-    int getWidth() {
-        return width;
-    }
+	int getWidth() {
+		return width;
+	}
 
-    int getHeight() {
-        return height;
-    }
+	int getHeight() {
+		return height;
+	}
 
-    int getTileset() {
-        return this -> tileset;
-    }
+	int getTileset() {
+		return this -> tileset;
+	}
 
-    int getID() {
-        return id;
-    }
+	int getID() {
+		return id;
+	}
 
-    std::vector<entrances_t> getEntrances() {
-        return entranceVector;
-    }
+	std::vector<entrances_t> getEntrances() {
+		return entranceVector;
+	}
 
-    std::vector<Tile> getTiles() {
-        return tiles;
-    }
+	std::vector<Tile> getTiles() {
+		return tiles;
+	}
 
-    void addEntrance(int oldMap, int entrance_x, int entrance_y) {
-        entrances_t entrances;
-        entrances.prevMap = oldMap;
-        entrances.exitXPos = entrance_x;
-        entrances.exitYPos = entrance_y;
-        entranceVector.push_back(entrances);
-    }
+	void addEntrance(int oldMap, int entrance_x, int entrance_y) {
+		entrances_t entrances;
+		entrances.prevMap = oldMap;
+		entrances.exitXPos = entrance_x;
+		entrances.exitYPos = entrance_y;
+		entranceVector.push_back(entrances);
+	}
 
-    void addEvent(int event_id, int event_x, int event_y) {
-        events_t event;
-        event.eventID = event_id;
-        event.eventXPos = event_x;
-        event.eventYPos = event_y;
-        eventsVector.push_back(event);
-    }
+	void addEvent(int event_id, int event_x, int event_y) {
+		events_t event;
+		event.eventID = event_id;
+		event.eventXPos = event_x;
+		event.eventYPos = event_y;
+		eventsVector.push_back(event);
+	}
 
-    void clearMap() {
-        eventsVector.clear();
-        entranceVector.clear();
-        tiles.clear();
-    }
+	void clearMap() {
+		eventsVector.clear();
+		entranceVector.clear();
+		tiles.clear();
+	}
 
-    void setWidth(int w) {
-        width = w;
-    }
+	void setWidth(int w) {
+		width = w;
+	}
 
-    void setHeight(int h) {
-        height = h;
-    }
-    void setTileset(int t) {
-        tileset = t;
-    }
-    void setID(int i) {
-        id = i;
-    }
+	void setHeight(int h) {
+		height = h;
+	}
+	void setTileset(int t) {
+		tileset = t;
+	}
+	void setID(int i) {
+		id = i;
+	}
 
-    void addTile(Tile t) {
-        tiles.push_back(t);
-    }
+	void addTile(Tile t) {
+		tiles.push_back(t);
+	}
 
-    Tile getLatestTile() {
-        return tiles.back();
-    }
+	Tile getLatestTile() {
+		return tiles.back();
+	}
 
-    void render(std::vector<Tile>* tileVector, int tileWidth);
+	void render(std::vector<Tile>* tileVector, int tileWidth);
 
 };	// prototypes to be used later
 

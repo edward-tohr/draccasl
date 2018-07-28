@@ -7,9 +7,9 @@
 
 
 enum DEBUG_T {
-    NONE,
-    ERROR,
-    ALL
+	NONE,
+	ERROR,
+	ALL
 };
 
 extern DEBUG_T DEBUG;

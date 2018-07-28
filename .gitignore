@@ -9,4 +9,6 @@ tags
 *.sublime*
 draccasl
 *.exe
-
+*.cbp
+*.depend
+build/
