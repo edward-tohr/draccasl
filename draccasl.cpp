@@ -304,6 +304,32 @@ void loadMap(Map mapToLoad) {
 	}
 }
 
+void checkCollision(gameObject* actor, std::vector<Tile> collidingTerrain) {
+  // takes pointer to gameObject and a vector of tiles which are overlapping in some way with the specified object.
+  // object is a pointer so we can modify the original object.
+  // let's suss out the proper logic here...
+  // first off, take object's position, move it down and see if it's in the floor. Y velocity + gravity? gravity + floor-snap factor? All three? gravity + max(floor-snap,y velocity)?
+  // if yes, cancel y velocity, snap object to the level of the floor, and set the midair flag to false.
+  // Otherwise, set midair flag to true.
+
+  // Next, we check the midair flag, and handle y velocity if true. add gravity to y vel, check for collisions, etc.
+  
+  // Next, we handle x velocity. If collider collides, check upwards and downwards by floor-snap for a floor. If yes, get floor height, and maybe calculate x distance via Pythagoras?
+  // If collider does not collide, then good.
+
+  // Do floor check again? Not sure if necessary/useful.
+
+
+  // Finally, move object to appropriate coordinate of each collider.
+  
+  //TODO: move collision checks here.
+
+  SDL_Rect tempRect = new SDL_Rect();
+  SDL_Rect actorCollider = new SDL_Rect();
+}
+  
+
+
 void loop() {
 
 	for (unsigned int i = 0; i < vectorObjects.size(); i++) {
@@ -367,6 +393,8 @@ void loop() {
 		// if vector is empty, great.
 		if (!vectorCollision.empty()) {
 			// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
+      // checkCollision(vectorObjects.at(i),vectorCollision);
+      // do I need vectorObjects.at(i)&? maybe.
 			if (vectorObjects.at(i).getXVel() > 0) {
 				int minx = tempRect.x + tempRect.w;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
