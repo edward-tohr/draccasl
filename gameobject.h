@@ -165,10 +165,12 @@ class GameObject {
 
 	void kill() {
 		dead = true;
+    health = 0;
 	}
 
 	void unkill() {
 		dead = false;
+    health = maxhealth;
 	}
 
 	/*void setCollision(SDL_Rect *collider){
