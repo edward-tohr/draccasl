@@ -10,6 +10,7 @@ WIN_OBJ_NAME = draccasl.exe
 
 LINUX_COMPILER_FLAGS = -Wall -Wextra --std=c++11
 LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+LINUX_DEBUG_FLAGS = -g 
 
 WIN_COMPILER_FLAGS = -Wall -Wextra --std=c++11
 WIN_LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
@@ -51,6 +52,9 @@ map.o: map.cpp map.h constants.h sdl_files.h
 
 final : $(OBJS)
 	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) -O3 $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
+
+debug : $(OBJS)
+	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_DEBUG_FLAGS) $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
 clean: 
 	-rm *.o *.exe draccasl
