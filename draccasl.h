@@ -51,6 +51,8 @@ void render();
 
 void loop();
 
+void checkCollision(gameObject* actor, vector<Tile> terrain);
+
 void gameStart();
 
 void loadMap(Map currentMap);
