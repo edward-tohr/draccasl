@@ -304,7 +304,7 @@ void loadMap(Map mapToLoad) {
 	}
 }
 
-void checkCollision(gameObject* actor, std::vector<Tile> collidingTerrain) {
+void checkCollision(GameObject* actor, std::vector<Tile> collidingTerrain) {
   // takes pointer to gameObject and a vector of tiles which are overlapping in some way with the specified object.
   // object is a pointer so we can modify the original object.
   // let's suss out the proper logic here...
@@ -324,8 +324,8 @@ void checkCollision(gameObject* actor, std::vector<Tile> collidingTerrain) {
   
   //TODO: move collision checks here.
 
-  SDL_Rect tempRect = new SDL_Rect();
-  SDL_Rect actorCollider = new SDL_Rect();
+  SDL_Rect *tempRect = new SDL_Rect();
+  SDL_Rect *actorCollider = new SDL_Rect();
 }
   
 
