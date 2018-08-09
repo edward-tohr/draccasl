@@ -346,8 +346,8 @@ void loop() {
 		// move collisionBox in the X direction according to velocity.
 		SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
     signed int rectX = tempRect.x;
-    signed int rectY = tempRect.y;
     signed int rectW = tempRect.w;
+    signed int rectY = tempRect.y;
     signed int rectH = tempRect.h;
 
 		bool eraseTile = false;
@@ -358,7 +358,7 @@ void loop() {
 				if (rectX >= mapTiles.at(j).getXPos() && rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				if (rectX + tempRect.w >= mapTiles.at(j).getXPos() && rectX + rectW <= mapTiles.at(j).getXPos() + TILESIZE) {
+				if (rectX + rectW >= mapTiles.at(j).getXPos() && rectX + rectW <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
 				for (int k = 0; k <= rectW; k += TILESIZE) {
@@ -376,16 +376,16 @@ void loop() {
 
 		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
-			for (signed int k = 0; k < tempRect.h; k += TILESIZE) {
-				if (tempRect.y >= vectorCollision.at(j).y && tempRect.y <= vectorCollision.at(j).y + TILESIZE) {
+			for (signed int k = 0; k < rectH; k += TILESIZE) {
+				if (rectY >= vectorCollision.at(j).y && rectY <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (tempRect.y + tempRect.h >= vectorCollision.at(j).y && tempRect.y + tempRect.h <= vectorCollision.at(j).y + TILESIZE) {
+				} else if (rectY + rectH >= vectorCollision.at(j).y && rectY + rectH <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (tempRect.y + k >= vectorCollision.at(j).y && tempRect.y + k <= vectorCollision.at(j).y + TILESIZE) {
+				} else if (rectY + k >= vectorCollision.at(j).y && rectY + k <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 				}
@@ -404,7 +404,7 @@ void loop() {
       // checkCollision(vectorObjects.at(i),vectorCollision);
       // do I need vectorObjects.at(i)&? maybe.
 			if (vectorObjects.at(i).getXVel() > 0) {
-				int minx = tempRect.x + tempRect.w;
+				int minx = rectX + rectW;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 					minx = std::min(minx,vectorCollision.at(j).x);
 				}
@@ -412,7 +412,7 @@ void loop() {
 				vectorObjects.at(i).setXPos(minx-vectorObjects.at(i).getWidth());
 				vectorObjects.at(i).setXVel(0);
 			} else if (vectorObjects.at(i).getXVel() < 0) {
-				int maxx = tempRect.x;
+				int maxx = rectX;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 					maxx = std::max(maxx,vectorCollision.at(j).x + TILESIZE);
 				}
@@ -424,16 +424,21 @@ void loop() {
 
 		vectorCollision.clear();
 		tempRect = vectorObjects.at(i).moveCollider(0,vectorObjects.at(i).getYVel());
+    rectY = tempRect.y;
+    rectX = tempRect.x;
+    rectW = tempRect.w;
+    rectH = tempRect.h;
+    
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
 			if (mapTiles.at(j).getID() != 1) {
-				if (tempRect.y >= mapTiles.at(j).getYPos() && tempRect.y <= mapTiles.at(j).getYPos() + TILESIZE) {
+				if (rectY >= mapTiles.at(j).getYPos() && rectY <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				if (tempRect.y + tempRect.h >= mapTiles.at(j).getYPos()&& tempRect.y + tempRect.h <= mapTiles.at(j).getYPos() + TILESIZE) {
+				if (rectY + rectH >= mapTiles.at(j).getYPos()&& rectY + rectH <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				for (signed int k = 0; k <= tempRect.h; k += TILESIZE) {
-					if (tempRect.y + k >= mapTiles.at(j).getYPos() && tempRect.y + k <= mapTiles.at(j).getYPos() + TILESIZE) {
+				for (signed int k = 0; k <= rectH; k += TILESIZE) {
+					if (rectY + k >= mapTiles.at(j).getYPos() && rectY + k <= mapTiles.at(j).getYPos() + TILESIZE) {
 						vectorCollision.push_back(mapTiles.at(j).getRect());
 					}
 				}
@@ -444,15 +449,15 @@ void loop() {
 		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
 			for (signed int k = 0; k <= tempRect.w; k += TILESIZE) {
-				if (tempRect.x >= vectorCollision.at(j).x && tempRect.x <= vectorCollision.at(j).x + TILESIZE) {
+				if (rectX >= vectorCollision.at(j).x && rectX <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (tempRect.x + tempRect.w >= vectorCollision.at(j).x && tempRect.x + tempRect.w <= vectorCollision.at(j).x + TILESIZE) {
+				} else if (rectX + rectW >= vectorCollision.at(j).x && rectX + rectW <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (tempRect.x + k >= vectorCollision.at(j).x && tempRect.x + k <= vectorCollision.at(j).x + TILESIZE) {
+				} else if (rectX + k >= vectorCollision.at(j).x && rectX + k <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 				}
@@ -467,7 +472,7 @@ void loop() {
 		if(!vectorCollision.empty()) {
 
 			if (vectorObjects.at(i).getYVel() > 0) { // If Y velocity is positive, object is moving downwards and should snap to top of terrain minus object's height.
-				int miny = tempRect.y + tempRect.h; // get position of object's feet
+				int miny = rectY + rectH; // get position of object's feet
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 					miny = std::min(miny,vectorCollision.at(j).y - vectorObjects.at(i).getHeight()); //Set YPos equal to whichever is higher, the object's feet, or top of terrain.
 				}
@@ -476,7 +481,7 @@ void loop() {
 				vectorObjects.at(i).setYVel(0);
 				//gravity = false;
 			} else if (vectorObjects.at(i).getYVel() < 0) { //If Y velocity is negative, object is moving upwards and should snap to bottom of terrain.
-				int maxy = tempRect.y;
+				int maxy = rectY;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 					maxy = std::max(maxy, vectorCollision.at(j).y + TILESIZE);
 				}
