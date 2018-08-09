@@ -343,7 +343,7 @@ void checkCollision(GameObject* actor, std::vector<Tile> collidingTerrain) {
   // of those tiles, only keep ones where tile Y is between actor Y + actor height + actor y vel and actor Y + actor height + FLOOR_SNAP + actor y vel
   // If there's a tile left, snap actor y to tile Y + actor height and disable midair flag.
   // else, set midair flag.
-  
+
 }
   
 

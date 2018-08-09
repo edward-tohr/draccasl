@@ -52,7 +52,6 @@ bool event(SDL_Event e);
 void render();
 
 void loop();
-
 void checkCollision(GameObject* actor, std::vector<Tile> terrain);
 
 void gameStart();
