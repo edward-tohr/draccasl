@@ -28,7 +28,7 @@ class GameObject {
 	bool dead;
 	float x_vel;
 	float y_vel;
-	bool jump = false;
+	bool midair = false; 
 	float gravMult = 1.0;
 
 	SDL_Rect collisionBox;
@@ -61,10 +61,6 @@ class GameObject {
 		return y_vel;
 	}
 
-	bool canJump() {
-		return jump;
-	}
-
 	int getType() {
 		return type;
 	}
@@ -92,6 +88,10 @@ class GameObject {
 	bool isDead() {
 		return dead;
 	}
+
+  bool isMidair() {
+    return midair;
+  }
 
 	SDL_Rect getCollision() {
 		return collisionBox;
@@ -121,9 +121,14 @@ class GameObject {
 		y_vel = y;
 	}
 
-	void setJump(bool j) {
-		jump = j;
-	}
+  void setMidair() {
+    midair = true;
+  }
+
+  void clearMidair() {
+    midair = false;
+  }
+
 
 	void setType(int t) {
 		type = t;

@@ -39,7 +39,7 @@ bool sound = true;
 bool gravity = true;
 
 
-DEBUG_T DEBUG = ALL;
+DEBUG_T DEBUG = DEBUG_ALL;
 
 
 // SDL requires int main(int argc char* argv[]). Remember that.
@@ -51,29 +51,32 @@ void init() {
 	//Setup phase
 	//sound = !DEBUG;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL init failed! " << SDL_GetError() << "\n";
+      exit();
 		}
 	} else {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL init succeeded!" << "\n";
 		}
 	}
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_img init failed! " << SDL_GetError() << "\n";
+      exit();
 		}
 	} else {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_img init succeeded!" << "\n";
 		}
 	}
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
+      exit();
 		}
 	} else {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_mixer init succeeded!" << "\n";
 		}
 	}
@@ -82,30 +85,34 @@ void init() {
 
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
+      exit();
 		}
 	}
 
 	jackSprite = IMG_Load("jack.png");
 	if (!jackSprite) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "we let go of jack!";
+      exit();
 		}
 	}
 
 	gSurface = IMG_Load("title.png");
 	if (!gSurface) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "failed to load title screen!";
+      exit();
 		}
 	}
 
 	if (sound) {
 		gMusic = Mix_LoadMUS("tocafuge.wav");
 		if (gMusic == NULL) {
-			if (DEBUG >= ERROR) {
+			if (DEBUG >= DEBUG_ERROR) {
 				cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
+        exit();
 			}
 		}
 	}
@@ -133,7 +140,7 @@ void init() {
 	//cout << "Jack's color-keyed now.\n";
 	//Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	Jack->loadSprite("jack");
-	if (DEBUG == ALL) {
+	if (DEBUG == DEBUG_ALL) {
 		cout << "Jack's sprite is set.\n";
 	}
 
@@ -179,14 +186,14 @@ bool event(SDL_Event e) {
 				case SDLK_d:
 					if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)) {
 						switch (DEBUG) {
-							case NONE:
-								DEBUG = ERROR;
+							case DEBUG_NONE:
+								DEBUG = DEBUG_ERROR;
 								break;
-							case ERROR:
-								DEBUG = ALL;
+							case DEBUG_ERROR:
+								DEBUG = DEBUG_ALL;
 								break;
-							case ALL:
-								DEBUG = NONE;
+							case DEBUG_ALL:
+								DEBUG = DEBUG_NONE;
 								break;
 						}
 						cout << "Debug level set to " << DEBUG << ".\n";
@@ -203,7 +210,7 @@ bool event(SDL_Event e) {
 
 
 				case SDLK_BACKSLASH:
-					if (DEBUG > NONE) {
+					if (DEBUG > DEBUG_NONE) {
 						currentMap++;
 						currentMap %= vectorMaps.size();
 						cout << "loading map " << currentMap << "...\n";
@@ -212,14 +219,14 @@ bool event(SDL_Event e) {
 					break;
 
 				case SDLK_HOME:
-					if (DEBUG > NONE) {
+					if (DEBUG > DEBUG_NONE) {
 						cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
 						cout << Jack->getXPos() << " " << Jack->getYPos() << "\n";
 					}
 					break;
 
 				case SDLK_END:
-					if (DEBUG > NONE) {
+					if (DEBUG > DEBUG_NONE) {
 						vectorObjects.at(0).loadSprite("dracula");
 					}
 
@@ -236,7 +243,7 @@ void render() {
 	// clear the renderer.
 	if (gameState != title) { //If we're on the title screen, don't draw all this crap.
 		//Render terrain
-		vectorMaps.at(currentMap).Map::render(&vectorTiles, tileSet->w /TILESIZE);
+		vectorMaps.at(currentMap).Map::render(&vectorTiles);
 		//Render Objects
 		//Jack->render();
 		for (unsigned int i = 0; i < vectorObjects.size(); i++) {
@@ -267,12 +274,12 @@ void loadMap(Map mapToLoad) {
 
 
 	if (tileSet == NULL) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "Error loading tileset " << tileName <<"!\n";
 		}
 	} else {
 
-		if (DEBUG == ALL) {
+		if (DEBUG == DEBUG_ALL) {
 			cout << "Successfully loaded tileset " << tileName <<"!\n";
 		}
 
@@ -297,7 +304,7 @@ void loadMap(Map mapToLoad) {
 				mapTiles.push_back(tempTiles.at(i)); //mapTiles should now only contain non-air tiles.
 			}
 		}
-		if (DEBUG == ALL) {
+		if (DEBUG == DEBUG_ALL) {
 			cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";
 		}
 		// And now we have vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
@@ -317,15 +324,26 @@ void checkCollision(GameObject* actor, std::vector<Tile> collidingTerrain) {
   // Next, we handle x velocity. If collider collides, check upwards and downwards by floor-snap for a floor. If yes, get floor height, and maybe calculate x distance via Pythagoras?
   // If collider does not collide, then good.
 
-  // Do floor check again? Not sure if necessary/useful.
+  // Do floor check again? Or skip the first one and only do it here?
 
 
   // Finally, move object to appropriate coordinate of each collider.
   
   //TODO: move collision checks here.
 
-  SDL_Rect *tempRect = new SDL_Rect();
-  SDL_Rect *actorCollider = new SDL_Rect();
+  SDL_Rect* tempRect = new SDL_Rect();
+  SDL_Rect* actorCollider = new SDL_Rect();
+  tempRect = actorCollider;
+  tempRect->x += 1;
+  int butts = actor->getID();
+  butts++;
+  collidingTerrain.clear();
+
+  // take collidingTerrain, grab only tiles below character (where tile X is between actor X and actor X - TILEWIDTH)
+  // of those tiles, only keep ones where tile Y is between actor Y + actor height + actor y vel and actor Y + actor height + FLOOR_SNAP + actor y vel
+  // If there's a tile left, snap actor y to tile Y + actor height and disable midair flag.
+  // else, set midair flag.
+
 }
   
 
@@ -339,19 +357,24 @@ void loop() {
 		// let's see, let's see......
 		// move collisionBox in the X direction according to velocity.
 		SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
+    signed int rectX = tempRect.x;
+    signed int rectW = tempRect.w;
+    signed int rectY = tempRect.y;
+    signed int rectH = tempRect.h;
+
 		bool eraseTile = false;
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
-		//if (DEBUG == ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
+		//if (DEBUG == DEBUG_ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
 			if (mapTiles.at(j).getID() != 1) {
-				if (tempRect.x >= mapTiles.at(j).getXPos() && tempRect.x <= mapTiles.at(j).getXPos() + TILESIZE) {
+				if (rectX >= mapTiles.at(j).getXPos() && rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				if (tempRect.x + tempRect.w >= mapTiles.at(j).getXPos() && tempRect.x + tempRect.w <= mapTiles.at(j).getXPos() + TILESIZE) {
+				if (rectX + rectW >= mapTiles.at(j).getXPos() && rectX + rectW <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE) {
-					if (tempRect.x + k >= mapTiles.at(j).getXPos() && tempRect.x + k <= mapTiles.at(j).getXPos() + TILESIZE) {
+				for (int k = 0; k <= rectW; k += TILESIZE) {
+					if (rectX + k >= mapTiles.at(j).getXPos() && rectX + k <= mapTiles.at(j).getXPos() + TILESIZE) {
 						vectorCollision.push_back(mapTiles.at(j).getRect());
 					}
 				}
@@ -365,16 +388,16 @@ void loop() {
 
 		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
-			for (unsigned int k = 0; k < tempRect.h; k += TILESIZE) {
-				if (tempRect.y >= vectorCollision.at(j).y && tempRect.y <= vectorCollision.at(j).y + TILESIZE) {
+			for (signed int k = 0; k < rectH; k += TILESIZE) {
+				if (rectY >= vectorCollision.at(j).y && rectY <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (tempRect.y + tempRect.h >= vectorCollision.at(j).y && tempRect.y + tempRect.h <= vectorCollision.at(j).y + TILESIZE) {
+				} else if (rectY + rectH >= vectorCollision.at(j).y && rectY + rectH <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (tempRect.y + k >= vectorCollision.at(j).y && tempRect.y + k <= vectorCollision.at(j).y + TILESIZE) {
+				} else if (rectY + k >= vectorCollision.at(j).y && rectY + k <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 				}
@@ -387,16 +410,13 @@ void loop() {
 		}
 
 
-
-
-
 		// if vector is empty, great.
 		if (!vectorCollision.empty()) {
 			// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
       // checkCollision(vectorObjects.at(i),vectorCollision);
       // do I need vectorObjects.at(i)&? maybe.
 			if (vectorObjects.at(i).getXVel() > 0) {
-				int minx = tempRect.x + tempRect.w;
+				int minx = rectX + rectW;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 					minx = std::min(minx,vectorCollision.at(j).x);
 				}
@@ -404,7 +424,7 @@ void loop() {
 				vectorObjects.at(i).setXPos(minx-vectorObjects.at(i).getWidth());
 				vectorObjects.at(i).setXVel(0);
 			} else if (vectorObjects.at(i).getXVel() < 0) {
-				int maxx = tempRect.x;
+				int maxx = rectX;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 					maxx = std::max(maxx,vectorCollision.at(j).x + TILESIZE);
 				}
@@ -416,16 +436,21 @@ void loop() {
 
 		vectorCollision.clear();
 		tempRect = vectorObjects.at(i).moveCollider(0,vectorObjects.at(i).getYVel());
+    rectY = tempRect.y;
+    rectX = tempRect.x;
+    rectW = tempRect.w;
+    rectH = tempRect.h;
+    
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
 			if (mapTiles.at(j).getID() != 1) {
-				if (tempRect.y >= mapTiles.at(j).getYPos() && tempRect.y <= mapTiles.at(j).getYPos() + TILESIZE) {
+				if (rectY >= mapTiles.at(j).getYPos() && rectY <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				if (tempRect.y + tempRect.h >= mapTiles.at(j).getYPos()&& tempRect.y + tempRect.h <= mapTiles.at(j).getYPos() + TILESIZE) {
+				if (rectY + rectH >= mapTiles.at(j).getYPos()&& rectY + rectH <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				for (unsigned int k = 0; k <= tempRect.h; k += TILESIZE) {
-					if (tempRect.y + k >= mapTiles.at(j).getYPos() && tempRect.y + k <= mapTiles.at(j).getYPos() + TILESIZE) {
+				for (signed int k = 0; k <= rectH; k += TILESIZE) {
+					if (rectY + k >= mapTiles.at(j).getYPos() && rectY + k <= mapTiles.at(j).getYPos() + TILESIZE) {
 						vectorCollision.push_back(mapTiles.at(j).getRect());
 					}
 				}
@@ -435,16 +460,16 @@ void loop() {
 
 		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
-			for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE) {
-				if (tempRect.x >= vectorCollision.at(j).x && tempRect.x <= vectorCollision.at(j).x + TILESIZE) {
+			for (signed int k = 0; k <= tempRect.w; k += TILESIZE) {
+				if (rectX >= vectorCollision.at(j).x && rectX <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (tempRect.x + tempRect.w >= vectorCollision.at(j).x && tempRect.x + tempRect.w <= vectorCollision.at(j).x + TILESIZE) {
+				} else if (rectX + rectW >= vectorCollision.at(j).x && rectX + rectW <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (tempRect.x + k >= vectorCollision.at(j).x && tempRect.x + k <= vectorCollision.at(j).x + TILESIZE) {
+				} else if (rectX + k >= vectorCollision.at(j).x && rectX + k <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 				}
@@ -459,7 +484,7 @@ void loop() {
 		if(!vectorCollision.empty()) {
 
 			if (vectorObjects.at(i).getYVel() > 0) { // If Y velocity is positive, object is moving downwards and should snap to top of terrain minus object's height.
-				int miny = tempRect.y + tempRect.h; // get position of object's feet
+				int miny = rectY + rectH; // get position of object's feet
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 					miny = std::min(miny,vectorCollision.at(j).y - vectorObjects.at(i).getHeight()); //Set YPos equal to whichever is higher, the object's feet, or top of terrain.
 				}
@@ -468,7 +493,7 @@ void loop() {
 				vectorObjects.at(i).setYVel(0);
 				//gravity = false;
 			} else if (vectorObjects.at(i).getYVel() < 0) { //If Y velocity is negative, object is moving upwards and should snap to bottom of terrain.
-				int maxy = tempRect.y;
+				int maxy = rectY;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 					maxy = std::max(maxy, vectorCollision.at(j).y + TILESIZE);
 				}
@@ -494,7 +519,7 @@ void gameStart() {
 	//New Game setup goes here. Load map, set up player graphics and such.
 	if (sound) {
 		Mix_PlayMusic(gMusic, 1);
-		if (DEBUG == NONE) {
+		if (DEBUG == DEBUG_NONE) {
 			SDL_Delay(3500);
 		}
 		Mix_HaltMusic();
@@ -504,7 +529,7 @@ void gameStart() {
 	nextMap = 1;
 	populateMapVector(&vectorMaps);
 	//populateObjectVector(&vectorObjects) will work the same way once I do that.
-	if (DEBUG == ALL) {
+	if (DEBUG == DEBUG_ALL) {
 		cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";
 	}
 	loadMap(vectorMaps.at(0));
@@ -547,17 +572,24 @@ int main(int argc, char* argv[]) {
 		for (int i = 0; i < argc; i++) {
 			argument = string(argv[i]);
 			if (argument == "--DEBUG-NONE" || argument == "-d") {
-				DEBUG = NONE;
+				DEBUG = DEBUG_NONE;
 			}
 			if (argument == "--DEBUG-ERROR" || argument == "-E") {
-				DEBUG = ERROR;
+				DEBUG = DEBUG_ERROR;
 			}
 			if (argument == "--DEBUG_ALL" || argument == "-D") {
-				DEBUG = ALL;
+				DEBUG = DEBUG_ALL;
 			}
 			if (argument == "--NO-SOUND" || argument == "-s") {
 				sound = false;
 			}
+      if (argument == "--help" || argument == "-h") {
+        std::cout << "jack DANGER strong in: Castle of the Draculas\n" << \
+                     "Debug flags: --DEBUG-NONE, --DEBUG-ERROR, --DEBUG_ALL\n" << \
+                     "Sound: --NO-SOUND\n" << \
+                     "Help: --help\n";
+        exit();
+      }
 
 		}
 
@@ -565,13 +597,13 @@ int main(int argc, char* argv[]) {
 
 	cout << "Debug level is: ";
 	switch (DEBUG) {
-		case NONE:
+		case DEBUG_NONE:
 			cout << "none.\n";
 			break;
-		case ERROR:
+		case DEBUG_ERROR:
 			cout << "error messages only.\n";
 			break;
-		case ALL:
+		case DEBUG_ALL:
 			cout << "full debug info.\n";
 			break;
 	}

@@ -28,7 +28,7 @@ void GameObject::loadSprite(string name) {
 	name.append(".png");
 	SDL_Surface* tempTexture = IMG_Load(name.c_str());
 	if (!tempTexture) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "Couldn't load " << name << "!\n";
 		}
 	} else {
@@ -75,11 +75,11 @@ void GameObject::beginUpdate() {
 		}
 		if (getXVel() <= DRAG && getXVel() > 0) {
 			setXVel(0);
-			//if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
+			//if (DEBUG == DEGUG_ALL){std::cout << "Jack's XVel is zeroed.\n";}
 		}
 		if (getXVel() >= -DRAG && getXVel() < 0) {
 			setXVel(0);
-			//if (DEBUG == ALL){std::cout << "Jack's XVel is zeroed.\n";}
+			//if (DEBUG == DEGUG_ALL){std::cout << "Jack's XVel is zeroed.\n";}
 		}
 
 	}
@@ -95,11 +95,11 @@ void GameObject::beginUpdate() {
 		}
 		//if (getYVel() <= DRAG && getYVel() > 0) {
 		// setYVel(0);
-		//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
+		//if (DEBUG == DEGUG_ALL){std::cout << "Jack's YVel is zeroed.\n";}
 		//}
 		if (getYVel() >= -DRAG && getYVel() < 0 ) {
 			setYVel(0);
-			//if (DEBUG == ALL){std::cout << "Jack's YVel is zeroed.\n";}
+			//if (DEBUG == DEGUG_ALL){std::cout << "Jack's YVel is zeroed.\n";}
 		}
 
 

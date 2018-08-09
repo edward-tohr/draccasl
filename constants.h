@@ -7,9 +7,17 @@
 
 
 enum DEBUG_T {
-	NONE,
-	ERROR,
-	ALL
+	DEBUG_NONE,
+	DEBUG_ERROR,
+	DEBUG_ALL
+};
+
+enum TILE_T { // Tile types.
+  TILE_NONE,       // No collision..
+  TILE_FLOOR,      // Regular floor.
+  TILE_DAMAGE,     // Damages on touch (spikes, etc.)
+  TILE_DEATH,      // Insta-kill (lava, bottomless pit, etc.)
+  TILE_ICE         // Slippery Floor
 };
 
 extern DEBUG_T DEBUG;
