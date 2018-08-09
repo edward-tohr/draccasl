@@ -317,15 +317,21 @@ void checkCollision(gameObject* actor, std::vector<Tile> collidingTerrain) {
   // Next, we handle x velocity. If collider collides, check upwards and downwards by floor-snap for a floor. If yes, get floor height, and maybe calculate x distance via Pythagoras?
   // If collider does not collide, then good.
 
-  // Do floor check again? Not sure if necessary/useful.
+  // Do floor check again? Or skip the first one and only do it here?
 
 
   // Finally, move object to appropriate coordinate of each collider.
   
   //TODO: move collision checks here.
 
-  SDL_Rect tempRect = new SDL_Rect();
-  SDL_Rect actorCollider = new SDL_Rect();
+  SDL_Rect* tempRect = new SDL_Rect();
+  SDL_Rect* actorCollider = new SDL_Rect();
+
+  // take collidingTerrain, grab only tiles below character (where tile X is between actor X and actor X - TILEWIDTH)
+  // of those tiles, only keep ones where tile Y is between actor Y + actor height + actor y vel and actor Y + actor height + FLOOR_SNAP + actor y vel
+  // If there's a tile left, snap actor y to tile Y + actor height and disable midair flag.
+  // else, set midair flag.
+  
 }
   
 
@@ -339,19 +345,24 @@ void loop() {
 		// let's see, let's see......
 		// move collisionBox in the X direction according to velocity.
 		SDL_Rect tempRect = vectorObjects.at(i).moveCollider(vectorObjects.at(i).getXVel(),0);
+    signed int rectX = tempRect.x;
+    signed int rectY = tempRect.y;
+    signed int rectW = tempRect.w;
+    signed int rectH = tempRect.h;
+
 		bool eraseTile = false;
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
 		//if (DEBUG == ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
 			if (mapTiles.at(j).getID() != 1) {
-				if (tempRect.x >= mapTiles.at(j).getXPos() && tempRect.x <= mapTiles.at(j).getXPos() + TILESIZE) {
+				if (rectX >= mapTiles.at(j).getXPos() && rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				if (tempRect.x + tempRect.w >= mapTiles.at(j).getXPos() && tempRect.x + tempRect.w <= mapTiles.at(j).getXPos() + TILESIZE) {
+				if (rectX + tempRect.w >= mapTiles.at(j).getXPos() && rectX + rectW <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE) {
-					if (tempRect.x + k >= mapTiles.at(j).getXPos() && tempRect.x + k <= mapTiles.at(j).getXPos() + TILESIZE) {
+				for (int k = 0; k <= rectW; k += TILESIZE) {
+					if (rectX + k >= mapTiles.at(j).getXPos() && rectX + k <= mapTiles.at(j).getXPos() + TILESIZE) {
 						vectorCollision.push_back(mapTiles.at(j).getRect());
 					}
 				}
@@ -365,7 +376,7 @@ void loop() {
 
 		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
-			for (unsigned int k = 0; k < tempRect.h; k += TILESIZE) {
+			for (signed int k = 0; k < tempRect.h; k += TILESIZE) {
 				if (tempRect.y >= vectorCollision.at(j).y && tempRect.y <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
@@ -385,9 +396,6 @@ void loop() {
 
 			}
 		}
-
-
-
 
 
 		// if vector is empty, great.
@@ -424,7 +432,7 @@ void loop() {
 				if (tempRect.y + tempRect.h >= mapTiles.at(j).getYPos()&& tempRect.y + tempRect.h <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				for (unsigned int k = 0; k <= tempRect.h; k += TILESIZE) {
+				for (signed int k = 0; k <= tempRect.h; k += TILESIZE) {
 					if (tempRect.y + k >= mapTiles.at(j).getYPos() && tempRect.y + k <= mapTiles.at(j).getYPos() + TILESIZE) {
 						vectorCollision.push_back(mapTiles.at(j).getRect());
 					}
@@ -435,7 +443,7 @@ void loop() {
 
 		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
-			for (unsigned int k = 0; k <= tempRect.w; k += TILESIZE) {
+			for (signed int k = 0; k <= tempRect.w; k += TILESIZE) {
 				if (tempRect.x >= vectorCollision.at(j).x && tempRect.x <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
