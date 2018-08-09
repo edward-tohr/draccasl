@@ -13,8 +13,9 @@ LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 LINUX_DEBUG_FLAGS = -g 
 
 WIN_COMPILER_FLAGS = -Wall -Wextra --std=c++11
-WIN_LINKER_FLAGS = -lSDL2main -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+WIN_LINKER_FLAGS = -lSDLmain -lSDL -llibSDL2_image.dll -llibSDL2_mixer.dll -llibSDL2_ttf.dll
 WIN_INCLUDE_PATHS = -IE:/draccasl/draccasl/dev/include/
+CROSS_INCLUDE_PATHS = -L./lib/x64/
 WIN_LIBRARY_PATHS = -LE:/draccasl/draccasl/dev/lib/
 WIN_DEFINE_FLAGS = -D WIN32
 LINUX_CROSS_COMPILE_FLAGS = -D __unix_cross_win__
@@ -36,25 +37,25 @@ obj: $(OBJS)
 	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_LINKER_FLAGS) -c $*.cpp
 
 cross-win: $(OBJS)
-	$(WIN_CC) $(OBJS) $(WIN_COMPILER_FLAGS) $(WIN_LINKER_FLAGS) $(WIN_INCLUDE_PATHS) $(WIN_LIBRARY_PATHS) $(LINUX_CROSS_COMPILE_FLAGS) -o $(WIN_OBJ_NAME)
+	$(WIN_CC) $(OBJS) $(LINUX_COMPILER_FLAGS) $(CROSS_INCLUDE_PATHS) $(WIN_LINKER_FLAGS) -o $(WIN_OBJ_NAME)
 
 draccasl.o: draccasl.cpp $(HEADERS)
-	$(CC) -c draccasl.cpp
+	$(CC) $(LINUX_COMPILER_FLAGS) -c draccasl.cpp
 
 .cpp.o:
 		$(CC) $(LINUX_COMPILER_FLAGS) -c *.cpp
 
 gameobject.o: gameobject.cpp gameobject.h constants.h sdl_files.h
-	$(CC) -c gameobject.cpp
+	$(CC) $(LINUX_COMPILER_FLAGS) -c gameobject.cpp
 
 map.o: map.cpp map.h constants.h sdl_files.h
-	$(CC) -c map.cpp
+	$(CC) $(LINUX_COMPILER_FLAGS) -c map.cpp
 
 final : $(OBJS)
 	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) -O3 $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
-debug : $(OBJS)
-	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_DEBUG_FLAGS) $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
+debug : 
+	$(CC) $(SRC_OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_DEBUG_FLAGS) $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
 clean: 
-	-rm *.o *.exe draccasl
+	-rm *.o draccasl

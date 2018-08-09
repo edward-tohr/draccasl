@@ -12,3 +12,7 @@ draccasl
 *.cbp
 *.depend
 build/
+lib/
+bin/
+*.gch
+*.layout

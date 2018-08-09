@@ -133,7 +133,7 @@ class Map {
 		return tiles.back();
 	}
 
-	void render(std::vector<Tile>* tileVector, int tileWidth);
+	void render(std::vector<Tile>* tileVector);
 
 };	// prototypes to be used later
 

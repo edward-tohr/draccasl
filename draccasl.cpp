@@ -236,7 +236,7 @@ void render() {
 	// clear the renderer.
 	if (gameState != title) { //If we're on the title screen, don't draw all this crap.
 		//Render terrain
-		vectorMaps.at(currentMap).Map::render(&vectorTiles, tileSet->w /TILESIZE);
+		vectorMaps.at(currentMap).Map::render(&vectorTiles);
 		//Render Objects
 		//Jack->render();
 		for (unsigned int i = 0; i < vectorObjects.size(); i++) {
@@ -304,7 +304,7 @@ void loadMap(Map mapToLoad) {
 	}
 }
 
-void checkCollision(gameObject* actor, std::vector<Tile> collidingTerrain) {
+void checkCollision(GameObject* actor, std::vector<Tile> collidingTerrain) {
   // takes pointer to gameObject and a vector of tiles which are overlapping in some way with the specified object.
   // object is a pointer so we can modify the original object.
   // let's suss out the proper logic here...
@@ -326,6 +326,11 @@ void checkCollision(gameObject* actor, std::vector<Tile> collidingTerrain) {
 
   SDL_Rect* tempRect = new SDL_Rect();
   SDL_Rect* actorCollider = new SDL_Rect();
+  tempRect = actorCollider;
+  tempRect->x += 1;
+  int butts = actor->getID();
+  butts++;
+  collidingTerrain.clear();
 
   // take collidingTerrain, grab only tiles below character (where tile X is between actor X and actor X - TILEWIDTH)
   // of those tiles, only keep ones where tile Y is between actor Y + actor height + actor y vel and actor Y + actor height + FLOOR_SNAP + actor y vel

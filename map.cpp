@@ -274,7 +274,7 @@ void populateMapVector(vector<Map>* mapVector) {
 	}
 }
 
-void Map::render(vector<Tile>* tileVector, int tileWidth) {
+void Map::render(vector<Tile>* tileVector) {
 	//so we've got two vectors, tiles, which contains a bunch of ints, and tileVector, which contains a bunch of SDL_Rects.
 	// We want to take tileVector.at(tiles.at(i)), slice that rect out of tileSet, and draw it to the screen at the proper coordinates.
 	// ... and also make sure that we're only rendering stuff what's on-camera.

@@ -61,10 +61,6 @@ class GameObject {
 		return y_vel;
 	}
 
-	bool canJump() {
-		return jump;
-	}
-
 	int getType() {
 		return type;
 	}

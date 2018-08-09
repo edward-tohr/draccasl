@@ -9,6 +9,8 @@
 #include "vector"
 #include "constants.h"
 class Map;
+class Tile;
+class GameObject;
 
 extern DEBUG_T DEBUG;
 extern const int TILESIZE;
@@ -51,7 +53,7 @@ void render();
 
 void loop();
 
-void checkCollision(gameObject* actor, vector<Tile> terrain);
+void checkCollision(GameObject* actor, std::vector<Tile> terrain);
 
 void gameStart();
 
