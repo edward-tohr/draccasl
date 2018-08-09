@@ -53,6 +53,7 @@ void init() {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL init failed! " << SDL_GetError() << "\n";
+      exit();
 		}
 	} else {
 		if (DEBUG >= DEBUG_ERROR) {
@@ -62,6 +63,7 @@ void init() {
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_img init failed! " << SDL_GetError() << "\n";
+      exit();
 		}
 	} else {
 		if (DEBUG >= DEBUG_ERROR) {
@@ -71,6 +73,7 @@ void init() {
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
+      exit();
 		}
 	} else {
 		if (DEBUG >= DEBUG_ERROR) {
@@ -84,6 +87,7 @@ void init() {
 	if (gWindow == NULL) {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
+      exit();
 		}
 	}
 
@@ -91,6 +95,7 @@ void init() {
 	if (!jackSprite) {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "we let go of jack!";
+      exit();
 		}
 	}
 
@@ -98,6 +103,7 @@ void init() {
 	if (!gSurface) {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "failed to load title screen!";
+      exit();
 		}
 	}
 
@@ -106,6 +112,7 @@ void init() {
 		if (gMusic == NULL) {
 			if (DEBUG >= DEBUG_ERROR) {
 				cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
+        exit();
 			}
 		}
 	}
@@ -576,6 +583,13 @@ int main(int argc, char* argv[]) {
 			if (argument == "--NO-SOUND" || argument == "-s") {
 				sound = false;
 			}
+      if (argument == "--help" || argument == "-h") {
+        std::cout << "jack DANGER strong in: Castle of the Draculas\n" << \
+                     "Debug flags: --DEBUG-NONE, --DEBUG-ERROR, --DEBUG_ALL\n" << \
+                     "Sound: --NO-SOUND\n" << \
+                     "Help: --help\n";
+        exit();
+      }
 
 		}
 
