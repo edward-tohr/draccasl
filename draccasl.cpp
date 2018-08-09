@@ -39,7 +39,7 @@ bool sound = true;
 bool gravity = true;
 
 
-DEBUG_T DEBUG = ALL;
+DEBUG_T DEBUG = DEBUG_ALL;
 
 
 // SDL requires int main(int argc char* argv[]). Remember that.
@@ -51,29 +51,29 @@ void init() {
 	//Setup phase
 	//sound = !DEBUG;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL init failed! " << SDL_GetError() << "\n";
 		}
 	} else {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL init succeeded!" << "\n";
 		}
 	}
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_img init failed! " << SDL_GetError() << "\n";
 		}
 	} else {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_img init succeeded!" << "\n";
 		}
 	}
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
 		}
 	} else {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_mixer init succeeded!" << "\n";
 		}
 	}
@@ -82,21 +82,21 @@ void init() {
 
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
 		}
 	}
 
 	jackSprite = IMG_Load("jack.png");
 	if (!jackSprite) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "we let go of jack!";
 		}
 	}
 
 	gSurface = IMG_Load("title.png");
 	if (!gSurface) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "failed to load title screen!";
 		}
 	}
@@ -104,7 +104,7 @@ void init() {
 	if (sound) {
 		gMusic = Mix_LoadMUS("tocafuge.wav");
 		if (gMusic == NULL) {
-			if (DEBUG >= ERROR) {
+			if (DEBUG >= DEBUG_ERROR) {
 				cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
 			}
 		}
@@ -133,7 +133,7 @@ void init() {
 	//cout << "Jack's color-keyed now.\n";
 	//Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	Jack->loadSprite("jack");
-	if (DEBUG == ALL) {
+	if (DEBUG == DEBUG_ALL) {
 		cout << "Jack's sprite is set.\n";
 	}
 
@@ -179,14 +179,14 @@ bool event(SDL_Event e) {
 				case SDLK_d:
 					if ((SDL_GetModState() & KMOD_CTRL) && (SDL_GetModState() & KMOD_ALT)) {
 						switch (DEBUG) {
-							case NONE:
-								DEBUG = ERROR;
+							case DEBUG_NONE:
+								DEBUG = DEBUG_ERROR;
 								break;
-							case ERROR:
-								DEBUG = ALL;
+							case DEBUG_ERROR:
+								DEBUG = DEBUG_ALL;
 								break;
-							case ALL:
-								DEBUG = NONE;
+							case DEBUG_ALL:
+								DEBUG = DEBUG_NONE;
 								break;
 						}
 						cout << "Debug level set to " << DEBUG << ".\n";
@@ -203,7 +203,7 @@ bool event(SDL_Event e) {
 
 
 				case SDLK_BACKSLASH:
-					if (DEBUG > NONE) {
+					if (DEBUG > DEBUG_NONE) {
 						currentMap++;
 						currentMap %= vectorMaps.size();
 						cout << "loading map " << currentMap << "...\n";
@@ -212,14 +212,14 @@ bool event(SDL_Event e) {
 					break;
 
 				case SDLK_HOME:
-					if (DEBUG > NONE) {
+					if (DEBUG > DEBUG_NONE) {
 						cout << "X: " << vectorObjects.at(0).getXPos() << " Y: " << vectorObjects.at(0).getYPos() << "\n";
 						cout << Jack->getXPos() << " " << Jack->getYPos() << "\n";
 					}
 					break;
 
 				case SDLK_END:
-					if (DEBUG > NONE) {
+					if (DEBUG > DEBUG_NONE) {
 						vectorObjects.at(0).loadSprite("dracula");
 					}
 
@@ -267,12 +267,12 @@ void loadMap(Map mapToLoad) {
 
 
 	if (tileSet == NULL) {
-		if (DEBUG >= ERROR) {
+		if (DEBUG >= DEBUG_ERROR) {
 			cout << "Error loading tileset " << tileName <<"!\n";
 		}
 	} else {
 
-		if (DEBUG == ALL) {
+		if (DEBUG == DEBUG_ALL) {
 			cout << "Successfully loaded tileset " << tileName <<"!\n";
 		}
 
@@ -297,7 +297,7 @@ void loadMap(Map mapToLoad) {
 				mapTiles.push_back(tempTiles.at(i)); //mapTiles should now only contain non-air tiles.
 			}
 		}
-		if (DEBUG == ALL) {
+		if (DEBUG == DEBUG_ALL) {
 			cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";
 		}
 		// And now we have vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
@@ -357,7 +357,7 @@ void loop() {
 
 		bool eraseTile = false;
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
-		//if (DEBUG == ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
+		//if (DEBUG == DEBUG_ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
 			if (mapTiles.at(j).getID() != 1) {
 				if (rectX >= mapTiles.at(j).getXPos() && rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
@@ -512,7 +512,7 @@ void gameStart() {
 	//New Game setup goes here. Load map, set up player graphics and such.
 	if (sound) {
 		Mix_PlayMusic(gMusic, 1);
-		if (DEBUG == NONE) {
+		if (DEBUG == DEBUG_NONE) {
 			SDL_Delay(3500);
 		}
 		Mix_HaltMusic();
@@ -522,7 +522,7 @@ void gameStart() {
 	nextMap = 1;
 	populateMapVector(&vectorMaps);
 	//populateObjectVector(&vectorObjects) will work the same way once I do that.
-	if (DEBUG == ALL) {
+	if (DEBUG == DEBUG_ALL) {
 		cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";
 	}
 	loadMap(vectorMaps.at(0));
@@ -565,13 +565,13 @@ int main(int argc, char* argv[]) {
 		for (int i = 0; i < argc; i++) {
 			argument = string(argv[i]);
 			if (argument == "--DEBUG-NONE" || argument == "-d") {
-				DEBUG = NONE;
+				DEBUG = DEBUG_NONE;
 			}
 			if (argument == "--DEBUG-ERROR" || argument == "-E") {
-				DEBUG = ERROR;
+				DEBUG = DEBUG_ERROR;
 			}
 			if (argument == "--DEBUG_ALL" || argument == "-D") {
-				DEBUG = ALL;
+				DEBUG = DEBUG_ALL;
 			}
 			if (argument == "--NO-SOUND" || argument == "-s") {
 				sound = false;
@@ -583,13 +583,13 @@ int main(int argc, char* argv[]) {
 
 	cout << "Debug level is: ";
 	switch (DEBUG) {
-		case NONE:
+		case DEBUG_NONE:
 			cout << "none.\n";
 			break;
-		case ERROR:
+		case DEBUG_ERROR:
 			cout << "error messages only.\n";
 			break;
-		case ALL:
+		case DEBUG_ALL:
 			cout << "full debug info.\n";
 			break;
 	}

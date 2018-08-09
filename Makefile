@@ -8,7 +8,7 @@ HEADERS = draccasl.h map.h gameobject.h constants.h sdl_files.h
 LINUX_OBJ_NAME = draccasl
 WIN_OBJ_NAME = draccasl.exe
 
-LINUX_COMPILER_FLAGS = -Wall -Wextra --std=c++11
+LINUX_COMPILER_FLAGS = -pedantic -Wall -Wextra --std=c++11
 LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
 LINUX_DEBUG_FLAGS = -g 
 
