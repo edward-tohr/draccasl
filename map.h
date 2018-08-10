@@ -8,6 +8,14 @@
 //tile data (tab-separated string of ints representing each tile) \t
 //event ID \t event X \t event Y \t
 
+/* Or a new, binary format?
+
+two bytes, first is tile ID
+second uses two bits for x/y flip and six for type? dunno.
+
+*/
+       
+
 
 #include "vector"
 #include "iostream"

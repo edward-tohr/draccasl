@@ -39,6 +39,22 @@ void Tile::setRect(int x_in, int y_in) {
 	tileRect.h = TILESIZE;
 }
 
+TILE_T Tile::getType(){
+  return type;
+}
+
+float Tile::getNormal(){
+  return normal;
+}
+
+void Tile::setType(TILE_T t_type) {
+  type = t_type;
+}
+
+void Tile::setNormal(float norm) {
+  normal = norm;
+}
+
 Tile::Tile() {
 	setRect(0,0);
 	setID(0);
