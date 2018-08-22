@@ -81,6 +81,8 @@ int parseMapInfo(ifstream &mapData) {
 
 }
 
+
+
 bool loadMapInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
 	if (DEBUG == DEBUG_ALL) {
@@ -121,6 +123,8 @@ bool loadMapInfo(Map *tempMap, ifstream &mapData) {
 	}
 	return success;
 }
+
+
 
 bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
@@ -177,9 +181,9 @@ bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 	}
 
 	return success;
-
-
 }
+
+
 
 bool loadEventInfo(Map *tempMap, ifstream &mapData) {
 	bool repeat = false;
@@ -221,6 +225,8 @@ bool loadEventInfo(Map *tempMap, ifstream &mapData) {
 	return repeat;
 }
 
+
+
 bool loadExitInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
 	mapData.ignore(5,10); //ignore a newline within the next 5 characters.
@@ -256,6 +262,8 @@ bool loadExitInfo(Map *tempMap, ifstream &mapData) {
 
 	return success;
 }
+
+
 
 void populateMapVector(vector<Map>* mapVector) {
 	//craaaaap, this should be split into three subfuctions:
@@ -316,4 +324,24 @@ void Map::render(vector<Tile>* tileVector) {
 		}
 	}
 
+}
+
+int newParseMapInfo(ifstream &mapData) {
+	return parseMapInfo(mapData);
+}
+
+bool newLoadMapInfo(Map *tempMap, ifstream &mapData) {
+	return loadMapInfo(tempMap, mapData);
+}
+
+bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
+	return loadTileInfo(tempMap, mapData);
+}
+
+bool newLoadEventInfo(Map *tempMap, ifstream &mapData) {
+	return loadEventInfo(tempMap, mapData);
+}
+
+bool newLoadExitInfo(Map *tempMap, ifstream &mapData) {
+	return loadExitInfo(tempMap, mapData);
 }
