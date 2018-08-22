@@ -156,14 +156,19 @@ class Map {
 void populateMapVector(std::vector<Map>* mapVector);
 
 bool loadMapInfo(Map* tempMap, std::ifstream &mapData);
+bool newLoadMapInfo(Map* tempMap, std::ifstream &newMapData); //so I can test new map formats w/out breaking everything.
 
 bool loadTileInfo(Map* tempMap, std::ifstream &mapData);
+bool newLoadTileInfo(Map* tempMap, std::ifstream &newMapData);
 
 bool loadEventInfo(Map* tempMap, std::ifstream &mapData);
+bool newLoadEventInfo(Map* tempMap, std::ifstream &mapData);
 
 bool loadExitInfo(Map* tempmap, std::ifstream &mapData);
+bool newLoadExitInfo(Map* tempmap, std::ifstream &mapData);
 
 int parseMapInfo(std::ifstream &mapData);
+int newParseMapInfo(std::ifstream &newMapData);
 
 
 
