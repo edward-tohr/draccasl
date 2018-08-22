@@ -577,7 +577,7 @@ int main(int argc, char* argv[]) {
 			if (argument == "--DEBUG-ERROR" || argument == "-E") {
 				DEBUG = DEBUG_ERROR;
 			}
-			if (argument == "--DEBUG_ALL" || argument == "-D") {
+			if (argument == "--DEBUG-ALL" || argument == "-D") {
 				DEBUG = DEBUG_ALL;
 			}
 			if (argument == "--NO-SOUND" || argument == "-s") {
@@ -585,7 +585,7 @@ int main(int argc, char* argv[]) {
 			}
       if (argument == "--help" || argument == "-h") {
         std::cout << "jack DANGER strong in: Castle of the Draculas\n" << \
-                     "Debug flags: --DEBUG-NONE, --DEBUG-ERROR, --DEBUG_ALL\n" << \
+                     "Debug flags: --DEBUG-NONE, --DEBUG-ERROR, --DEBUG-ALL\n" << \
                      "Sound: --NO-SOUND\n" << \
                      "Help: --help\n";
         exit();
