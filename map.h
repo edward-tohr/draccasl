@@ -35,8 +35,8 @@ class Tile {
  private:
 	int id;             //The tiletype ID.
 	SDL_Rect tileRect; //Contains the size and location in pixels of the tile.
-  TILE_T type = TILE_FLOOR;
-  float normal = 0; // Tile's normal vector in degrees. For ramps.
+  	TILE_T type = TILE_FLOOR;
+  	float normal = 0; // Tile's normal vector. For ramps. Not sure if it should be in degrees or general slope.
 
  public:
 	void setRect(int x, int y);
@@ -47,12 +47,12 @@ class Tile {
 	void setXPos(int x);
 	void setYPos(int y);
 	int getID();
-  TILE_T getType();
-  void setType(TILE_T type);
-  float getNormal();
-  void setNormal(float normal);
+  	TILE_T getType();
+  	void setType(TILE_T type);
+  	float getNormal();
+  	void setNormal(float normal);
 	Tile();
-  Tile(TILE_T type, float normal);
+  	Tile(TILE_T type, float normal);
 };
 
 
