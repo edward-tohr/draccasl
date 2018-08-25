@@ -29,16 +29,5 @@ const float MOVE_ACCEL = 2.4;
 const float DRAG = 0.7;
 const float FLOOR_SNAP = GRAVITY_V; // snap to floors that are within this value of projected y position.
 
-void dPrint(DEBUG_T dLvl, std::string msg) {
-	if (DEBUG >= dLvl) {
-		std::cout << "errlog lv: " << dLvl << ": " << msg << std::endl;
-	}
-}
-
-void dPrint (DEBUG_T dLvl, std::string msg, std::string memo) {
-	if (DEBUG >= dLvl) {
-		std::cout << "errlog lv: " << dLvl << ": " << memo << " " << msg << std::endl;
-	}
-}
 
 #endif

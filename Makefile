@@ -1,5 +1,5 @@
 #SRC_OBJS is the objects we'll be compiling.
-SRC_OBJS = draccasl.cpp map.cpp gameobject.cpp
+SRC_OBJS = draccasl.cpp map.cpp gameobject.cpp constants.cpp
 OBJS = draccasl.o map.o gameobject.o
 HEADERS = draccasl.h map.h gameobject.h constants.h sdl_files.h
 

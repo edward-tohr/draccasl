@@ -12,6 +12,7 @@ using std::vector;
 using std::cout;
 using std::string;
 
+
 //Let's see... window, obviously, and that needs a renderer. Camera stuff, too? And maybe an enum for game state or current map or something.
 
 enum gameState_t {
@@ -51,7 +52,7 @@ void init() {
 	//Setup phase
 	//sound = !DEBUG;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-			dPrint(DEBUG_ERROR,SDL_GetError(),"SDL init failed:");
+			dPrint(DEBUG_ERROR,SDL_GetError());
       exit();
 		
 	} else {
@@ -59,14 +60,14 @@ void init() {
 	}
 
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-		dPrint(DEBUG_ERROR, SDL_GetError(),"SDL_img init failed:");
+		dPrint(DEBUG_ERROR, SDL_GetError());
       exit();
 	} else {
 		dPrint(DEBUG_ERROR,"SDL_img init succeeded.");
 	}
 
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-		dPrint(DEBUG_ERROR,SDL_GetError(), "SDL_mixer init failed:");
+		dPrint(DEBUG_ERROR,SDL_GetError());
       exit();
 		
 	} else {
@@ -77,7 +78,7 @@ void init() {
 
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL) {
-		dPrint(DEBUG_ERROR,SDL_GetError(),"gWindow is NULL! 'cause of");
+		dPrint(DEBUG_ERROR,SDL_GetError());
       exit();
 	}
 

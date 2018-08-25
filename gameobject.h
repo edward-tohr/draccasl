@@ -13,6 +13,7 @@ extern bool gravity;
 extern const float GRAVITY_V;
 extern const float MOVE_ACCEL;
 extern const float DRAG;
+extern void dPrint(DEBUG_T dLvl, std::string msg);
 
 
 class GameObject {

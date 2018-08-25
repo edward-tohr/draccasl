@@ -4,6 +4,7 @@ using std::ifstream;
 using std::cout;
 using std::vector;
 
+
 int Tile::getID() {
 	return id;
 }

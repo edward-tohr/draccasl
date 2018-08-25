@@ -6,6 +6,7 @@ using std::cout;
 using std::string;
 
 
+
 void GameObject::render() {
 	// Okay. Check if the object is within the bounds of the camera.
 	// If yes, texture.render(this.x - camera.x, this.y - camera.y, this.sprite);
