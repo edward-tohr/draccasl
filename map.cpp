@@ -85,42 +85,40 @@ int parseMapInfo(ifstream &mapData) {
 
 bool loadMapInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
-	if (DEBUG == DEBUG_ALL) {
-		cout << "Parsing map ID... ";
-	}
+	dPrint(DEBUG_ALL,"Parsing map ID... ");
+
 	tempMap->setID(parseMapInfo(mapData));
-	if (DEBUG == DEBUG_ALL) {
-		cout << tempMap -> getID() << "\n";
-		cout << "Parsing map width... ";
-	}
+	
+	dPrint(DEBUG_ALL,std::to_string(tempMap -> getID()));
+	dPrint(DEBUG_ALL,"Parsing map width... ");
+	
 	tempMap->setWidth(parseMapInfo(mapData));
-	if (DEBUG == DEBUG_ALL) {
-		cout << tempMap -> getWidth() << "\n";
-		cout << "Parsing map height... ";
-	}
+	
+	
+	dPrint(DEBUG_ALL,std::to_string(tempMap -> getWidth()));
+	dPrint(DEBUG_ALL,"Parsing map height... ");
+	
 	tempMap->setHeight(parseMapInfo(mapData));
-	if (DEBUG == DEBUG_ALL) {
-		cout << tempMap -> getHeight() << "\n";
-		cout << "Parsing map tileset... ";
-	}
+	
+	dPrint(DEBUG_ALL,std::to_string(tempMap -> getHeight()));
+	dPrint(DEBUG_ALL,"Parsing map tileset... ");
+	
 	tempMap->setTileset(parseMapInfo(mapData));
-	if (DEBUG == DEBUG_ALL) {
-		cout << tempMap -> getTileset() << "\n";
-	}
+	
+	dPrint(DEBUG_ALL,std::to_string(tempMap -> getTileset()));
+	
 	if (mapData.peek() != 10) { // If there's not a newline following the map header...
 		success = false;
 		if (mapData.eof()) {
-			if (DEBUG >= DEBUG_ERROR) {
-				cout << "Early EOF reached! Map data only contains header info! \n";
-			}
+				dPrint(DEBUG_ERROR,"Early EOF reached! Map data only contains header info!");
 		}
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "Map header is not followed by a newline. Map file may need to be recreated.\n";
-		}
+
+		dPrint(DEBUG_ERROR,"Map header is not followed by a newline. Map file may need to be recreated.");
+		
 	}
-	if (DEBUG >= DEBUG_ALL) {
-		cout << "Post-header, we are at position " << mapData.tellg() << ".\n";
-	}
+	
+		dPrint(DEBUG_ALL, "Post-header, we are at position " + std::to_string(mapData.tellg()));
+	
 	return success;
 }
 
@@ -129,12 +127,9 @@ bool loadMapInfo(Map *tempMap, ifstream &mapData) {
 bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
 	Tile tempTile;
-	if (DEBUG >= DEBUG_ALL) {
-		cout << "loading tile info....\n";
-	}
-	if (DEBUG >= DEBUG_ALL) {
-		cout << "We are at position " << mapData.tellg() << ".\n";
-	}
+	dPrint(DEBUG_ALL,"loading tile info....");
+	dPrint(DEBUG_ALL,"We are at position " + std::to_string(mapData.tellg()) );
+	
 	mapData.ignore(5,10); // Skip over the newline character.
 	int tilesLoaded = 0;
 	int tempX = 0;
@@ -151,26 +146,23 @@ bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 		tempMap->addTile(tempTile);
 
 		if (++tilesLoaded > tempMap->getWidth() * tempMap->getHeight()) {
-			if (DEBUG >= DEBUG_ERROR) {
-				cout << "too many tiles defined for map's listed size!\neither remove tiles or increase map's width and/or height.\n";
-			}
+			dPrint(DEBUG_ERROR,"too many tiles defined for map's listed size!\neither remove tiles or increase map's width and/or height.");
 			success = false;
 			break;
 		}
 	}
+	
 	if (tilesLoaded < tempMap->getWidth() * tempMap->getHeight()) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "too few tiles defined for map's listed size!\neither add tiles or decrease map's width and/or height.\n";
-		}
+		dPrint(DEBUG_ERROR,"too few tiles defined for map's listed size!\neither add tiles or decrease map's width and/or height.");
 		success = false;
 	}
+
 	if (mapData.eof()) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "EOF reached after tile info. No events defined.\n";
-		}
+		dPrint(DEBUG_ERROR,"EOF reached after tile info. No events defined.\n");
 		success = false;
 	}
-	if (DEBUG == DEBUG_ALL) {
+
+	if (DEBUG == DEBUG_ALL) { // Yeah, this one can be special.
 		cout << "Finished parsing map data for map " << tempMap -> getID() << ":\n";
 		for (int i = 0; i < tempMap->getHeight(); i++) {
 			for (int j = 0; j < tempMap->getWidth(); j++) {
@@ -187,9 +179,9 @@ bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 
 bool loadEventInfo(Map *tempMap, ifstream &mapData) {
 	bool repeat = false;
-	if (DEBUG == DEBUG_ALL) {
-		cout << "loading event info....\n";
-	}
+	
+	dPrint(DEBUG_ALL,"loading event info....");
+	
 	mapData.ignore(5,10); // Skip over the newline character.
 	int eventID = 0;
 	int eventXPos = 0;
@@ -197,17 +189,16 @@ bool loadEventInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
 	while (mapData.peek() != 10 && !mapData.eof()) { //Keep loading exit data until you hit a newline or eof.
 		success = false;
-		if (DEBUG == DEBUG_ALL) {
-			cout << "Parsing event ID...\n";
-		}
+		dPrint(DEBUG_ALL,"Parsing event ID...");
+		
 		eventID = parseMapInfo(mapData);
-		if (DEBUG == DEBUG_ALL) {
-			cout << "Parsing event X pos...\n";
-		}
+		
+		dPrint(DEBUG_ALL,"Parsing event X pos...");
+		
 		eventXPos = parseMapInfo(mapData);
-		if (DEBUG == DEBUG_ALL) {
-			cout << "Parsing event Y pos...\n";
-		}
+		
+		dPrint(DEBUG_ALL,"Parsing event Y pos...");
+		
 		eventYPos = parseMapInfo(mapData);
 		tempMap->addEvent(eventID,eventXPos,eventYPos);
 		success = true;
@@ -219,9 +210,9 @@ bool loadEventInfo(Map *tempMap, ifstream &mapData) {
 			mapData.ignore(5,10);
 		}
 	}
-	if (DEBUG >= DEBUG_ALL) {
-		cout << "Do we repeat? " << repeat << ".\n";
-	}
+	
+	dPrint(DEBUG_ALL,"Do we repeat? " + std::to_string(repeat) +".");
+	
 	return repeat;
 }
 
@@ -235,28 +226,28 @@ bool loadExitInfo(Map *tempMap, ifstream &mapData) {
 	int exitYPos = 0;
 	while (mapData.peek() != 10 && !mapData.eof()) {
 		success = false;
-		if (DEBUG == DEBUG_ALL) {
-			cout << "Parsing exit ID...\n";
-		}
+
+		dPrint(DEBUG_ALL,"Parsing exit ID...");
+		
 		exitID = parseMapInfo(mapData);
-		if (DEBUG == DEBUG_ALL) {
-			cout << "Parsing exit X pos...\n";
-		}
+
+		dPrint(DEBUG_ALL,"Parsing exit X pos...");
+		
 		exitXPos = parseMapInfo(mapData);
-		if (DEBUG == DEBUG_ALL) {
-			cout << "Parsing exit Y pos...\n";
-		}
+
+		dPrint(DEBUG_ALL,"Parsing exit Y pos...");
+		
 		exitYPos = parseMapInfo(mapData);
 		tempMap->addEntrance(exitID,exitXPos,exitYPos);
 		success = true;
 	}
 
-	if (!success && DEBUG >= DEBUG_ERROR) {
-		cout << "failed to load map exit data.\n";
+	if (!success) {
+		dPrint(DEBUG_ERROR,"failed to load map exit data.");
 		if (mapData.eof()) {
-			cout << "EOF reached in exit data.\n";
+			dPrint(DEBUG_ERROR,"EOF reached in exit data.");
 		} else {
-			cout << "Exit data is malformed.\n";
+			dPrint(DEBUG_ERROR,"Exit data is malformed.");
 		}
 	}
 
@@ -289,13 +280,11 @@ void populateMapVector(vector<Map>* mapVector) {
 		loop = loadEventInfo(&tempMap,mapData);
 		(*mapVector).push_back(tempMap);
 		tempMap.clearMap();
-		if (DEBUG >= DEBUG_ALL) {
-			cout << "tempMap ID is " << mapVector->back().getID() << ".\n";
-		}
+		
+		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()));
 	} while (loop);
-	if (DEBUG >= DEBUG_ALL) {
-		cout << "Number of maps: " << mapVector->size() << ".\n";
-	}
+	dPrint(DEBUG_ALL,"Number of maps: " + std::to_string(mapVector->size()));
+	
 }
 
 void Map::render(vector<Tile>* tileVector) {

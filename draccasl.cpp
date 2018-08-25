@@ -41,18 +41,6 @@ bool gravity = true;
 
 DEBUG_T DEBUG = DEBUG_ALL;
 
-void dPrint(DEBUG_T dLvl, std::string msg) {
-	if (DEBUG >= dLvl) {
-		std::cout << "errlog lv: " << dLvl << ": " << msg << std::endl;
-	}
-}
-
-void dPrint (DEBUG_T dLvl, std::string msg, std::string memo) {
-	if (DEBUG >= dLvl) {
-		std::cout << "errlog lv: " << dLvl << ": " << memo << " " << msg << std::endl;
-	}
-}
-
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
