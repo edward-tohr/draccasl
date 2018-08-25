@@ -41,6 +41,18 @@ bool gravity = true;
 
 DEBUG_T DEBUG = DEBUG_ALL;
 
+void dPrint(DEBUG_T dLvl, std::string msg) {
+	if (DEBUG >= dLvl) {
+		std::cout << "errlog lv: " << dLvl << ": " << msg << std::endl;
+	}
+}
+
+void dPrint (DEBUG_T dLvl, std::string msg, std::string memo) {
+	if (DEBUG >= dLvl) {
+		std::cout << "errlog lv: " << dLvl << ": " << memo << " " << msg << std::endl;
+	}
+}
+
 
 // SDL requires int main(int argc char* argv[]). Remember that.
 // Also, should make new functions for init, event, loop, render, close.
@@ -51,69 +63,52 @@ void init() {
 	//Setup phase
 	//sound = !DEBUG;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "SDL init failed! " << SDL_GetError() << "\n";
+			dPrint(DEBUG_ERROR,SDL_GetError(),"SDL init failed:");
       exit();
-		}
+		
 	} else {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "SDL init succeeded!" << "\n";
-		}
+		dPrint(DEBUG_ERROR,"SDL init succeeded.");
 	}
+
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "SDL_img init failed! " << SDL_GetError() << "\n";
+		dPrint(DEBUG_ERROR, SDL_GetError(),"SDL_img init failed:");
       exit();
-		}
 	} else {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "SDL_img init succeeded!" << "\n";
-		}
+		dPrint(DEBUG_ERROR,"SDL_img init succeeded.");
 	}
+
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
+		dPrint(DEBUG_ERROR,SDL_GetError(), "SDL_mixer init failed:");
       exit();
-		}
+		
 	} else {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "SDL_mixer init succeeded!" << "\n";
-		}
+		dPrint(DEBUG_ERROR,"SDL_mixer init succeeded.");
 	}
 
 	//Load phase
 
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "gWindow is NULL! 'cause of " << SDL_GetError() << "\n";
+		dPrint(DEBUG_ERROR,SDL_GetError(),"gWindow is NULL! 'cause of");
       exit();
-		}
 	}
 
 	jackSprite = IMG_Load("jack.png");
 	if (!jackSprite) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "we let go of jack!";
-      exit();
-		}
+		dPrint(DEBUG_ERROR,"we let go of jack!");
+		exit();
 	}
 
 	gSurface = IMG_Load("title.png");
 	if (!gSurface) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "failed to load title screen!";
-      exit();
-		}
+		dPrint(DEBUG_ERROR,"failed to load title screen!");
+		exit();
 	}
 
 	if (sound) {
 		gMusic = Mix_LoadMUS("tocafuge.wav");
 		if (gMusic == NULL) {
-			if (DEBUG >= DEBUG_ERROR) {
-				cout << "tocafuge.wav refused to load! " << Mix_GetError() << "\n";
-        exit();
-			}
+			dPrint(DEBUG_ERROR,"Failed to load tocafuge.wav!");
 		}
 	}
 
@@ -140,9 +135,7 @@ void init() {
 	//cout << "Jack's color-keyed now.\n";
 	//Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	Jack->loadSprite("jack");
-	if (DEBUG == DEBUG_ALL) {
-		cout << "Jack's sprite is set.\n";
-	}
+	dPrint(DEBUG_ALL,"Jack's sprite is set.");
 
 	Jack -> setCollision(70,70,64,64);
 	vectorObjects.push_back(*Jack);
@@ -274,14 +267,9 @@ void loadMap(Map mapToLoad) {
 
 
 	if (tileSet == NULL) {
-		if (DEBUG >= DEBUG_ERROR) {
-			cout << "Error loading tileset " << tileName <<"!\n";
-		}
+		dPrint(DEBUG_ERROR,"Error loading tileset " + tileName + "!");
 	} else {
-
-		if (DEBUG == DEBUG_ALL) {
-			cout << "Successfully loaded tileset " << tileName <<"!\n";
-		}
+		dPrint(DEBUG_ALL,"Successfully loaded tileset " + tileName + "!");
 
 		tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 
@@ -304,9 +292,9 @@ void loadMap(Map mapToLoad) {
 				mapTiles.push_back(tempTiles.at(i)); //mapTiles should now only contain non-air tiles.
 			}
 		}
-		if (DEBUG == DEBUG_ALL) {
-			cout << "Map ID: " << curMap.getID() << " has " << curMap.getTiles().size() << " tiles innit.\n";
-		}
+		
+			dPrint(DEBUG_ALL, "Map ID: " + std::to_string(curMap.getID()) + " has " + std::to_string(curMap.getTiles().size()) + " tiles innit.");
+		
 		// And now we have vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
 	}
 }
@@ -530,7 +518,8 @@ void gameStart() {
 	populateMapVector(&vectorMaps);
 	//populateObjectVector(&vectorObjects) will work the same way once I do that.
 	if (DEBUG == DEBUG_ALL) {
-		cout << "VectorMaps size = " << vectorMaps.size() << "\nvectorObjects size = " << vectorObjects.size() << ".\n";
+		dPrint(DEBUG_ALL, "VectorMaps size = " + std::to_string(vectorMaps.size()));
+		dPrint(DEBUG_ALL, "vectorObjects size = " + std::to_string(vectorObjects.size()));
 	}
 	loadMap(vectorMaps.at(0));
 	if (sound) {

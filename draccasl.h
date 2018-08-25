@@ -50,6 +50,8 @@ void exit();
 bool event(SDL_Event e);
 
 void render();
+void dPrint(DEBUG_T dLvl, std::string msg);
+void dPrint(DEBUG_T dLvl, std::string msg, std::string memo);
 
 void loop();
 void checkCollision(GameObject* actor, std::vector<Tile> terrain);
