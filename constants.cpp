@@ -2,7 +2,7 @@
 #include "iostream"
 
 
-void dPrint(DEBUG_T dLvl, std::string msg, bool) {
+void dPrint(DEBUG_T dLvl, std::string msg, bool err) {
 	if (DEBUG >= dLvl) {
     if (err) {
 		std::cerr << "errlog " << dLvl << ": " << msg << std::endl;
