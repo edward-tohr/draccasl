@@ -13,9 +13,9 @@ class Tile;
 class GameObject;
 
 extern DEBUG_T DEBUG;
-extern const int TILESIZE;
-extern const float VELOCITY_MAX;
-extern void dPrint(DEBUG_T dLvl, std::string msg);
+extern int TILESIZE;
+extern float VELOCITY_MAX;
+extern void dPrint(DEBUG_T dLvl, std::string msg, bool err = true);
 
 //globals go in header file? Is this also awful?
 SDL_Window *gWindow;
