@@ -52,7 +52,7 @@ void init() {
 	//Setup phase
 	//sound = !DEBUG;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-			dPrint(DEBUG_ERROR,SDL_GetError());
+			dPrint(DEBUG_ERROR,SDL_GetError(),true);
       exit();
 		
 	} else {

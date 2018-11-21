@@ -29,7 +29,7 @@ extern SDL_Renderer *gRenderer;
 extern SDL_Texture *tileTexture;
 extern SDL_Rect gCamera;
 extern int TILESIZE;
-extern void dPrint(DEBUG_T dLvl, std::string msg, bool err = true);
+extern void dPrint(DEBUG_T dLvl, std::string msg, bool err);
 
 class Tile {
 

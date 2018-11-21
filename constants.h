@@ -22,12 +22,12 @@ enum TILE_T { // Tile types.
 
 extern DEBUG_T DEBUG;
 
-float GRAVITY_V = 1.05; //Gravity value.
-int TILESIZE = 32;
-float VELOCITY_MAX = 12;
-float MOVE_ACCEL = 2.4;
-float DRAG = 0.7;
-float FLOOR_SNAP = GRAVITY_V; // snap to floors that are within this value of projected y position.
+extern float GRAVITY_V;//Gravity value.
+extern int TILESIZE;
+extern float VELOCITY_MAX;
+extern float MOVE_ACCEL;
+extern float DRAG;
+extern float FLOOR_SNAP;// snap to floors that are within this value of projected y position.
 
 
 #endif
