@@ -56,48 +56,48 @@ void init() {
       exit();
 		
 	} else {
-		dPrint(DEBUG_ERROR,"SDL init succeeded.");
+		dPrint(DEBUG_ERROR,"SDL init succeeded.",false);
 	}
 
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-		dPrint(DEBUG_ERROR, SDL_GetError());
+		dPrint(DEBUG_ERROR, SDL_GetError(),true);
       exit();
 	} else {
-		dPrint(DEBUG_ERROR,"SDL_img init succeeded.");
+		dPrint(DEBUG_ERROR,"SDL_img init succeeded.",false);
 	}
 
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-		dPrint(DEBUG_ERROR,SDL_GetError());
+		dPrint(DEBUG_ERROR,SDL_GetError(),true);
       exit();
 		
 	} else {
-		dPrint(DEBUG_ERROR,"SDL_mixer init succeeded.");
+		dPrint(DEBUG_ERROR,"SDL_mixer init succeeded.",false);
 	}
 
 	//Load phase
 
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL) {
-		dPrint(DEBUG_ERROR,SDL_GetError());
+		dPrint(DEBUG_ERROR,SDL_GetError(),true);
       exit();
 	}
 
 	jackSprite = IMG_Load("jack.png");
 	if (!jackSprite) {
-		dPrint(DEBUG_ERROR,"we let go of jack!");
+		dPrint(DEBUG_ERROR,"we let go of jack!",true);
 		exit();
 	}
 
 	gSurface = IMG_Load("title.png");
 	if (!gSurface) {
-		dPrint(DEBUG_ERROR,"failed to load title screen!");
+		dPrint(DEBUG_ERROR,"failed to load title screen!",true);
 		exit();
 	}
 
 	if (sound) {
 		gMusic = Mix_LoadMUS("tocafuge.wav");
 		if (gMusic == NULL) {
-			dPrint(DEBUG_ERROR,"Failed to load tocafuge.wav!");
+			dPrint(DEBUG_ERROR,"Failed to load tocafuge.wav!",true);
 		}
 	}
 
@@ -124,7 +124,7 @@ void init() {
 	//cout << "Jack's color-keyed now.\n";
 	//Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	Jack->loadSprite("jack");
-	dPrint(DEBUG_ALL,"Jack's sprite is set.");
+	dPrint(DEBUG_ALL,"Jack's sprite is set.",false);
 
 	Jack -> setCollision(70,70,64,64);
 	vectorObjects.push_back(*Jack);
@@ -256,9 +256,9 @@ void loadMap(Map mapToLoad) {
 
 
 	if (tileSet == NULL) {
-		dPrint(DEBUG_ERROR,"Error loading tileset " + tileName + "!");
+		dPrint(DEBUG_ERROR,"Error loading tileset " + tileName + "!",true);
 	} else {
-		dPrint(DEBUG_ALL,"Successfully loaded tileset " + tileName + "!");
+		dPrint(DEBUG_ALL,"Successfully loaded tileset " + tileName + "!",true);
 
 		tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 
@@ -282,7 +282,7 @@ void loadMap(Map mapToLoad) {
 			}
 		}
 		
-			dPrint(DEBUG_ALL, "Map ID: " + std::to_string(curMap.getID()) + " has " + std::to_string(curMap.getTiles().size()) + " tiles innit.");
+			dPrint(DEBUG_ALL, "Map ID: " + std::to_string(curMap.getID()) + " has " + std::to_string(curMap.getTiles().size()) + " tiles innit.",false);
 		
 		// And now we have vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
 	}
@@ -507,8 +507,8 @@ void gameStart() {
 	populateMapVector(&vectorMaps);
 	//populateObjectVector(&vectorObjects) will work the same way once I do that.
 	if (DEBUG == DEBUG_ALL) {
-		dPrint(DEBUG_ALL, "VectorMaps size = " + std::to_string(vectorMaps.size()));
-		dPrint(DEBUG_ALL, "vectorObjects size = " + std::to_string(vectorObjects.size()));
+		dPrint(DEBUG_ALL, "VectorMaps size = " + std::to_string(vectorMaps.size()),false);
+		dPrint(DEBUG_ALL, "vectorObjects size = " + std::to_string(vectorObjects.size()),false);
 	}
 	loadMap(vectorMaps.at(0));
 	if (sound) {

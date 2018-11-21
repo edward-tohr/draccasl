@@ -29,7 +29,7 @@ void GameObject::loadSprite(string name) {
 	name.append(".png");
 	SDL_Surface* tempTexture = IMG_Load(name.c_str());
 	if (!tempTexture) {
-			 dPrint(DEBUG_ERROR, "Couldn't load " + name + "!");
+			 dPrint(DEBUG_ERROR, "Couldn't load " + name + "!",true);
 	} else {
 		SDL_SetColorKey(tempTexture,SDL_TRUE,SDL_MapRGB(tempTexture->format,0xFF,0x00,0xFF));
 		setTexture(SDL_CreateTextureFromSurface(gRenderer, tempTexture));
