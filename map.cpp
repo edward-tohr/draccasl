@@ -43,19 +43,27 @@ void Tile::setRect(int x_in, int y_in) {
 TILE_T Tile::getType(){
   return type;
 }
-
+/*
 float Tile::getNormal(){
   return normal;
-}
+}*/
 
 void Tile::setType(TILE_T t_type) {
   type = t_type;
 }
 
+COLLISION_T Tile::getCollision() {
+	return collision;
+}
+
+void Tile::setCollision(COLLISION_T t_collision) {
+	collision = t_collision;
+}
+/*
 void Tile::setNormal(float norm) {
   normal = norm;
 }
-
+*/
 Tile::Tile() {
 	setRect(0,0);
 	setID(0);

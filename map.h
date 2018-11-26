@@ -38,7 +38,7 @@ class Tile {
 	SDL_Rect tileRect; //Contains the size and location in pixels of the tile.
   	TILE_T type = TILE_FLOOR;
 	COLLISION_T collision = COLLISION_NONE;
-  	float normal = 0; // Tile's normal vector. For ramps. Not sure if it should be in degrees or general slope.
+  	//float normal = 0; // Tile's normal vector. For ramps. Not sure if it should be in degrees or general slope.
 
  public:
 	void setRect(int x, int y);
@@ -50,11 +50,13 @@ class Tile {
 	void setYPos(int y);
 	int getID();
   	TILE_T getType();
+	COLLISION_T getCollision();
   	void setType(TILE_T type);
-  	float getNormal();
-  	void setNormal(float normal);
+  	//float getNormal();
+  	//void setNormal(float normal);
+	void setCollision(COLLISION_T collision);
 	Tile();
-  	Tile(TILE_T type, float normal);
+  	Tile(TILE_T type, COLLISION_T collision);
 };
 
 
