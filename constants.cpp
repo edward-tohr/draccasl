@@ -48,3 +48,41 @@ void dPrint(DEBUG_T dLvl, std::string msg) {
 	
 }
 */
+void setupColliders() {
+// And now to define the hitboxen for each collider... Oh boy.
+
+// Square should just have the one hitbox taking up the whole tile
+SDL_Rect* tempRect = new SDL_Rect();
+tempRect->w = TILESIZE;
+tempRect->h = TILESIZE;
+TILE_COLLISION_SQUARE.push_back(*tempRect);
+
+// Ramp up should have TILESIZE boxen, 1 px width, height = x coord
+
+// Ramp down should have TILESIZE boxen, 1 px width, height = TILESIZE - x coord
+
+// Steep ramp up bottom should have TILESIZE/2 boxen, most 1 px, last TILESIZE/2 width, height = min (x coord*2,TILESIZE)
+
+// Steep ramp up top should have TILESIZE/2 boxen, most 1 px, first TILESIZE/2 width, height = (TILESIZE/2 - x coord) * 2
+
+// Steep ramp down bottom  should have TILESIZE/2 boxen, most 1 px, first TILESIZE/2 width, height = TILESIZE - ((TILESIZE/2 - x coord) *2)
+
+// Steep ramp down top should have TILESIZE/2 boxen, most 1 px, last TILESIZE/2 width, height = min(TILESIZE-x coord*2,0)
+
+// Shallow ramp up bottom should have TILESIZE/2 boxen, 2 px width, height = x coord/2
+
+// Shallow ramp up top should have TILESIZE/2 boxen, 2 px width, height = (TILESIZE + x coord)/2
+
+// Shallow ramp down bottom should have TILESIZE/2 boxen, 2 px width, height = (TILESIZE-x coord) /2
+
+// Shallow ramp down top should have TILESIZE/2 boxen, 2 px width, height = TILESIZE - (xcoord /2)
+
+// Up stairs should have TILESIZE/4 boxen, 4 px width, height = ((x coord /4) +1) *4
+
+// Down stairs should have TILESIZE/4 boxen, 4 px width, height = TILESIZE - ((x coord /4) +1) *4
+
+// Up step should have 2 boxen, TILESIZE/2 px width, first height TILESIZE/2, second height TILESIZE.
+
+// Down step should have 2 boxen, TILESIZE/2 px width, first height TILESIZE, second height TILESIZE/2.
+
+}
