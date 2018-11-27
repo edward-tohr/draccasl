@@ -28,6 +28,7 @@ vector<SDL_Rect> TILE_COLLISION_STAIRS_U;         // Staircase, up to the right
 vector<SDL_Rect> TILE_COLLISION_STAIRS_D;         // Staircase, down to the right
 vector<SDL_Rect> TILE_COLLISION_STEP_U;           // Single step, up to the right
 vector<SDL_Rect> TILE_COLLISION_STEP_D;           // Single step, down to the right
+                                                  // Empty tile would go here, if it needed collision
 
 
 
@@ -55,15 +56,49 @@ void setupColliders() {
 SDL_Rect* tempRect = new SDL_Rect();
 tempRect->w = TILESIZE;
 tempRect->h = TILESIZE;
+tempRect->y = TILESIZE;
 TILE_COLLISION_SQUARE.push_back(*tempRect);
 
 // Ramp up should have TILESIZE boxen, 1 px width, height = x coord
+tempRect->w = 1;
+
+for (int i = 0; i < TILESIZE; i++) {
+  tempRect->x = i;	
+	tempRect->h = i;
+	tempRect->y = i;
+	TILE_COLLISION_RAMP_U.push_back(*tempRect);
+}
 
 // Ramp down should have TILESIZE boxen, 1 px width, height = TILESIZE - x coord
+for (int i = 0; i < TILESIZE; i++) {
+	tempRect->x = i;
+	tempRect->y = TILESIZE - i;
+	tempRect->h = TILESIZE - i;
+	TILE_COLLISION_RAMP_D.push_back(*tempRect);
+}
 
 // Steep ramp up bottom should have TILESIZE/2 boxen, most 1 px, last TILESIZE/2 width, height = min (x coord*2,TILESIZE)
+for (int i = 0; i < TILESIZE/2; i++) {
+	tempRect->x = i;
+	tempRect->y = std::min(i*2,TILESIZE);
+	tempRect->h = tempRect->y;
+	TILE_COLLISION_RAMP_STEEP_BU.push_back(*tempRect);	
+}
+tempRect->x = TILESIZE/2;
+tempRect->w = TILESIZE/2;
+tempRect->h = TILESIZE;
+tempRect->y = TILESIZE;
+TILE_COLLISION_RAMP_STEEP_BU.push_back(*tempRect);
 
 // Steep ramp up top should have TILESIZE/2 boxen, most 1 px, first TILESIZE/2 width, height = (TILESIZE/2 - x coord) * 2
+tempRect->w = 1;
+for (int i = 0; i < TILESIZE/2; i++) {
+tempRect->x = TILESIZE/2 + i;
+tempRect->y = i*2;
+tempRect->h = i*2;
+TILE_COLLISION_RAMP_STEEP_TU.push_back(*tempRect);
+}
+
 
 // Steep ramp down bottom  should have TILESIZE/2 boxen, most 1 px, first TILESIZE/2 width, height = TILESIZE - ((TILESIZE/2 - x coord) *2)
 
