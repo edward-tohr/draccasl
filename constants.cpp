@@ -10,6 +10,7 @@ float VELOCITY_MAX = 12;
 float MOVE_ACCEL = 2.4;
 float DRAG = 0.7;
 float FLOOR_SNAP = GRAVITY_V;
+int STAIR_WIDTH = TILESIZE / 8;
 
 using std::vector;
 
@@ -160,8 +161,23 @@ for (int i = 0; i < TILESIZE; i += 2) {
 }
 
 // Up stairs should have TILESIZE/4 boxen, 4 px width, height = ((x coord /4) +1) *4
+tempRect->w = STAIR_WIDTH;
+
+for (int i = 0; i < TILESIZE; i+= STAIR_WIDTH){
+	tempRect->x = i;
+	tempRect->y = ((i/4)+1) *4;
+	tempRect->h = tempRect->y;
+	TILE_COLLISION_STAIRS_U.push_back(*tempRect);
+}
 
 // Down stairs should have TILESIZE/4 boxen, 4 px width, height = TILESIZE - ((x coord /4) +1) *4
+//TODO: double-check this one, as I don't think the math's right.
+for (int i = 0; i < TILESIZE; i += STAIR_WIDTH){
+	tempRect->x = i;
+	tempRect->y = TILESIZE - (((i/4)+1) *4);
+	tempRect->h = tempRect->y;
+	TILE_COLLISION_STAIRS_D.push_back(*tempRect);
+}
 
 // Up step should have 2 boxen, TILESIZE/2 px width, first height TILESIZE/2, second height TILESIZE.
 tempRect->w = TILESIZE/2;

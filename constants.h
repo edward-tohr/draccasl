@@ -47,6 +47,7 @@ extern float VELOCITY_MAX;
 extern float MOVE_ACCEL;
 extern float DRAG;
 extern float FLOOR_SNAP;// snap to floors that are within this value of projected y position.
+extern int STAIR_WIDTH;
 
 
 #endif
