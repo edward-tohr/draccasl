@@ -1,6 +1,7 @@
 #include "map.h"
 
 using std::ifstream;
+using std::ofstream;
 using std::cout;
 using std::vector;
 
@@ -342,4 +343,8 @@ bool newLoadEventInfo(Map *tempMap, ifstream &mapData) {
 
 bool newLoadExitInfo(Map *tempMap, ifstream &mapData) {
 	return loadExitInfo(tempMap, mapData);
+}
+
+void convertMap (Map *tempMap, ifstream &mapData, ofstream &outData) {
+	
 }

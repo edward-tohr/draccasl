@@ -392,6 +392,8 @@ void loop() {
 			// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
       // checkCollision(vectorObjects.at(i),vectorCollision);
       // do I need vectorObjects.at(i)&? maybe.
+
+	  //TODO: This is where the actual collision gets handled
 			if (vectorObjects.at(i).getXVel() > 0) {
 				int minx = rectX + rectW;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {

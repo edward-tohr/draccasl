@@ -206,3 +206,8 @@ tempRect->h = TILESIZE/2;
 TILE_COLLISION_STEP_D.push_back(*tempRect);
 
 }
+
+void createFiles() {
+	// create the default map and tileset files for collision, etc.
+
+}
