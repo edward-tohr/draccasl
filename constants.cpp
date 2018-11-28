@@ -101,23 +101,87 @@ TILE_COLLISION_RAMP_STEEP_TU.push_back(*tempRect);
 
 
 // Steep ramp down bottom  should have TILESIZE/2 boxen, most 1 px, first TILESIZE/2 width, height = TILESIZE - ((TILESIZE/2 - x coord) *2)
+for (int i = 0; i < TILESIZE/2; i++) {
+	tempRect->x = TILESIZE/2 +i;
+	tempRect->y = TILESIZE - (2*i);
+	tempRect->h = TILESIZE = (2*i);
+	TILE_COLLISION_RAMP_STEEP_BD.push_back(*tempRect);
+}
+tempRect->x = 0;
+tempRect->y = TILESIZE;
+tempRect->h = TILESIZE;
+tempRect->w = TILESIZE/2;
+TILE_COLLISION_RAMP_STEEP_BD.push_back(*tempRect);
 
 // Steep ramp down top should have TILESIZE/2 boxen, most 1 px, last TILESIZE/2 width, height = min(TILESIZE-x coord*2,0)
+tempRect->w = 1;
+for (int i = 0; i < TILESIZE/2; i++) {
+	tempRect->x = i;
+	tempRect->y = TILESIZE - (2*i);
+	tempRect->h = TILESIZE - (2*i);
+	TILE_COLLISION_RAMP_STEEP_TD.push_back(*tempRect);
+}
+
 
 // Shallow ramp up bottom should have TILESIZE/2 boxen, 2 px width, height = x coord/2
+tempRect->w = 2;
+for (int i = 0; i < TILESIZE; i += 2) {
+	tempRect->x = i;
+	tempRect->y = i/2;
+	tempRect->h = i/2;
+	TILE_COLLISION_RAMP_SHALLOW_BU.push_back(*tempRect);
+}
 
 // Shallow ramp up top should have TILESIZE/2 boxen, 2 px width, height = (TILESIZE + x coord)/2
 
+for (int i = 0; i < TILESIZE; i+=2) {
+	tempRect->x = i;
+	tempRect->y = (TILESIZE + i)/2;
+	tempRect->h = (TILESIZE + i)/2;
+	TILE_COLLISION_RAMP_SHALLOW_TU.push_back(*tempRect);
+}
+
 // Shallow ramp down bottom should have TILESIZE/2 boxen, 2 px width, height = (TILESIZE-x coord) /2
 
+for (int i = 0; i < TILESIZE; i += 2){
+	tempRect->x = i;
+	tempRect->y = TILESIZE - (i/2);
+	tempRect->h = TILESIZE - (i/2);
+	TILE_COLLISION_RAMP_SHALLOW_BD.push_back(*tempRect);
+}
+
 // Shallow ramp down top should have TILESIZE/2 boxen, 2 px width, height = TILESIZE - (xcoord /2)
+
+for (int i = 0; i < TILESIZE; i += 2) {
+	tempRect->x = i;
+	tempRect->y = (TILESIZE - i) /2;
+	tempRect->h = (TILESIZE - i) /2;
+	TILE_COLLISION_RAMP_SHALLOW_TD.push_back(*tempRect);
+}
 
 // Up stairs should have TILESIZE/4 boxen, 4 px width, height = ((x coord /4) +1) *4
 
 // Down stairs should have TILESIZE/4 boxen, 4 px width, height = TILESIZE - ((x coord /4) +1) *4
 
 // Up step should have 2 boxen, TILESIZE/2 px width, first height TILESIZE/2, second height TILESIZE.
+tempRect->w = TILESIZE/2;
+tempRect->x = 0;
+tempRect->y = TILESIZE/2;
+tempRect->h = TILESIZE/2;
+TILE_COLLISION_STEP_U.push_back(*tempRect);
+tempRect->x = TILESIZE/2;
+tempRect->y = TILESIZE;
+tempRect->h = TILESIZE;
+TILE_COLLISION_STEP_U.push_back(*tempRect);
 
 // Down step should have 2 boxen, TILESIZE/2 px width, first height TILESIZE, second height TILESIZE/2.
+tempRect->x = 0;
+tempRect->y = TILESIZE;
+tempRect->h = TILESIZE;
+TILE_COLLISION_STEP_D.push_back(*tempRect);
+tempRect->x = TILESIZE/2;
+tempRect->y = TILESIZE/2;
+tempRect->h = TILESIZE/2;
+TILE_COLLISION_STEP_D.push_back(*tempRect);
 
 }
