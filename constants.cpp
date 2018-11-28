@@ -31,6 +31,11 @@ vector<SDL_Rect> TILE_COLLISION_STEP_U;           // Single step, up to the righ
 vector<SDL_Rect> TILE_COLLISION_STEP_D;           // Single step, down to the right
                                                   // Empty tile would go here, if it needed collision
 
+const COLLISION_T defaultCollision[18] = \
+	{COLLISION_SQUARE,COLLISION_NONE,COLLISION_RAMP_U,COLLISION_RAMP_D,COLLISION_RAMP_SHALLOW_TD,COLLISION_RAMP_SHALLOW_BD,\
+	COLLISION_RAMP_SHALLOW_BU,COLLISION_RAMP_SHALLOW_TU,COLLISION_RAMP_STEEP_TU,COLLISION_RAMP_STEEP_TD,COLLISION_SQUARE,\
+	COLLISION_NONE,COLLISION_NONE,COLLISION_NONE,COLLISION_NONE,COLLISION_NONE,COLLISION_RAMP_STEEP_BU,COLLISION_RAMP_STEEP_BD};
+
 
 
 void dPrint(DEBUG_T dLvl, std::string msg, bool err) {
