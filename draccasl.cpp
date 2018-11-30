@@ -531,6 +531,23 @@ int main(int argc, char* argv[]) {
 
 
 	std::ofstream outFile ("version.txt",std::ofstream::trunc);
+	std::fstream versFile ("vers",std::fstream::in | std::fstream::binary);
+	int version = 0;
+	int versionLo = versFile.get();
+	int versionHi = 0;
+	if (!versFile.eof()) {
+		versionHi = versFile.get();
+	}
+	version = (256 * versionHi) + versionLo;
+	version++;
+	versFile.close();
+
+	versionLo = version % 256;
+	versionHi = version / 256;
+	versFile.open("vers",std::fstream::out|std::fstream::binary|std::fstream::trunc);
+	versFile.put((char)versionLo);
+	versFile.put((char)versionHi);
+	versFile.close();
 
 	string fileOutput;
 	fileOutput  = "jack DANGER strong in: castle of the draculas\nBuild Date: ";
@@ -542,7 +559,7 @@ int main(int argc, char* argv[]) {
 	fileOutput += " last modified: ";
 	fileOutput += __TIMESTAMP__;
 	fileOutput += "\nBuild Number: ";
-	fileOutput += AutoVersion::BUILD;
+	fileOutput += std::to_string(version);
 	fileOutput += "\n";
 
 
