@@ -330,17 +330,43 @@ int newParseMapInfo(ifstream &mapData) {
 }
 
 bool newLoadMapInfo(Map *tempMap, ifstream &mapData) {
-	return loadMapInfo(tempMap, mapData);
+	//return loadMapInfo(tempMap, mapData);
+	int mapID = mapData.get();
+	int mapWidth = mapData.get();
+	int mapHeight = mapData.get();
+	int mapTileset = mapData.get();
+	tempMap->setID(mapID);
+	tempMap->setWidth(mapWidth);
+	tempMap->setHeight(mapHeight);
+	tempMap->setTileset(mapTileset);
+	newLoadTileInfo(tempMap,mapData);
+	newLoadEventInfo(tempMap,mapData);
+	newLoadExitInfo(tempMap,mapData);
+	return true; // TODO: error checking
 }
 
 bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
-	return loadTileInfo(tempMap, mapData);
+	//return loadTileInfo(tempMap, mapData);
+	int mapHeight = tempMap->getHeight();
+	int mapWidth = tempMap->getWidth();
+	Tile tempTile;
+
+	for (int i = 0; i < mapHeight; i++) {
+		for (int j = 0; j < mapWidth; j++) {
+			tempTile.setXPos(j);
+			tempTile.setYPos(i);
+			tempTile.setID(mapData.get());
+			tempMap->addTile(tempTile);
+		}
+		
+	}
+	return true; //TODO: error checking
 }
 
 bool newLoadEventInfo(Map *tempMap, ifstream &mapData) {
-	return loadEventInfo(tempMap, mapData);
+	return loadEventInfo(tempMap, mapData); //TODO: actually read/parse event info
 }
 
 bool newLoadExitInfo(Map *tempMap, ifstream &mapData) {
-	return loadExitInfo(tempMap, mapData);
+	return loadExitInfo(tempMap, mapData); //TODO: actually read/parse exit info
 }
