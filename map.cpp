@@ -275,19 +275,19 @@ void populateMapVector(vector<Map>* mapVector) {
 	// if (int)c ==9, it's a tab. if ==10, it's a newline.
 
 	Map tempMap;
-	ifstream mapData("maps.map");
+	ifstream mapData("maps.nmp");
 	bool loop = true;
 	do {
-		if (!loadMapInfo(&tempMap,mapData)) {
+		if (!newLoadMapInfo(&tempMap,mapData)) {
 			break;
 		}
-		if (!loadExitInfo(&tempMap,mapData)) {
+		if (!newLoadExitInfo(&tempMap,mapData)) {
 			break;
 		}
-		if (!loadTileInfo(&tempMap,mapData)) {
+		if (!newLoadTileInfo(&tempMap,mapData)) {
 			break;
 		}
-		loop = loadEventInfo(&tempMap,mapData);
+		loop = newLoadEventInfo(&tempMap,mapData);
 		(*mapVector).push_back(tempMap);
 		tempMap.clearMap();
 		
@@ -364,9 +364,11 @@ bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
 }
 
 bool newLoadEventInfo(Map *tempMap, ifstream &mapData) {
-	return loadEventInfo(tempMap, mapData); //TODO: actually read/parse event info
+	//return loadEventInfo(tempMap, mapData);
+	return true; //TODO: actually read/parse event info
 }
 
 bool newLoadExitInfo(Map *tempMap, ifstream &mapData) {
-	return loadExitInfo(tempMap, mapData); //TODO: actually read/parse exit info
+	//return loadExitInfo(tempMap, mapData); 
+	return true; //TODO: actually read/parse exit info
 }
