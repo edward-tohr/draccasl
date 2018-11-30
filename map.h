@@ -25,6 +25,7 @@ second uses two bits for x/y flip and six for type? dunno.
 #include "sdl_files.h"
 
 extern DEBUG_T DEBUG;
+extern const COLLISION_T defaultCollision[18];
 extern SDL_Renderer *gRenderer;
 extern SDL_Texture *tileTexture;
 extern SDL_Rect gCamera;

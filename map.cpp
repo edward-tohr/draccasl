@@ -332,9 +332,13 @@ int newParseMapInfo(ifstream &mapData) {
 bool newLoadMapInfo(Map *tempMap, ifstream &mapData) {
 	//return loadMapInfo(tempMap, mapData);
 	int mapID = mapData.get();
+	dPrint(DEBUG_ALL,"Map ID: " + std::to_string(mapID) + ".\n",false);
 	int mapWidth = mapData.get();
+	dPrint(DEBUG_ALL,"Map Width: " + std::to_string(mapWidth) + ".\n",false);
 	int mapHeight = mapData.get();
+	dPrint(DEBUG_ALL,"Map Height: " + std::to_string(mapHeight) + ".\n",false);
 	int mapTileset = mapData.get();
+	dPrint(DEBUG_ALL,"Map Tileset: " + std::to_string(mapTileset) + ".\n",false);
 	tempMap->setID(mapID);
 	tempMap->setWidth(mapWidth);
 	tempMap->setHeight(mapHeight);
@@ -342,7 +346,7 @@ bool newLoadMapInfo(Map *tempMap, ifstream &mapData) {
 	newLoadTileInfo(tempMap,mapData);
 	newLoadEventInfo(tempMap,mapData);
 	newLoadExitInfo(tempMap,mapData);
-	return true; // TODO: error checking
+	return (mapID > -1); // TODO: error checking
 }
 
 bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
@@ -356,11 +360,15 @@ bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
 			tempTile.setXPos(j);
 			tempTile.setYPos(i);
 			tempTile.setID(mapData.get());
+			tempTile.setCollision(defaultCollision[tempTile.getID()]);
+			if (tempTile.getCollision() == COLLISION_NONE){
+				tempTile.setType(TILE_NONE);
+			}
 			tempMap->addTile(tempTile);
 		}
 		
 	}
-	return true; //TODO: error checking
+	return !mapData.eof(); //TODO: error checking
 }
 
 bool newLoadEventInfo(Map *tempMap, ifstream &mapData) {
