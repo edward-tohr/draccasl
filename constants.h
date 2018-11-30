@@ -17,7 +17,8 @@ enum TILE_T { // Tile types.
   TILE_FLOOR,      // Regular floor.
   TILE_DAMAGE,     // Damages on touch (spikes, etc.)
   TILE_DEATH,      // Insta-kill (lava, bottomless pit, etc.)
-  TILE_ICE         // Slippery Floor
+  TILE_ICE,        // Slippery Floor
+  TILE_UNDEFINED   // Tile type not set! Error!
 };
 
 enum COLLISION_T {
@@ -36,7 +37,8 @@ enum COLLISION_T {
   COLLISION_STAIRS_U,
   COLLISION_STEP_D,
   COLLISION_STEP_U,
-  COLLISION_NONE
+  COLLISION_NONE,
+  COLLISION_UNDEFINED          // Collision not set! Error!
 };
 
 extern DEBUG_T DEBUG;

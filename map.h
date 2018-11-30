@@ -37,8 +37,8 @@ class Tile {
  private:
 	int id;             //The tiletype ID.
 	SDL_Rect tileRect; //Contains the size and location in pixels of the tile.
-  	TILE_T type = TILE_FLOOR;
-	COLLISION_T collision = COLLISION_NONE;
+  	TILE_T type = TILE_UNDEFINED;
+	COLLISION_T collision = COLLISION_UNDEFINED;
   	//float normal = 0; // Tile's normal vector. For ramps. Not sure if it should be in degrees or general slope.
 
  public:

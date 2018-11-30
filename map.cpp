@@ -275,23 +275,30 @@ void populateMapVector(vector<Map>* mapVector) {
 	// if (int)c ==9, it's a tab. if ==10, it's a newline.
 
 	Map tempMap;
-	ifstream mapData("maps.nmp");
+	ifstream mapData("maps.map");
 	bool loop = true;
+	int id = 0;
 	do {
-		if (!newLoadMapInfo(&tempMap,mapData)) {
+		if (!loadMapInfo(&tempMap,mapData)) {
 			break;
 		}
-		if (!newLoadExitInfo(&tempMap,mapData)) {
+		if (!loadExitInfo(&tempMap,mapData)) {
 			break;
 		}
-		if (!newLoadTileInfo(&tempMap,mapData)) {
+		if (!loadTileInfo(&tempMap,mapData)) {
 			break;
 		}
-		loop = newLoadEventInfo(&tempMap,mapData);
-		(*mapVector).push_back(tempMap);
+		loop = loadEventInfo(&tempMap,mapData);
+		mapVector->push_back(tempMap);
 		tempMap.clearMap();
 		
 		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false);
+		if (tempMap.getID() != id) {
+			dPrint(DEBUG_ERROR,"Map ID mismatch! Should be " + std::to_string(id) + " but says it's " +\
+			  std::to_string(tempMap.getID()) + "!\n",true);
+		}
+
+		id++;
 	} while (loop);
 	dPrint(DEBUG_ALL,"Number of maps: " + std::to_string(mapVector->size()),false);
 	
@@ -357,12 +364,21 @@ bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
 
 	for (int i = 0; i < mapHeight; i++) {
 		for (int j = 0; j < mapWidth; j++) {
-			tempTile.setXPos(j);
-			tempTile.setYPos(i);
+			tempTile.setXPos(TILESIZE * j);
+			tempTile.setYPos(TILESIZE * i);
 			tempTile.setID(mapData.get());
 			tempTile.setCollision(defaultCollision[tempTile.getID()]);
+			if (tempTile.getCollision() == COLLISION_UNDEFINED) {
+				using std::to_string;
+				dPrint(DEBUG_ERROR,"Tile in map " + to_string(tempMap->getID()) + " at coords " +\
+				  to_string(i) + "," + to_string(j) + " is undefined!",true);
+				  SDL_Quit();
+				  return false;
+			}
 			if (tempTile.getCollision() == COLLISION_NONE){
 				tempTile.setType(TILE_NONE);
+			} else {
+				tempTile.setType(TILE_FLOOR);
 			}
 			tempMap->addTile(tempTile);
 		}

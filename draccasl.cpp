@@ -196,7 +196,7 @@ bool event(SDL_Event e) {
 						currentMap++;
 						currentMap %= vectorMaps.size();
 						cout << "loading map " << currentMap << "...\n";
-						loadMap(vectorMaps.at(currentMap));
+						loadMap(vectorMaps.back());
 					}
 					break;
 
@@ -350,7 +350,7 @@ void loop() {
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
 		//if (DEBUG == DEBUG_ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
-			if (mapTiles.at(j).getCollision() != COLLISION_NONE) {
+			if (mapTiles.at(j).getType() != TILE_NONE) {
 				if (rectX >= mapTiles.at(j).getXPos() && rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
@@ -428,7 +428,7 @@ void loop() {
     rectH = tempRect.h;
     
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
-			if (mapTiles.at(j).getID() != 1) {
+			if (mapTiles.at(j).getType() != TILE_NONE) {
 				if (rectY >= mapTiles.at(j).getYPos() && rectY <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
@@ -567,6 +567,7 @@ int main(int argc, char* argv[]) {
 	cout << fileOutput;
 
 	outFile << fileOutput;
+	outFile.close();
 
 
 
@@ -630,13 +631,16 @@ void convertMap(vector<Map> mapVector) {
 	//if (DEBUG == DEBUG_NONE) { return; }
 	using std::ifstream;
 	using std::ofstream;
-	ofstream newMap("maps.nmp",ofstream::trunc|ofstream::binary);
+	ofstream newMap;
 	for (Map& m: mapVector) {
+		std::string name = "map" + std::to_string(m.getID()) + ".nmp";
+		newMap.open(name.c_str(),ofstream::trunc|ofstream::binary);
 		vector<Tile> tileVector = m.getTiles();
 		const char mapID = (char) m.getID();
 		const char mapWidth = (char) m.getWidth();
 		const char mapHeight = (char) m.getHeight();
 		const char mapTileset = (char) m.getTileset();
+
 		newMap.write(&mapID,sizeof(mapID));
 		newMap.write(&mapWidth,sizeof(mapWidth));
 		newMap.write(&mapHeight,sizeof(mapHeight));
@@ -652,6 +656,7 @@ void convertMap(vector<Map> mapVector) {
 			newMap.write(&tileID2,sizeof(tileID2));
 			
 		}
+		newMap.close();
 	}
 	newMap.close();
 }
