@@ -60,5 +60,7 @@ void gameStart();
 
 void loadMap(Map currentMap);
 
+void convertMap(std::vector<Map> vectorMaps);
+
 #endif
 //There. Now draccasl files just need to #include draccasl.h. Right?

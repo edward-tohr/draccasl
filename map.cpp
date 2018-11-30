@@ -344,7 +344,3 @@ bool newLoadEventInfo(Map *tempMap, ifstream &mapData) {
 bool newLoadExitInfo(Map *tempMap, ifstream &mapData) {
 	return loadExitInfo(tempMap, mapData);
 }
-
-void convertMap (Map *tempMap, ifstream &mapData, ofstream &outData) {
-	
-}

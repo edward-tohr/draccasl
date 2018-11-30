@@ -211,6 +211,13 @@ bool event(SDL_Event e) {
 					if (DEBUG > DEBUG_NONE) {
 						vectorObjects.at(0).loadSprite("dracula");
 					}
+					break;
+				
+				case SDLK_INSERT:
+					if (DEBUG > DEBUG_NONE) {
+						convertMap(vectorMaps);
+					}
+					break;
 
 			}
 			return false;
@@ -599,4 +606,32 @@ int main(int argc, char* argv[]) {
 	}
 	exit();
 	return 0;
+}
+
+void convertMap(vector<Map> mapVector) {
+	//if (DEBUG == DEBUG_NONE) { return; }
+	using std::ifstream;
+	using std::ofstream;
+	ofstream newMap("maps.nmp",ofstream::trunc|ofstream::binary);
+	for (Map& m: mapVector) {
+		vector<Tile> tileVector = m.getTiles();
+		const char mapID = (char) m.getID();
+		const char mapWidth = (char) m.getWidth();
+		const char mapHeight = (char) m.getHeight();
+		newMap.write(&mapID,sizeof(mapID));
+		newMap.write(&mapWidth,sizeof(mapWidth));
+		newMap.write(&mapHeight,sizeof(mapHeight));
+
+		
+		for (Tile& t : tileVector) {
+			//const char* tileID = std::to_string(t.getID()).c_str();
+			const char tileID2 = (char)t.getID();
+			dPrint(DEBUG_ALL,"Map: " + std::to_string(m.getID()) + " \nTile: " + std::to_string(t.getID()) + "\n",false);
+			const char* outChar = &tileID2;
+			//newMap.write(std::to_string(t.getID()).c_str(),sizeof(t.getID()));
+			newMap.write(&tileID2,sizeof(tileID2));
+			
+		}
+	}
+	newMap.close();
 }

@@ -174,6 +174,4 @@ bool newLoadExitInfo(Map* tempmap, std::ifstream &mapData);
 int parseMapInfo(std::ifstream &mapData);
 int newParseMapInfo(std::ifstream &newMapData);
 
-
-
 #endif
