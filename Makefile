@@ -1,6 +1,6 @@
 #SRC_OBJS is the objects we'll be compiling.
 SRC_OBJS = draccasl.cpp map.cpp gameobject.cpp constants.cpp
-OBJS = draccasl.o map.o gameobject.o constants.o
+OBJS = draccasl.o map.o gameobject.o constants.o vers
 HEADERS = draccasl.h map.h gameobject.h constants.h sdl_files.h
 
 
@@ -9,7 +9,8 @@ LINUX_OBJ_NAME = draccasl
 WIN_OBJ_NAME = draccasl.exe
 
 LINUX_COMPILER_FLAGS = -pedantic -Wall -Wextra --std=c++11 -no-pie
-LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf
+BUILD_NUMBER_FILE = vers
+LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf $(BUILD_NUMBER_LDFLAGS)
 LINUX_DEBUG_FLAGS = -g 
 
 WIN_COMPILER_FLAGS = -Wall -Wextra --std=c++11
@@ -20,8 +21,9 @@ WIN_LIBRARY_PATHS = -LE:/draccasl/draccasl/dev/lib/
 WIN_DEFINE_FLAGS = -D WIN32
 LINUX_CROSS_COMPILE_FLAGS = -D __unix_cross_win__
 
+
 CC = g++
-WIN_CC = x86_64-w64-mingw32-g++
+WIN_CC = x86_64-w64-mingw32-g++ 
 
 #And the target
 default : $(OBJS)
@@ -59,3 +61,5 @@ debug :
 
 clean: 
 	-rm *.o draccasl
+
+include buildnum.mak

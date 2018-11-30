@@ -531,6 +531,7 @@ int main(int argc, char* argv[]) {
 
 
 	std::ofstream outFile ("version.txt",std::ofstream::trunc);
+	/*
 	std::fstream versFile ("vers",std::fstream::in | std::fstream::binary);
 	int version = 0;
 	int versionLo = versFile.get();
@@ -548,7 +549,7 @@ int main(int argc, char* argv[]) {
 	versFile.put((char)versionLo);
 	versFile.put((char)versionHi);
 	versFile.close();
-
+*/
 	string fileOutput;
 	fileOutput  = "jack DANGER strong in: castle of the draculas\nBuild Date: ";
 	fileOutput += __DATE__;
@@ -559,7 +560,7 @@ int main(int argc, char* argv[]) {
 	fileOutput += " last modified: ";
 	fileOutput += __TIMESTAMP__;
 	fileOutput += "\nBuild Number: ";
-	fileOutput += std::to_string(version);
+	fileOutput += std::to_string((unsigned long) &__BUILD_NUMBER);
 	fileOutput += "\n";
 
 
