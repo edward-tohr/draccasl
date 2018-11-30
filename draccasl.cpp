@@ -350,7 +350,7 @@ void loop() {
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
 		//if (DEBUG == DEBUG_ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
-			if (mapTiles.at(j).getCollision != COLLISION_NONE) {
+			if (mapTiles.at(j).getCollision() != COLLISION_NONE) {
 				if (rectX >= mapTiles.at(j).getXPos() && rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
