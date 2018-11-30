@@ -56,7 +56,8 @@ map.o: map.cpp map.h constants.h sdl_files.h
 final : $(OBJS)
 	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) -O3 $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
-debug : 
+debug : $(OBJS)
+	rm *.o
 	$(CC) $(SRC_OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_DEBUG_FLAGS) $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
 clean: 
