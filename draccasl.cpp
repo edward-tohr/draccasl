@@ -618,9 +618,11 @@ void convertMap(vector<Map> mapVector) {
 		const char mapID = (char) m.getID();
 		const char mapWidth = (char) m.getWidth();
 		const char mapHeight = (char) m.getHeight();
+		const char mapTileset = (char) m.getTileset();
 		newMap.write(&mapID,sizeof(mapID));
 		newMap.write(&mapWidth,sizeof(mapWidth));
 		newMap.write(&mapHeight,sizeof(mapHeight));
+		newMap.write(&mapTileset, sizeof(mapTileset));
 
 		
 		for (Tile& t : tileVector) {
