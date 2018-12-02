@@ -95,39 +95,39 @@ int parseMapInfo(ifstream &mapData) {
 
 bool loadMapInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
-	dPrint(DEBUG_ALL,"Parsing map ID... ",false);
+	dPrint(DEBUG_ALL,"Parsing map ID... ",false,__FILE__,__LINE__);
 
 	tempMap->setID(parseMapInfo(mapData));
 	
-	dPrint(DEBUG_ALL,std::to_string(tempMap -> getID()), false);
-	dPrint(DEBUG_ALL,"Parsing map width... ",false);
+	dPrint(DEBUG_ALL,std::to_string(tempMap -> getID()), false,__FILE__,__LINE__);
+	dPrint(DEBUG_ALL,"Parsing map width... ",false,__FILE__,__LINE__);
 	
 	tempMap->setWidth(parseMapInfo(mapData));
 	
 	
-	dPrint(DEBUG_ALL,std::to_string(tempMap -> getWidth()),false);
-	dPrint(DEBUG_ALL,"Parsing map height... ",false);
+	dPrint(DEBUG_ALL,std::to_string(tempMap -> getWidth()),false,__FILE__,__LINE__);
+	dPrint(DEBUG_ALL,"Parsing map height... ",false,__FILE__,__LINE__);
 	
 	tempMap->setHeight(parseMapInfo(mapData));
 	
-	dPrint(DEBUG_ALL,std::to_string(tempMap -> getHeight()),false);
-	dPrint(DEBUG_ALL,"Parsing map tileset... ",false);
+	dPrint(DEBUG_ALL,std::to_string(tempMap -> getHeight()),false,__FILE__,__LINE__);
+	dPrint(DEBUG_ALL,"Parsing map tileset... ",false,__FILE__,__LINE__);
 	
 	tempMap->setTileset(parseMapInfo(mapData));
 	
-	dPrint(DEBUG_ALL,std::to_string(tempMap -> getTileset()),false);
+	dPrint(DEBUG_ALL,std::to_string(tempMap -> getTileset()),false,__FILE__,__LINE__);
 	
 	if (mapData.peek() != 10) { // If there's not a newline following the map header...
 		success = false;
 		if (mapData.eof()) {
-				dPrint(DEBUG_ERROR,"Early EOF reached! Map data only contains header info!",true);
+				dPrint(DEBUG_ERROR,"Early EOF reached! Map data only contains header info!",true,__FILE__,__LINE__);
 		}
 
-		dPrint(DEBUG_ERROR,"Map header is not followed by a newline. Map file may need to be recreated.",true);
+		dPrint(DEBUG_ERROR,"Map header is not followed by a newline. Map file may need to be recreated.",true,__FILE__,__LINE__);
 		
 	}
 	
-		dPrint(DEBUG_ALL, "Post-header, we are at position " + std::to_string(mapData.tellg()),false);
+		dPrint(DEBUG_ALL, "Post-header, we are at position " + std::to_string(mapData.tellg()),false,__FILE__,__LINE__);
 	
 	return success;
 }
@@ -137,8 +137,8 @@ bool loadMapInfo(Map *tempMap, ifstream &mapData) {
 bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
 	Tile tempTile;
-	dPrint(DEBUG_ALL,"loading tile info....",false);
-	dPrint(DEBUG_ALL,"We are at position " + std::to_string(mapData.tellg()) ,false);
+	dPrint(DEBUG_ALL,"loading tile info....",false,__FILE__,__LINE__);
+	dPrint(DEBUG_ALL,"We are at position " + std::to_string(mapData.tellg()) ,false,__FILE__,__LINE__);
 	
 	mapData.ignore(5,10); // Skip over the newline character.
 	int tilesLoaded = 0;
@@ -156,19 +156,21 @@ bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 		tempMap->addTile(tempTile);
 
 		if (++tilesLoaded > tempMap->getWidth() * tempMap->getHeight()) {
-			dPrint(DEBUG_ERROR,"too many tiles defined for map's listed size!\neither remove tiles or increase map's width and/or height.",true);
+			dPrint(DEBUG_ERROR,"too many tiles defined for map's listed size!\n"\
+					"either remove tiles or increase map's width and/or height.",true,__FILE__,__LINE__);
 			success = false;
 			break;
 		}
 	}
 	
 	if (tilesLoaded < tempMap->getWidth() * tempMap->getHeight()) {
-		dPrint(DEBUG_ERROR,"too few tiles defined for map's listed size!\neither add tiles or decrease map's width and/or height.",true);
+		dPrint(DEBUG_ERROR,"too few tiles defined for map's listed size!\neither add tiles or decrease "\
+				"map's width and/or height.",true,__FILE__,__LINE__);
 		success = false;
 	}
 
 	if (mapData.eof()) {
-		dPrint(DEBUG_ERROR,"EOF reached after tile info. No events defined.\n",true);
+		dPrint(DEBUG_ERROR,"EOF reached after tile info. No events defined.\n",true,__FILE__,__LINE__);
 		success = false;
 	}
 
@@ -190,7 +192,7 @@ bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 bool loadEventInfo(Map *tempMap, ifstream &mapData) {
 	bool repeat = false;
 	
-	dPrint(DEBUG_ALL,"loading event info....",false);
+	dPrint(DEBUG_ALL,"loading event info....",false,__FILE__,__LINE__);
 	
 	mapData.ignore(5,10); // Skip over the newline character.
 	int eventID = 0;
@@ -199,15 +201,15 @@ bool loadEventInfo(Map *tempMap, ifstream &mapData) {
 	bool success = true;
 	while (mapData.peek() != 10 && !mapData.eof()) { //Keep loading exit data until you hit a newline or eof.
 		success = false;
-		dPrint(DEBUG_ALL,"Parsing event ID...",false);
+		dPrint(DEBUG_ALL,"Parsing event ID...",false,__FILE__,__LINE__);
 		
 		eventID = parseMapInfo(mapData);
 		
-		dPrint(DEBUG_ALL,"Parsing event X pos...",false);
+		dPrint(DEBUG_ALL,"Parsing event X pos...",false,__FILE__,__LINE__);
 		
 		eventXPos = parseMapInfo(mapData);
 		
-		dPrint(DEBUG_ALL,"Parsing event Y pos...",false);
+		dPrint(DEBUG_ALL,"Parsing event Y pos...",false,__FILE__,__LINE__);
 		
 		eventYPos = parseMapInfo(mapData);
 		tempMap->addEvent(eventID,eventXPos,eventYPos);
@@ -221,7 +223,7 @@ bool loadEventInfo(Map *tempMap, ifstream &mapData) {
 		}
 	}
 	
-	dPrint(DEBUG_ALL,"Do we repeat? " + std::to_string(repeat) +".",false);
+	dPrint(DEBUG_ALL,"Do we repeat? " + std::to_string(repeat) +".",false,__FILE__,__LINE__);
 	
 	return repeat;
 }
@@ -237,15 +239,15 @@ bool loadExitInfo(Map *tempMap, ifstream &mapData) {
 	while (mapData.peek() != 10 && !mapData.eof()) {
 		success = false;
 
-		dPrint(DEBUG_ALL,"Parsing exit ID...",false);
+		dPrint(DEBUG_ALL,"Parsing exit ID...",false,__FILE__,__LINE__);
 		
 		exitID = parseMapInfo(mapData);
 
-		dPrint(DEBUG_ALL,"Parsing exit X pos...",false);
+		dPrint(DEBUG_ALL,"Parsing exit X pos...",false,__FILE__,__LINE__);
 		
 		exitXPos = parseMapInfo(mapData);
 
-		dPrint(DEBUG_ALL,"Parsing exit Y pos...",false);
+		dPrint(DEBUG_ALL,"Parsing exit Y pos...",false,__FILE__,__LINE__);
 		
 		exitYPos = parseMapInfo(mapData);
 		tempMap->addEntrance(exitID,exitXPos,exitYPos);
@@ -253,11 +255,11 @@ bool loadExitInfo(Map *tempMap, ifstream &mapData) {
 	}
 
 	if (!success) {
-		dPrint(DEBUG_ERROR,"failed to load map exit data.",true);
+		dPrint(DEBUG_ERROR,"failed to load map exit data.",true,__FILE__,__LINE__);
 		if (mapData.eof()) {
-			dPrint(DEBUG_ERROR,"EOF reached in exit data.",true);
+			dPrint(DEBUG_ERROR,"EOF reached in exit data.",true,__FILE__,__LINE__);
 		} else {
-			dPrint(DEBUG_ERROR,"Exit data is malformed.",true);
+			dPrint(DEBUG_ERROR,"Exit data is malformed.",true,__FILE__,__LINE__);
 		}
 	}
 
@@ -298,10 +300,10 @@ void populateMapVector(vector<Map>* mapVector) {
 		mapVector->push_back(tempMap);
 		tempMap.clearMap();
 		
-		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false);
+		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false,__FILE__,__LINE__);
 		if (tempMap.getID() != id) {
 			dPrint(DEBUG_ERROR,"Map ID mismatch! Should be " + std::to_string(id) + " but says it's " +\
-			  std::to_string(tempMap.getID()) + "!\n",true);
+			  std::to_string(tempMap.getID()) + "!\n",true,__FILE__,__LINE__);
 		}
 
 		id++;
@@ -321,16 +323,16 @@ void populateMapVector(vector<Map>* mapVector) {
 		mapVector->push_back(tempMap);
 		tempMap.clearMap();
 		
-		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false);
+		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false,__FILE__,__LINE__);
 		if (tempMap.getID() != id) {
 			dPrint(DEBUG_ERROR,"Map ID mismatch! Should be " + std::to_string(id) + " but says it's " +\
-			  std::to_string(tempMap.getID()) + "!\n",true);
+			  std::to_string(tempMap.getID()) + "!\n",true,__FILE__,__LINE__);
 		}
 
 		id++;
 	} while (loop);
 	}
-	dPrint(DEBUG_ALL,"Number of maps: " + std::to_string(mapVector->size()),false);
+	dPrint(DEBUG_ALL,"Number of maps: " + std::to_string(mapVector->size()),false,__FILE__,__LINE__);
 	
 }
 
@@ -369,17 +371,21 @@ int newParseMapInfo(ifstream &mapData) {
 bool newLoadMapInfo(Map *tempMap, ifstream &mapData) {
 	//return loadMapInfo(tempMap, mapData);
 	int mapID = mapData.get();
-	dPrint(DEBUG_ALL,"Map ID: " + std::to_string(mapID) + ".\n",false);
+	dPrint(DEBUG_ALL,"Map ID: " + std::to_string(mapID) + ".\n",false,__FILE__,__LINE__);
 	int mapWidth = mapData.get();
-	dPrint(DEBUG_ALL,"Map Width: " + std::to_string(mapWidth) + ".\n",false);
+	dPrint(DEBUG_ALL,"Map Width: " + std::to_string(mapWidth) + ".\n",false,__FILE__,__LINE__);
 	int mapHeight = mapData.get();
-	dPrint(DEBUG_ALL,"Map Height: " + std::to_string(mapHeight) + ".\n",false);
+	dPrint(DEBUG_ALL,"Map Height: " + std::to_string(mapHeight) + ".\n",false,__FILE__,__LINE__);
 	int mapTileset = mapData.get();
-	dPrint(DEBUG_ALL,"Map Tileset: " + std::to_string(mapTileset) + ".\n",false);
+	dPrint(DEBUG_ALL,"Map Tileset: " + std::to_string(mapTileset) + ".\n",false,__FILE__,__LINE__);
+
+	//mapData seems to be off by four???
+
 	tempMap->setID(mapID);
 	tempMap->setWidth(mapWidth);
 	tempMap->setHeight(mapHeight);
 	tempMap->setTileset(mapTileset);
+	dPrint(DEBUG_ALL,"Loading " + std::to_string(mapWidth * mapHeight) + " tiles....",false,__FILE__,__LINE__);
 	newLoadTileInfo(tempMap,mapData);
 	newLoadEventInfo(tempMap,mapData);
 	newLoadExitInfo(tempMap,mapData);
@@ -401,7 +407,7 @@ bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
 			if (tempTile.getCollision() == COLLISION_UNDEFINED) {
 				using std::to_string;
 				dPrint(DEBUG_ERROR,"Tile in map " + to_string(tempMap->getID()) + " at coords " +\
-				  to_string(i) + "," + to_string(j) + " is undefined!",true);
+				  to_string(i) + "," + to_string(j) + " is undefined!",true,__FILE__,__LINE__);
 				  SDL_Quit();
 				  return false;
 			}
@@ -411,18 +417,22 @@ bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
 				tempTile.setType(TILE_FLOOR);
 			}
 			tempMap->addTile(tempTile);
+			dPrint(DEBUG_ALL,"For map ID " + std::to_string(tempMap->getID()) + \
+			       " loaded " + std::to_string((i*mapWidth)+j+1) + " tiles.\n",false,__FILE__,__LINE__);
+
 		}
 		
 	}
+
 	return !mapData.eof(); //TODO: error checking
 }
 
 bool newLoadEventInfo(Map *tempMap, ifstream &mapData) {
 	//return loadEventInfo(tempMap, mapData);
-	return true; //TODO: actually read/parse event info
+	return !mapData.eof(); //TODO: actually read/parse event info
 }
 
 bool newLoadExitInfo(Map *tempMap, ifstream &mapData) {
 	//return loadExitInfo(tempMap, mapData); 
-	return true; //TODO: actually read/parse exit info
+	return !mapData.eof(); //TODO: actually read/parse exit info
 }

@@ -52,26 +52,26 @@ void init() {
 	//Setup phase
 	//sound = !DEBUG;
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
-			dPrint(DEBUG_ERROR,SDL_GetError(),true);
+			dPrint(DEBUG_ERROR,SDL_GetError(),true,__FILE__,__LINE__);
       exit();
 		
 	} else {
-		dPrint(DEBUG_ERROR,"SDL init succeeded.",false);
+		dPrint(DEBUG_ERROR,"SDL init succeeded.",false,__FILE__,__LINE__);
 	}
 
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-		dPrint(DEBUG_ERROR, SDL_GetError(),true);
+		dPrint(DEBUG_ERROR, SDL_GetError(),true,__FILE__,__LINE__);
       exit();
 	} else {
-		dPrint(DEBUG_ERROR,"SDL_img init succeeded.",false);
+		dPrint(DEBUG_ERROR,"SDL_img init succeeded.",false,__FILE__,__LINE__);
 	}
 
 	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
-		dPrint(DEBUG_ERROR,SDL_GetError(),true);
+		dPrint(DEBUG_ERROR,SDL_GetError(),true,__FILE__,__LINE__);
       exit();
 		
 	} else {
-		dPrint(DEBUG_ERROR,"SDL_mixer init succeeded.",false);
+		dPrint(DEBUG_ERROR,"SDL_mixer init succeeded.",false,__FILE__,__LINE__);
 	}
 
 	//Load phase
@@ -79,26 +79,26 @@ void init() {
 	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas",\
 	  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL) {
-		dPrint(DEBUG_ERROR,SDL_GetError(),true);
+		dPrint(DEBUG_ERROR,SDL_GetError(),true,__FILE__,__LINE__);
       exit();
 	}
 
 	jackSprite = IMG_Load("jack.png");
 	if (!jackSprite) {
-		dPrint(DEBUG_ERROR,"we let go of jack!",true);
+		dPrint(DEBUG_ERROR,"we let go of jack!",true,__FILE__,__LINE__);
 		exit();
 	}
 
 	gSurface = IMG_Load("title.png");
 	if (!gSurface) {
-		dPrint(DEBUG_ERROR,"failed to load title screen!",true);
+		dPrint(DEBUG_ERROR,"failed to load title screen!",true,__FILE__,__LINE__);
 		exit();
 	}
 
 	if (sound) {
 		gMusic = Mix_LoadMUS("tocafuge.wav");
 		if (gMusic == NULL) {
-			dPrint(DEBUG_ERROR,"Failed to load tocafuge.wav!",true);
+			dPrint(DEBUG_ERROR,"Failed to load tocafuge.wav!",true,__FILE__,__LINE__);
 		}
 	}
 
@@ -125,7 +125,7 @@ void init() {
 	//cout << "Jack's color-keyed now.\n";
 	//Jack->setTexture(SDL_CreateTextureFromSurface(gRenderer,jackSprite));
 	Jack->loadSprite("jack");
-	dPrint(DEBUG_ALL,"Jack's sprite is set.",false);
+	dPrint(DEBUG_ALL,"Jack's sprite is set.",false,__FILE__,__LINE__);
 
 	Jack -> setCollision(70,70,64,64);
 	vectorObjects.push_back(*Jack);
@@ -264,9 +264,9 @@ void loadMap(Map mapToLoad) {
 
 
 	if (tileSet == NULL) {
-		dPrint(DEBUG_ERROR,"Error loading tileset " + tileName + "!",true);
+		dPrint(DEBUG_ERROR,"Error loading tileset " + tileName + "!",true,__FILE__,__LINE__);
 	} else {
-		dPrint(DEBUG_ALL,"Successfully loaded tileset " + tileName + "!",true);
+		dPrint(DEBUG_ALL,"Successfully loaded tileset " + tileName + "!",true,__FILE__,__LINE__);
 
 		tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 
@@ -291,7 +291,7 @@ void loadMap(Map mapToLoad) {
 		}
 		
 			dPrint(DEBUG_ALL, "Map ID: " + std::to_string(curMap.getID()) + " has "\
-			  + std::to_string(curMap.getTiles().size()) + " tiles innit.",false);
+			  + std::to_string(curMap.getTiles().size()) + " tiles innit.",false,__FILE__,__LINE__);
 		
 		// And now we have vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
 	}
@@ -530,8 +530,8 @@ void gameStart() {
 	populateMapVector(&vectorMaps);
 	//populateObjectVector(&vectorObjects) will work the same way once I do that.
 	if (DEBUG == DEBUG_ALL) {
-		dPrint(DEBUG_ALL, "VectorMaps size = " + std::to_string(vectorMaps.size()),false);
-		dPrint(DEBUG_ALL, "vectorObjects size = " + std::to_string(vectorObjects.size()),false);
+		dPrint(DEBUG_ALL, "VectorMaps size = " + std::to_string(vectorMaps.size()),false,__FILE__,__LINE__);
+		dPrint(DEBUG_ALL, "vectorObjects size = " + std::to_string(vectorObjects.size()),false,__FILE__,__LINE__);
 	}
 	loadMap(vectorMaps.at(0));
 	if (sound) {
@@ -672,7 +672,7 @@ void convertMap(vector<Map> mapVector) {
 			//const char* tileID = std::to_string(t.getID()).c_str();
 			const char tileID2 = (char)t.getID();
 			dPrint(DEBUG_ALL,"Map: " + std::to_string(m.getID()) + \
-			        " \nTile: " + std::to_string(t.getID()) + "\n",false);
+			        " \nTile: " + std::to_string(t.getID()) + "\n",false,__FILE__,__LINE__);
 			const char* outChar = &tileID2;
 			//newMap.write(std::to_string(t.getID()).c_str(),sizeof(t.getID()));
 			newMap.write(&tileID2,sizeof(tileID2));

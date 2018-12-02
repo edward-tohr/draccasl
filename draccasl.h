@@ -15,7 +15,7 @@ class GameObject;
 extern DEBUG_T DEBUG;
 extern int TILESIZE;
 extern float VELOCITY_MAX;
-extern void dPrint(DEBUG_T dLvl, std::string msg, bool err);
+extern void dPrint(DEBUG_T dLvl, std::string msg, bool err, std::string file, int lineNum);
 extern char __BUILD_NUMBER;
 
 //globals go in header file? Is this also awful?

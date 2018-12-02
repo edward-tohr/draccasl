@@ -39,8 +39,10 @@ const COLLISION_T defaultCollision[18] = \
 
 
 
-void dPrint(DEBUG_T dLvl, std::string msg, bool err) {
+void dPrint(DEBUG_T dLvl, std::string msg, bool err, std::string file = __FILE__, int lineNum = __LINE__) {
+	std::string line = std::to_string(lineNum);
 	if (DEBUG >= dLvl) {
+	std::cout << "Message from " << file << " line " << line << std::endl;
     if (err) {
 		std::cerr << "errlog " << dLvl << ": " << msg << std::endl;
     } else {

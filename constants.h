@@ -4,6 +4,7 @@
 //  NONE will not output any debug info.
 //  ERROR will only output error messages.
 //  ALL will output all debug messages.
+#include "string"
 
 
 enum DEBUG_T {
@@ -52,6 +53,7 @@ extern float FLOOR_SNAP;// snap to floors that are within this value of projecte
 extern int STAIR_WIDTH;
 extern const COLLISION_T defaultCollision[18];
 extern bool LOAD_NEW_MAPS;
+void dPrint(DEBUG_T dLvl, std::string msg, bool err, std::string file, int lineNum);
 
 
 #endif
