@@ -60,6 +60,14 @@ COLLISION_T Tile::getCollision() {
 void Tile::setCollision(COLLISION_T t_collision) {
 	collision = t_collision;
 }
+
+std::vector<SDL_Rect> Tile::getColliders() {
+	return vectorColliders;
+}
+
+void Tile::setColliders(std::vector<SDL_Rect> colliders) {
+	vectorColliders = colliders;
+}
 /*
 void Tile::setNormal(float norm) {
   normal = norm;
@@ -395,9 +403,8 @@ bool newLoadMapInfo(Map *tempMap, ifstream &mapData) {
 	newLoadExitInfo(tempMap,mapData);
 	if (mapData.peek() == EOF) {
 		dPrint(DEBUG_ALL,"All maps loaded!",false,__FILE__,__LINE__);
-		return true;
 	}
-	return !mapData.eof(); // TODO: error checking
+	return !(mapData.peek() == EOF); // TODO: error checking
 }
 
 bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {

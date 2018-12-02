@@ -130,6 +130,10 @@ void init() {
 	Jack -> setCollision(70,70,64,64);
 	vectorObjects.push_back(*Jack);
 
+	dPrint(DEBUG_ALL,"Setting up tile colliders...",false,__FILE__,__LINE__);
+	setupColliders();
+	dPrint(DEBUG_ALL,"Colliders set!",false,__FILE__,__LINE__);
+
 }
 
 void exit() {
@@ -267,25 +271,28 @@ void loadMap(Map mapToLoad) {
 		dPrint(DEBUG_ERROR,"Error loading tileset " + tileName + "!",true,__FILE__,__LINE__);
 	} else {
 		dPrint(DEBUG_ALL,"Successfully loaded tileset " + tileName + "!",true,__FILE__,__LINE__);
-
 		tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
-
 		// Once we have it loaded, we can slice the tileset into tiles, and store it all in a vector<Tile>.
-		int numCols = tileSet->w / TILESIZE;
+		dPrint(DEBUG_ALL,"setting numCols... tilesize is " + std::to_string(TILESIZE),false,__FILE__,__LINE__);
+		int numCols = tileSet->w / TILESIZE; // AAAAAAAAAAAAAA WHY IS THIS BREAKING
+		dPrint(DEBUG_ALL,"numCols set",false,__FILE__,__LINE__);
 		int numRows = tileSet->h / TILESIZE;
+		dPrint(DEBUG_ALL,"numRows set",false,__FILE__,__LINE__);
 		Tile currentTile;
+		
 		for (int i = 0; i < numRows; i++) {
 			for (int j = 0; j < numCols; j++) {
 				currentTile.setRect(j*TILESIZE,i*TILESIZE);
 				vectorTiles.push_back(currentTile);
 			}
 		}
+		dPrint(DEBUG_ALL,"Loading map " + std::to_string(mapToLoad.getID()) + "...",false,__FILE__,__LINE__);
 		currentMap = mapToLoad.getID();
 		curMap = mapToLoad;
 		mapTiles.clear();
 		vector<Tile> tempTiles = curMap.getTiles();
 		for (unsigned int i = 0; i < tempTiles.size(); i++) {
-			if (tempTiles.at(i).getID() != 1) {
+			if (tempTiles.at(i).getType() != TILE_NONE) {
 				mapTiles.push_back(tempTiles.at(i)); //mapTiles should now only contain non-air tiles.
 			}
 		}
@@ -335,7 +342,7 @@ void checkCollision(GameObject* actor, std::vector<Tile> collidingTerrain) {
 
 
 void loop() {
-
+dPrint(DEBUG_ALL, "beginning main loop...",false,__FILE__,__LINE__);
 	for (unsigned int i = 0; i < vectorObjects.size(); i++) {
 		vectorObjects.at(i).beginUpdate();
 		vectorCollision.clear();
@@ -352,7 +359,7 @@ void loop() {
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
 		//if (DEBUG == DEBUG_ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
-			if (mapTiles.at(j).getType() != TILE_NONE) {
+			if (mapTiles.at(j).getCollision() != COLLISION_NONE) {
 				if (rectX >= mapTiles.at(j).getXPos() &&\
 				    rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
@@ -436,7 +443,7 @@ void loop() {
     rectH = tempRect.h;
     
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
-			if (mapTiles.at(j).getType() != TILE_NONE) {
+			if (mapTiles.at(j).getCollision() != COLLISION_NONE) {
 				if (rectY >= mapTiles.at(j).getYPos() &&\
 				    rectY <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());

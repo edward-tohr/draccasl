@@ -45,7 +45,7 @@ enum COLLISION_T {
 extern DEBUG_T DEBUG;
 
 extern float GRAVITY_V;//Gravity value.
-extern int TILESIZE;
+extern const int TILESIZE;
 extern float VELOCITY_MAX;
 extern float MOVE_ACCEL;
 extern float DRAG;
@@ -54,6 +54,7 @@ extern int STAIR_WIDTH;
 extern const COLLISION_T defaultCollision[18];
 extern bool LOAD_NEW_MAPS;
 void dPrint(DEBUG_T dLvl, std::string msg, bool err, std::string file, int lineNum);
+void setupColliders();
 
 
 #endif

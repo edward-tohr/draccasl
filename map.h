@@ -29,7 +29,7 @@ extern const COLLISION_T defaultCollision[18];
 extern SDL_Renderer *gRenderer;
 extern SDL_Texture *tileTexture;
 extern SDL_Rect gCamera;
-extern int TILESIZE;
+extern const int TILESIZE;
 extern void dPrint(DEBUG_T dLvl, std::string msg, bool err, std::string file, int lineNum);
 
 class Tile {
@@ -39,6 +39,7 @@ class Tile {
 	SDL_Rect tileRect; //Contains the size and location in pixels of the tile.
   	TILE_T type = TILE_UNDEFINED;
 	COLLISION_T collision = COLLISION_UNDEFINED;
+	std::vector<SDL_Rect> vectorColliders;
   	//float normal = 0; // Tile's normal vector. For ramps. Not sure if it should be in degrees or general slope.
 
  public:
@@ -56,6 +57,8 @@ class Tile {
   	//float getNormal();
   	//void setNormal(float normal);
 	void setCollision(COLLISION_T collision);
+	std::vector<SDL_Rect> getColliders();
+	void setColliders(std::vector<SDL_Rect> colliders);
 	Tile();
   	Tile(TILE_T type, COLLISION_T collision);
 };
