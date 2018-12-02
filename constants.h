@@ -6,6 +6,7 @@
 //  ALL will output all debug messages.
 #include "string"
 #include "sdl_files.h"
+#include "vector"
 
 
 enum DEBUG_T {
