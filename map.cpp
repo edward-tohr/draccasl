@@ -310,25 +310,19 @@ void populateMapVector(vector<Map>* mapVector) {
 	} while (loop);
 	} else {
 		do {
-		if (!newLoadMapInfo(&tempMap,mapData)) {
-			break;
-		}
-		if (!newLoadExitInfo(&tempMap,mapData)) {
-			break;
-		}
-		if (!newLoadTileInfo(&tempMap,mapData)) {
-			break;
-		}
-		loop = newLoadEventInfo(&tempMap,mapData);
+			loop = newLoadMapInfo(&tempMap,mapData);
 		mapVector->push_back(tempMap);
-		tempMap.clearMap();
+		dPrint(DEBUG_ALL,"map pushed to vector.",false,__FILE__,__LINE__);
 		
+		tempMap.clearMap();
+		loop = newLoadEventInfo(&tempMap,mapData);
 		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false,__FILE__,__LINE__);
 		if (tempMap.getID() != id) {
 			dPrint(DEBUG_ERROR,"Map ID mismatch! Should be " + std::to_string(id) + " but says it's " +\
 			  std::to_string(tempMap.getID()) + "!\n",true,__FILE__,__LINE__);
-		}
-
+			  mapVector->erase(mapVector->end());
+		} 
+		
 		id++;
 	} while (loop);
 	}
@@ -371,12 +365,24 @@ int newParseMapInfo(ifstream &mapData) {
 bool newLoadMapInfo(Map *tempMap, ifstream &mapData) {
 	//return loadMapInfo(tempMap, mapData);
 	int mapID = mapData.get();
+	if (mapData.eof()) {
+		return false;
+	}
 	dPrint(DEBUG_ALL,"Map ID: " + std::to_string(mapID) + ".\n",false,__FILE__,__LINE__);
 	int mapWidth = mapData.get();
+	if (mapData.eof()) {
+		return false;
+	}
 	dPrint(DEBUG_ALL,"Map Width: " + std::to_string(mapWidth) + ".\n",false,__FILE__,__LINE__);
 	int mapHeight = mapData.get();
+	if (mapData.eof()) {
+		return false;
+	}
 	dPrint(DEBUG_ALL,"Map Height: " + std::to_string(mapHeight) + ".\n",false,__FILE__,__LINE__);
 	int mapTileset = mapData.get();
+	if (mapData.eof()) {
+		return false;
+	}
 	dPrint(DEBUG_ALL,"Map Tileset: " + std::to_string(mapTileset) + ".\n",false,__FILE__,__LINE__);
 
 	//mapData seems to be off by four???
@@ -389,7 +395,11 @@ bool newLoadMapInfo(Map *tempMap, ifstream &mapData) {
 	newLoadTileInfo(tempMap,mapData);
 	newLoadEventInfo(tempMap,mapData);
 	newLoadExitInfo(tempMap,mapData);
-	return (mapID > -1); // TODO: error checking
+	if (mapData.peek() == EOF) {
+		dPrint(DEBUG_ALL,"All maps loaded!",false,__FILE__,__LINE__);
+		return true;
+	}
+	return !mapData.eof(); // TODO: error checking
 }
 
 bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
@@ -397,13 +407,28 @@ bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
 	int mapHeight = tempMap->getHeight();
 	int mapWidth = tempMap->getWidth();
 	Tile tempTile;
+	int maxRead = mapHeight * mapWidth;
+	int curRead = 0;
 
 	for (int i = 0; i < mapHeight; i++) {
 		for (int j = 0; j < mapWidth; j++) {
 			tempTile.setXPos(TILESIZE * j);
 			tempTile.setYPos(TILESIZE * i);
 			tempTile.setID(mapData.get());
+			if (mapData.eof()) {
+				std::string errMap = std::to_string(tempMap->getID());
+				std::string errTileX = std::to_string(tempTile.getXPos());
+				std::string errTileY = std::to_string(tempTile.getYPos());
+				dPrint(DEBUG_ERROR,"\n\nEOF reached!!!\nMap ID: " + errMap + "\nX: " + errTileX +\
+					" Y: " + errTileY + "\n\n",true,__FILE__,__LINE__);
+				SDL_Quit();
+				exit(1);
+			}
 			tempTile.setCollision(defaultCollision[tempTile.getID()]);
+			if (tempTile.getID() < 0 || tempTile.getID() > 20) {
+				dPrint(DEBUG_ERROR,"Tile load error!",true,__FILE__,__LINE__);
+				return true;
+			}
 			if (tempTile.getCollision() == COLLISION_UNDEFINED) {
 				using std::to_string;
 				dPrint(DEBUG_ERROR,"Tile in map " + to_string(tempMap->getID()) + " at coords " +\
@@ -416,14 +441,18 @@ bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
 			} else {
 				tempTile.setType(TILE_FLOOR);
 			}
+			if (++curRead > maxRead) {
+				dPrint(DEBUG_ERROR,"Map ID " + std::to_string(tempMap->getID()) + \
+					" tried to load too many tiles!",true,__FILE__,__LINE__);
+				break;
+			}
 			tempMap->addTile(tempTile);
-			dPrint(DEBUG_ALL,"For map ID " + std::to_string(tempMap->getID()) + \
-			       " loaded " + std::to_string((i*mapWidth)+j+1) + " tiles.\n",false,__FILE__,__LINE__);
-
 		}
 		
 	}
-
+	if (mapData.peek() == EOF) {
+		return true;
+	}
 	return !mapData.eof(); //TODO: error checking
 }
 

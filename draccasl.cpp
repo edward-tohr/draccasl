@@ -197,7 +197,7 @@ bool event(SDL_Event e) {
 						currentMap++;
 						currentMap %= vectorMaps.size();
 						cout << "loading map " << currentMap << "...\n";
-						loadMap(vectorMaps.back());
+						loadMap(vectorMaps.at(currentMap));
 					}
 					break;
 
@@ -652,20 +652,20 @@ void convertMap(vector<Map> mapVector) {
 	//if (DEBUG == DEBUG_NONE) { return; }
 	using std::ifstream;
 	using std::ofstream;
-	ofstream newMap;
+	ofstream newMap("maps.nmp",ofstream::binary|ofstream::trunc);
 	for (Map& m: mapVector) {
-		std::string name = "map" + std::to_string(m.getID()) + ".nmp";
-		newMap.open(name.c_str(),ofstream::trunc|ofstream::binary);
+		//std::string name = "map" + std::to_string(m.getID()) + ".nmp";
+		//newMap.open(name.c_str(),ofstream::trunc|ofstream::binary);
 		vector<Tile> tileVector = m.getTiles();
 		const char mapID = (char) m.getID();
 		const char mapWidth = (char) m.getWidth();
 		const char mapHeight = (char) m.getHeight();
 		const char mapTileset = (char) m.getTileset();
 
-		newMap.write(&mapID,sizeof(mapID));
-		newMap.write(&mapWidth,sizeof(mapWidth));
-		newMap.write(&mapHeight,sizeof(mapHeight));
-		newMap.write(&mapTileset, sizeof(mapTileset));
+		newMap.write(&mapID,sizeof(char));
+		newMap.write(&mapWidth,sizeof(char));
+		newMap.write(&mapHeight,sizeof(char));
+		newMap.write(&mapTileset, sizeof(char));
 
 		
 		for (Tile& t : tileVector) {
@@ -675,10 +675,10 @@ void convertMap(vector<Map> mapVector) {
 			        " \nTile: " + std::to_string(t.getID()) + "\n",false,__FILE__,__LINE__);
 			const char* outChar = &tileID2;
 			//newMap.write(std::to_string(t.getID()).c_str(),sizeof(t.getID()));
-			newMap.write(&tileID2,sizeof(tileID2));
+			newMap.write(&tileID2,sizeof(char));
 			
 		}
-		newMap.close();
+		//newMap.close();
 	}
 	newMap.close();
 }
