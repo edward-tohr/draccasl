@@ -603,12 +603,6 @@ int main(int argc, char* argv[]) {
 			if (argument == "--NO-SOUND" || argument == "-s") {
 				sound = false;
 			}
-			if (argument == "--NEW-MAPS" || argument == "-N") {
-				LOAD_NEW_MAPS = true;
-			}
-			if (argument == "--NO-NEW-MAPS" || argument == "-n") {
-				LOAD_NEW_MAPS = false;
-			}
       if (argument == "--help" || argument == "-h") {
         std::cout << "jack DANGER strong in: Castle of the Draculas\n" << \
                      "Debug flags: --DEBUG-NONE, --DEBUG-ERROR, --DEBUG-ALL\n" << \

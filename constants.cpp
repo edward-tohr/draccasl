@@ -12,6 +12,8 @@ float DRAG = 0.7;
 float FLOOR_SNAP = GRAVITY_V;
 int STAIR_WIDTH = TILESIZE / 8;
 bool LOAD_NEW_MAPS = true;
+bool LOG_TO_FILE = false;
+bool LOG_ERROR_TO_FILE = false;
 
 using std::vector;
 
