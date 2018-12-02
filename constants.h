@@ -5,6 +5,7 @@
 //  ERROR will only output error messages.
 //  ALL will output all debug messages.
 #include "string"
+#include "sdl_files.h"
 
 
 enum DEBUG_T {
@@ -43,7 +44,21 @@ enum COLLISION_T {
 };
 
 extern DEBUG_T DEBUG;
-
+extern std::vector<SDL_Rect> TILE_COLLISION_SQUARE;           // Full squares
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_U;           // 45-degree ramp, up to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_D;           // 45-degree ramp, down to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_STEEP_BU;    // 68-degree ramp, bottom, up to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_STEEP_TU;    // 68-degreen ramp, top, up to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_STEEP_BD;    // 68-degree ramp, bottom, down to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_STEEP_TD;    // 68-degree ramp, top, down to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_SHALLOW_BU;  // 23-degree ramp, bottom, up to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_SHALLOW_TU;  // 23-degree ramp, top, up to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_SHALLOW_BD;  // 23-degree ramp, bottom, down to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_RAMP_SHALLOW_TD;  // 23-degree ramp, top, down to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_STAIRS_U;         // Staircase, up to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_STAIRS_D;         // Staircase, down to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_STEP_U;           // Single step, up to the right
+extern std::vector<SDL_Rect> TILE_COLLISION_STEP_D; 
 extern float GRAVITY_V;//Gravity value.
 extern const int TILESIZE;
 extern float VELOCITY_MAX;

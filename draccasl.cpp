@@ -254,7 +254,7 @@ void render() {
 }
 
 void loadMap(Map mapToLoad) {
-	// We have a map taken from vectorMaps, taken from maps.map.
+	// We have a map taken from vectorMaps, taken from maps.nmp.
 	// We need a surface/texture of the tileset.
 	int tiles = mapToLoad.getTileset();
 	cout << "tiles = " << mapToLoad.getTileset() << "\n";
@@ -274,7 +274,7 @@ void loadMap(Map mapToLoad) {
 		tileTexture = SDL_CreateTextureFromSurface(gRenderer, tileSet);
 		// Once we have it loaded, we can slice the tileset into tiles, and store it all in a vector<Tile>.
 		dPrint(DEBUG_ALL,"setting numCols... tilesize is " + std::to_string(TILESIZE),false,__FILE__,__LINE__);
-		int numCols = tileSet->w / TILESIZE; // AAAAAAAAAAAAAA WHY IS THIS BREAKING
+		int numCols = tileSet->w / TILESIZE; 
 		dPrint(DEBUG_ALL,"numCols set",false,__FILE__,__LINE__);
 		int numRows = tileSet->h / TILESIZE;
 		dPrint(DEBUG_ALL,"numRows set",false,__FILE__,__LINE__);
@@ -342,7 +342,6 @@ void checkCollision(GameObject* actor, std::vector<Tile> collidingTerrain) {
 
 
 void loop() {
-dPrint(DEBUG_ALL, "beginning main loop...",false,__FILE__,__LINE__);
 	for (unsigned int i = 0; i < vectorObjects.size(); i++) {
 		vectorObjects.at(i).beginUpdate();
 		vectorCollision.clear();
@@ -357,21 +356,27 @@ dPrint(DEBUG_ALL, "beginning main loop...",false,__FILE__,__LINE__);
 
 		bool eraseTile = false;
 		// get a vector of tiles that have x coordinate + width between collider's x and collider's x + width
-		//if (DEBUG == DEBUG_ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
+	
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
 			if (mapTiles.at(j).getCollision() != COLLISION_NONE) {
 				if (rectX >= mapTiles.at(j).getXPos() &&\
 				    rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
-					vectorCollision.push_back(mapTiles.at(j).getRect());
+						for (auto &r:mapTiles.at(j).getColliders()){
+							vectorCollision.push_back(r);
+						}
 				}
 				if (rectX + rectW >= mapTiles.at(j).getXPos() &&\
 				    rectX + rectW <= mapTiles.at(j).getXPos() + TILESIZE) {
-					vectorCollision.push_back(mapTiles.at(j).getRect());
+					for (auto &r:mapTiles.at(j).getColliders()){
+							vectorCollision.push_back(r);
+						}
 				}
 				for (int k = 0; k <= rectW; k += TILESIZE) {
 					if (rectX + k >= mapTiles.at(j).getXPos() &&\
 					    rectX + k <= mapTiles.at(j).getXPos() + TILESIZE) {
-						vectorCollision.push_back(mapTiles.at(j).getRect());
+						for (auto &r:mapTiles.at(j).getColliders()){
+							vectorCollision.push_back(r);
+						}
 					}
 				}
 			}
@@ -416,6 +421,7 @@ dPrint(DEBUG_ALL, "beginning main loop...",false,__FILE__,__LINE__);
       // do I need vectorObjects.at(i)&? maybe.
 
 	  //TODO: This is where the actual collision gets handled
+
 			if (vectorObjects.at(i).getXVel() > 0) {
 				int minx = rectX + rectW;
 				for (unsigned int j = 0; j < vectorCollision.size(); j++) {
@@ -446,16 +452,22 @@ dPrint(DEBUG_ALL, "beginning main loop...",false,__FILE__,__LINE__);
 			if (mapTiles.at(j).getCollision() != COLLISION_NONE) {
 				if (rectY >= mapTiles.at(j).getYPos() &&\
 				    rectY <= mapTiles.at(j).getYPos() + TILESIZE) {
-					vectorCollision.push_back(mapTiles.at(j).getRect());
+					for (auto &r:mapTiles.at(j).getColliders()){
+							vectorCollision.push_back(r);
+						}
 				}
 				if (rectY + rectH >= mapTiles.at(j).getYPos() &&\
 				    rectY + rectH <= mapTiles.at(j).getYPos() + TILESIZE) {
-					vectorCollision.push_back(mapTiles.at(j).getRect());
+					for (auto &r:mapTiles.at(j).getColliders()){
+							vectorCollision.push_back(r);
+						}
 				}
 				for (signed int k = 0; k <= rectH; k += TILESIZE) {
 					if (rectY + k >= mapTiles.at(j).getYPos() &&\
 					    rectY + k <= mapTiles.at(j).getYPos() + TILESIZE) {
-						vectorCollision.push_back(mapTiles.at(j).getRect());
+						for (auto &r:mapTiles.at(j).getColliders()){
+							vectorCollision.push_back(r);
+						}
 					}
 				}
 			}

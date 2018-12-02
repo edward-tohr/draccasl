@@ -5,6 +5,69 @@ using std::ofstream;
 using std::cout;
 using std::vector;
 
+void Tile::setCollisionType(COLLISION_T collType) {
+	switch (collType) {
+		
+		case COLLISION_SQUARE:
+		setColliders(TILE_COLLISION_SQUARE);
+		break;
+
+		case COLLISION_RAMP_D:
+		setColliders(TILE_COLLISION_RAMP_D);
+		break;
+
+		case COLLISION_RAMP_SHALLOW_BD:
+		setColliders(TILE_COLLISION_RAMP_SHALLOW_BD);
+		break;
+
+		case COLLISION_RAMP_SHALLOW_BU:
+		setColliders(TILE_COLLISION_RAMP_SHALLOW_BU);
+		break;
+
+		case COLLISION_RAMP_SHALLOW_TD:
+		setColliders(TILE_COLLISION_RAMP_SHALLOW_TD);
+		break;
+
+		case COLLISION_RAMP_SHALLOW_TU:
+		setColliders(TILE_COLLISION_RAMP_SHALLOW_TU);
+		break;
+
+		case COLLISION_RAMP_STEEP_BD:
+		setColliders(TILE_COLLISION_RAMP_STEEP_BD);
+		break;
+
+		case COLLISION_RAMP_STEEP_TD:
+		setColliders(TILE_COLLISION_RAMP_STEEP_TD);
+		break;
+
+		case COLLISION_RAMP_STEEP_TU:
+		setColliders(TILE_COLLISION_RAMP_STEEP_TU);
+		break;
+
+		case COLLISION_RAMP_U:
+		setColliders(TILE_COLLISION_RAMP_U);
+		break;
+
+		case COLLISION_STAIRS_D:
+		setColliders(TILE_COLLISION_STAIRS_D);
+		break;
+
+		case COLLISION_STAIRS_U:
+		setColliders(TILE_COLLISION_STAIRS_U);
+		break;
+
+		case COLLISION_STEP_D:
+		setColliders(TILE_COLLISION_STEP_D);
+		break;
+
+		case COLLISION_STEP_U:
+		setColliders(TILE_COLLISION_STEP_U);
+		break;
+
+		default:
+		break;
+	}
+}
 
 int Tile::getID() {
 	return id;
@@ -441,6 +504,8 @@ bool newLoadTileInfo(Map *tempMap, ifstream &mapData) {
 				  SDL_Quit();
 				  return false;
 			}
+
+			tempTile.setCollisionType(tempTile.getCollision());
 			if (tempTile.getCollision() == COLLISION_NONE){
 				tempTile.setType(TILE_NONE);
 			} else {

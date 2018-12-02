@@ -43,6 +43,7 @@ class Tile {
   	//float normal = 0; // Tile's normal vector. For ramps. Not sure if it should be in degrees or general slope.
 
  public:
+	void setCollisionType(COLLISION_T collType);
 	void setRect(int x, int y);
 	void setID (int i);
 	SDL_Rect getRect();
