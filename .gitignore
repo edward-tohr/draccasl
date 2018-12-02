@@ -17,3 +17,5 @@ bin/
 *.gch
 *.layout
 .vscode/
+version.txt
+vers
