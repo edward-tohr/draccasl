@@ -51,6 +51,7 @@ extern float DRAG;
 extern float FLOOR_SNAP;// snap to floors that are within this value of projected y position.
 extern int STAIR_WIDTH;
 extern const COLLISION_T defaultCollision[18];
+extern bool LOAD_NEW_MAPS;
 
 
 #endif

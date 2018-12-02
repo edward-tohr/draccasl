@@ -275,9 +275,15 @@ void populateMapVector(vector<Map>* mapVector) {
 	// if (int)c ==9, it's a tab. if ==10, it's a newline.
 
 	Map tempMap;
-	ifstream mapData("maps.map");
+	ifstream mapData;
+	if (!LOAD_NEW_MAPS) {
+	mapData.open("maps.map");
+	} else {
+	mapData.open("maps.nmp");
+	}
 	bool loop = true;
 	int id = 0;
+	if (!LOAD_NEW_MAPS) {
 	do {
 		if (!loadMapInfo(&tempMap,mapData)) {
 			break;
@@ -300,6 +306,30 @@ void populateMapVector(vector<Map>* mapVector) {
 
 		id++;
 	} while (loop);
+	} else {
+		do {
+		if (!newLoadMapInfo(&tempMap,mapData)) {
+			break;
+		}
+		if (!newLoadExitInfo(&tempMap,mapData)) {
+			break;
+		}
+		if (!newLoadTileInfo(&tempMap,mapData)) {
+			break;
+		}
+		loop = newLoadEventInfo(&tempMap,mapData);
+		mapVector->push_back(tempMap);
+		tempMap.clearMap();
+		
+		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false);
+		if (tempMap.getID() != id) {
+			dPrint(DEBUG_ERROR,"Map ID mismatch! Should be " + std::to_string(id) + " but says it's " +\
+			  std::to_string(tempMap.getID()) + "!\n",true);
+		}
+
+		id++;
+	} while (loop);
+	}
 	dPrint(DEBUG_ALL,"Number of maps: " + std::to_string(mapVector->size()),false);
 	
 }
