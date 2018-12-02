@@ -76,7 +76,8 @@ void init() {
 
 	//Load phase
 
-	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
+	gWindow = SDL_CreateWindow("jack DANGER strong in: castle of the draculas",\
+	  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_W,WINDOW_H, 0);
 	if (gWindow == NULL) {
 		dPrint(DEBUG_ERROR,SDL_GetError(),true);
       exit();
@@ -289,7 +290,8 @@ void loadMap(Map mapToLoad) {
 			}
 		}
 		
-			dPrint(DEBUG_ALL, "Map ID: " + std::to_string(curMap.getID()) + " has " + std::to_string(curMap.getTiles().size()) + " tiles innit.",false);
+			dPrint(DEBUG_ALL, "Map ID: " + std::to_string(curMap.getID()) + " has "\
+			  + std::to_string(curMap.getTiles().size()) + " tiles innit.",false);
 		
 		// And now we have vector<Tile> vectorTiles that contains each individual tile, sorted by tile ID.
 	}
@@ -351,14 +353,17 @@ void loop() {
 		//if (DEBUG == DEBUG_ALL){cout << "Temprect is at: " << tempRect.x << "," << tempRect.y << ". Xvel is " << vectorObjects.at(i).getXVel() << "\n";}
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
 			if (mapTiles.at(j).getType() != TILE_NONE) {
-				if (rectX >= mapTiles.at(j).getXPos() && rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
+				if (rectX >= mapTiles.at(j).getXPos() &&\
+				    rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				if (rectX + rectW >= mapTiles.at(j).getXPos() && rectX + rectW <= mapTiles.at(j).getXPos() + TILESIZE) {
+				if (rectX + rectW >= mapTiles.at(j).getXPos() &&\
+				    rectX + rectW <= mapTiles.at(j).getXPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
 				for (int k = 0; k <= rectW; k += TILESIZE) {
-					if (rectX + k >= mapTiles.at(j).getXPos() && rectX + k <= mapTiles.at(j).getXPos() + TILESIZE) {
+					if (rectX + k >= mapTiles.at(j).getXPos() &&\
+					    rectX + k <= mapTiles.at(j).getXPos() + TILESIZE) {
 						vectorCollision.push_back(mapTiles.at(j).getRect());
 					}
 				}
@@ -373,15 +378,18 @@ void loop() {
 		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
 			for (signed int k = 0; k < rectH; k += TILESIZE) {
-				if (rectY >= vectorCollision.at(j).y && rectY <= vectorCollision.at(j).y + TILESIZE) {
+				if (rectY >= vectorCollision.at(j).y &&\
+				    rectY <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (rectY + rectH >= vectorCollision.at(j).y && rectY + rectH <= vectorCollision.at(j).y + TILESIZE) {
+				} else if (rectY + rectH >= vectorCollision.at(j).y &&\
+				           rectY + rectH <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (rectY + k >= vectorCollision.at(j).y && rectY + k <= vectorCollision.at(j).y + TILESIZE) {
+				} else if (rectY + k >= vectorCollision.at(j).y &&\
+				           rectY + k <= vectorCollision.at(j).y + TILESIZE) {
 					eraseTile = false;
 					break;
 				}
@@ -429,14 +437,17 @@ void loop() {
     
 		for (unsigned int j = 0; j < mapTiles.size(); j++) {
 			if (mapTiles.at(j).getType() != TILE_NONE) {
-				if (rectY >= mapTiles.at(j).getYPos() && rectY <= mapTiles.at(j).getYPos() + TILESIZE) {
+				if (rectY >= mapTiles.at(j).getYPos() &&\
+				    rectY <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
-				if (rectY + rectH >= mapTiles.at(j).getYPos()&& rectY + rectH <= mapTiles.at(j).getYPos() + TILESIZE) {
+				if (rectY + rectH >= mapTiles.at(j).getYPos() &&\
+				    rectY + rectH <= mapTiles.at(j).getYPos() + TILESIZE) {
 					vectorCollision.push_back(mapTiles.at(j).getRect());
 				}
 				for (signed int k = 0; k <= rectH; k += TILESIZE) {
-					if (rectY + k >= mapTiles.at(j).getYPos() && rectY + k <= mapTiles.at(j).getYPos() + TILESIZE) {
+					if (rectY + k >= mapTiles.at(j).getYPos() &&\
+					    rectY + k <= mapTiles.at(j).getYPos() + TILESIZE) {
 						vectorCollision.push_back(mapTiles.at(j).getRect());
 					}
 				}
@@ -447,15 +458,18 @@ void loop() {
 		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
 			for (signed int k = 0; k <= tempRect.w; k += TILESIZE) {
-				if (rectX >= vectorCollision.at(j).x && rectX <= vectorCollision.at(j).x + TILESIZE) {
+				if (rectX >= vectorCollision.at(j).x &&\
+				    rectX <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (rectX + rectW >= vectorCollision.at(j).x && rectX + rectW <= vectorCollision.at(j).x + TILESIZE) {
+				} else if (rectX + rectW >= vectorCollision.at(j).x &&\
+				           rectX + rectW <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 
-				} else if (rectX + k >= vectorCollision.at(j).x && rectX + k <= vectorCollision.at(j).x + TILESIZE) {
+				} else if (rectX + k >= vectorCollision.at(j).x &&\
+				           rectX + k <= vectorCollision.at(j).x + TILESIZE) {
 					eraseTile = false;
 					break;
 				}
@@ -599,6 +613,7 @@ int main(int argc, char* argv[]) {
         std::cout << "jack DANGER strong in: Castle of the Draculas\n" << \
                      "Debug flags: --DEBUG-NONE, --DEBUG-ERROR, --DEBUG-ALL\n" << \
                      "Sound: --NO-SOUND\n" << \
+					 "Map format: --NEW-MAPS or --NO-NEW-MAPS" << \
                      "Help: --help\n";
         exit();
       }
@@ -656,7 +671,8 @@ void convertMap(vector<Map> mapVector) {
 		for (Tile& t : tileVector) {
 			//const char* tileID = std::to_string(t.getID()).c_str();
 			const char tileID2 = (char)t.getID();
-			dPrint(DEBUG_ALL,"Map: " + std::to_string(m.getID()) + " \nTile: " + std::to_string(t.getID()) + "\n",false);
+			dPrint(DEBUG_ALL,"Map: " + std::to_string(m.getID()) + \
+			        " \nTile: " + std::to_string(t.getID()) + "\n",false);
 			const char* outChar = &tileID2;
 			//newMap.write(std::to_string(t.getID()).c_str(),sizeof(t.getID()));
 			newMap.write(&tileID2,sizeof(tileID2));
