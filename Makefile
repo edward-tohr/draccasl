@@ -1,6 +1,6 @@
 #SRC_OBJS is the objects we'll be compiling.
 SRC_OBJS = draccasl.cpp map.cpp gameobject.cpp constants.cpp
-OBJS = draccasl.o map.o gameobject.o constants.o vers
+OBJS = draccasl.o map.o gameobject.o constants.o
 HEADERS = draccasl.h map.h gameobject.h constants.h sdl_files.h
 
 
@@ -57,8 +57,7 @@ final : $(OBJS)
 	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) -O3 $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
 debug : $(OBJS)
-	rm *.o
-	$(CC) $(SRC_OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_DEBUG_FLAGS) $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
+	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_DEBUG_FLAGS) $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
 clean: 
 	-rm *.o draccasl
