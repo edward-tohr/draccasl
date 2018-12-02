@@ -311,20 +311,18 @@ void populateMapVector(vector<Map>* mapVector) {
 	} else {
 		do {
 			loop = newLoadMapInfo(&tempMap,mapData);
-		mapVector->push_back(tempMap);
-		dPrint(DEBUG_ALL,"map pushed to vector.",false,__FILE__,__LINE__);
+			mapVector->push_back(tempMap);
+			dPrint(DEBUG_ALL,"map pushed to vector.",false,__FILE__,__LINE__);	
+			tempMap.clearMap();
+			dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false,__FILE__,__LINE__);
+			if (tempMap.getID() != id) {
+				dPrint(DEBUG_ERROR,"Map ID mismatch! Should be " + std::to_string(id) + " but says it's " +\
+			  			std::to_string(tempMap.getID()) + "!\n",true,__FILE__,__LINE__);
+			  	mapVector->erase(mapVector->end());
+			} 
 		
-		tempMap.clearMap();
-		loop = newLoadEventInfo(&tempMap,mapData);
-		dPrint(DEBUG_ALL,"tempMap ID is " + std::to_string(mapVector->back().getID()),false,__FILE__,__LINE__);
-		if (tempMap.getID() != id) {
-			dPrint(DEBUG_ERROR,"Map ID mismatch! Should be " + std::to_string(id) + " but says it's " +\
-			  std::to_string(tempMap.getID()) + "!\n",true,__FILE__,__LINE__);
-			  mapVector->erase(mapVector->end());
-		} 
-		
-		id++;
-	} while (loop);
+			id++;
+		} while (loop);
 	}
 	dPrint(DEBUG_ALL,"Number of maps: " + std::to_string(mapVector->size()),false,__FILE__,__LINE__);
 	
