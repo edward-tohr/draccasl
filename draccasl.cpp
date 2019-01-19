@@ -35,6 +35,7 @@ vector<GameObject> vectorObjects;
 vector<Tile> vectorTiles;
 vector<Tile> mapTiles;
 vector<SDL_Rect> vectorCollision;
+vector<Tile> vectorCollidingTiles;
 Map curMap;
 bool sound = true;
 bool gravity = true;
@@ -361,23 +362,62 @@ void loop() {
 			if (mapTiles.at(j).getCollision() != COLLISION_NONE) {
 				if (rectX >= mapTiles.at(j).getXPos() &&\
 				    rectX <= mapTiles.at(j).getXPos() + TILESIZE) {
-						for (auto &r:mapTiles.at(j).getColliders()){
-							vectorCollision.push_back(r);
-						}
+						//for (auto &r:mapTiles.at(j).getColliders()){
+						//	vectorCollision.push_back(r);
+						//}
+						vectorCollidingTiles.push_back(mapTiles.at(j));
 				}
 				if (rectX + rectW >= mapTiles.at(j).getXPos() &&\
 				    rectX + rectW <= mapTiles.at(j).getXPos() + TILESIZE) {
-					for (auto &r:mapTiles.at(j).getColliders()){
-							vectorCollision.push_back(r);
-						}
+					//for (auto &r:mapTiles.at(j).getColliders()){
+					//		vectorCollision.push_back(r);
+					//	}
+					vectorCollidingTiles.push_back(mapTiles.at(j));
 				}
 				for (int k = 0; k <= rectW; k += TILESIZE) {
 					if (rectX + k >= mapTiles.at(j).getXPos() &&\
 					    rectX + k <= mapTiles.at(j).getXPos() + TILESIZE) {
-						for (auto &r:mapTiles.at(j).getColliders()){
-							vectorCollision.push_back(r);
-						}
+						//for (auto &r:mapTiles.at(j).getColliders()){
+						//	vectorCollision.push_back(r);
+						//}
+						vectorCollidingTiles.push_back(mapTiles.at(j));
 					}
+				}
+			}
+		}
+
+		for (int i = 0; i < vectorCollidingTiles.size(); i++){
+			for (int j = 0; j < vectorCollidingTiles.at(i).getColliders().size(); j++) {
+				// check each collider's x, y, width, and height for collision with player
+				int tileLoX = vectorCollidingTiles.at(i).getColliders().at(j).x; //AAAAAAAAAAAAAAA
+				int tileHiX = vectorCollidingTiles.at(i).getColliders().at(j).w + tileLoX;
+				int tileLoY = vectorCollidingTiles.at(i).getColliders().at(j).y;
+				int tileHiY = vectorCollidingTiles.at(i).getColliders().at(j).h + tileLoY;
+				int playerLoX = Jack -> getXPos();
+				int playerHiX = playerLoX + Jack -> getWidth();
+				int playerLoY = Jack -> getYPos();
+				int playerHiY = playerLoY + Jack -> getHeight();
+				bool xOverlap = false;
+				bool yOverlap = false;
+
+				if (playerLoX > tileLoX && playerLoX <= tileHiX) {
+					xOverlap = true;
+				}
+
+				if (playerHiX < tileHiX && playerHiX > tileLoX) {
+					xOverlap = true;
+				}
+
+				if (playerLoY > tileLoY && playerLoY <= tileHiY) {
+					yOverlap = true;
+				}
+
+				if (playerHiY > tileLoY && playerHiY < tileHiY) {
+					yOverlap = true;
+				}
+
+				if (xOverlap && yOverlap) {
+					vectorCollision.push_back(vectorCollidingTiles.at(i).getColliders().at(j));
 				}
 			}
 		}
@@ -387,7 +427,8 @@ void loop() {
 		// vectorCollision contains all non-air tiles that are in the same column as the object.
 		// This should prune tiles that aren't in the same row, leaving only tiles that the object is truly overlapping.
 
-		for (unsigned int j = 0; j < vectorCollision.size(); j++) {
+
+		/*for (unsigned int j = 0; j < vectorCollision.size(); j++) {
 			eraseTile = true;
 			for (signed int k = 0; k < rectH; k += TILESIZE) {
 				if (rectY >= vectorCollision.at(j).y &&\
@@ -411,12 +452,12 @@ void loop() {
 				j--; // No need to back up all the way to the start since we're only erasing one tile at a time.
 
 			}
-		}
+		}*/
 
 
 		// if vector is empty, great.
 		if (!vectorCollision.empty()) {
-			// if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
+	  // if not, check x velocity. If positive, set collider's x equal to smallest x in terrain vector. If negative, set X equal to largest X + width. Set velocity to 0 either way.
       // checkCollision(vectorObjects.at(i),vectorCollision);
       // do I need vectorObjects.at(i)&? maybe.
 
