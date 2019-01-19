@@ -129,6 +129,10 @@ std::vector<SDL_Rect> Tile::getColliders() {
 }
 
 void Tile::setColliders(std::vector<SDL_Rect> colliders) {
+	for (int i = 0; i < colliders.size(); i++) {
+		colliders.at(i).x += getXPos();
+		colliders.at(i).y += getYPos();
+	}
 	vectorColliders = colliders;
 }
 /*
