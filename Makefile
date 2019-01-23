@@ -8,10 +8,10 @@ HEADERS = draccasl.h map.h gameobject.h constants.h sdl_files.h
 LINUX_OBJ_NAME = draccasl
 WIN_OBJ_NAME = draccasl.exe
 
-LINUX_COMPILER_FLAGS = -pedantic -Wall -Wextra --std=c++11 -no-pie
+LINUX_COMPILER_FLAGS = -pedantic -Wall -Wextra --std=c++11 -no-pie -pg
 BUILD_NUMBER_FILE = vers
 LINUX_LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_mixer -lSDL2_ttf $(BUILD_NUMBER_LDFLAGS)
-LINUX_DEBUG_FLAGS = -g 
+LINUX_DEBUG_FLAGS = -g -ggdb -pg
 
 WIN_COMPILER_FLAGS = -Wall -Wextra --std=c++11
 WIN_LINKER_FLAGS = -lSDLmain -lSDL -llibSDL2_image.dll -llibSDL2_mixer.dll -llibSDL2_ttf.dll
@@ -56,8 +56,8 @@ map.o: map.cpp map.h constants.h sdl_files.h
 final : $(OBJS)
 	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) -O3 $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
-debug : $(OBJS)
-	$(CC) $(OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_DEBUG_FLAGS) $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
+debug : 
+	$(CC) $(SRC_OBJS) $(LINUX_COMPILER_FLAGS) $(LINUX_DEBUG_FLAGS) $(LINUX_LINKER_FLAGS) -o $(LINUX_OBJ_NAME)
 
 clean: 
 	-rm *.o draccasl
