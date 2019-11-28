@@ -70,7 +70,8 @@ void init() {
 			cout << "SDL_img init succeeded!" << "\n";
 		}
 	}
-	if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
+  if (sound == true) {	
+  if(Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048) < 0) {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL_mixer init failed! " << SDL_GetError() << "\n";
       exit();
@@ -80,6 +81,12 @@ void init() {
 			cout << "SDL_mixer init succeeded!" << "\n";
 		}
 	}
+  } else {
+    if (DEBUG >= DEBUG_ERROR) {
+      cout << "SDL_mixer init skipped!\n";
+    }
+  }
+
 
 	//Load phase
 
