@@ -50,6 +50,7 @@ DEBUG_T DEBUG = DEBUG_ALL;
 void init() {
 	//Setup phase
 	//sound = !DEBUG;
+	if (sound == true) {
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL init failed! " << SDL_GetError() << "\n";
@@ -58,6 +59,15 @@ void init() {
 	} else {
 		if (DEBUG >= DEBUG_ERROR) {
 			cout << "SDL init succeeded!" << "\n";
+		}
+	}
+	} else {
+		if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+			if (DEBUG >= DEBUG_ERROR) {
+				cout << "SDL init failed! " << SDL_GetError() << "\n";
+			}
+		} else {
+			cout << "SDL init (no sound) succeeded!" << "\n";
 		}
 	}
 	if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
@@ -114,7 +124,7 @@ void init() {
 		}
 	}
 
-	if (sound) {
+	if (sound == true) {
 		gMusic = Mix_LoadMUS("tocafuge.wav");
 		if (gMusic == NULL) {
 			if (DEBUG >= DEBUG_ERROR) {
