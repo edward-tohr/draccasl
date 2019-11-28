@@ -154,7 +154,7 @@ bool loadTileInfo(Map *tempMap, ifstream &mapData) {
 		cout << "Finished parsing map data for map " << tempMap -> getID() << ":\n";
 		for (int i = 0; i < tempMap->getHeight(); i++) {
 			for (int j = 0; j < tempMap->getWidth(); j++) {
-				cout << tempMap->getTiles().at((i*tempMap->getWidth()) + j).getID() << " ";
+				cout << std::setfill('0') << std::setw(2) << tempMap->getTiles().at((i*tempMap->getWidth()) + j).getID() << " ";
 			}
 			cout << "\n";
 		}
